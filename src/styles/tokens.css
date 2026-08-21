@@ -1,0 +1,99 @@
+:root {
+  /* Primary Colors */
+  --color-primary: #1B2D5B;
+  --color-primary-dark: #111D3E;
+  --color-primary-light: #2E4A8A;
+  
+  /* Accent Gold */
+  --color-accent-gold: #C4A35A;
+  --color-accent-gold-light: #D9C48E;
+  --color-accent-gold-hover: #B08D3E;
+  
+  /* Secondary Blues */
+  --color-blue-mid: #3B7CA8;
+  --color-blue-gray: #8A9BB5;
+  --color-blue-cyan: #4DA8C4;
+  
+  /* Surfaces */
+  --color-background: #FFFFFF;
+  --color-surface: #F8F7F4;
+  --color-surface-alt: #F0EDE8;
+  
+  /* Text */
+  --color-text-primary: #1B2D5B;
+  --color-text-secondary: #5A6A85;
+  --color-text-muted: #8A9BB5;
+  --color-text-inverse: #FFFFFF;
+  
+  /* Borders */
+  --color-border: #E2E0DB;
+  --color-border-light: #F0EDE8;
+  --color-border-focus: #3B7CA8;
+  
+  /* Status */
+  --color-success: #2D8A6E;
+  --color-warning: #C4903A;
+  --color-error: #C44B4B;
+  --color-info: #3B7CA8;
+  
+  /* Spacing (4px base) */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
+  --space-32: 8rem;
+  
+  /* Text Sizes */
+  --text-xs:   0.75rem;
+  --text-sm:   0.875rem;
+  --text-base: 1rem;
+  --text-lg:   1.125rem;
+  --text-xl:   1.25rem;
+  --text-2xl:  1.5rem;
+  --text-3xl:  1.875rem;
+  --text-4xl:  2.25rem;
+  --text-5xl:  3rem;
+  --text-6xl:  3.75rem;
+  --text-7xl:  4.5rem;
+  
+  /* Border Radius */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+  --radius-full: 9999px;
+  
+  /* Shadows (subtle) */
+  --shadow-xs: 0 1px 2px rgba(27,45,91,0.04);
+  --shadow-sm: 0 1px 3px rgba(27,45,91,0.06), 0 1px 2px rgba(27,45,91,0.04);
+  --shadow-md: 0 4px 6px rgba(27,45,91,0.06), 0 2px 4px rgba(27,45,91,0.03);
+  --shadow-lg: 0 10px 15px rgba(27,45,91,0.06), 0 4px 6px rgba(27,45,91,0.03);
+  
+  /* Layout */
+  --container-max: 1280px;
+  --container-narrow: 960px;
+  --header-height: 80px;
+  --sidebar-width: 260px;
+  
+  /* Transitions */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --duration-fast: 150ms;
+  --duration-normal: 300ms;
+  --duration-slow: 500ms;
+  
+  /* Z-Index */
+  --z-dropdown: 100;
+  --z-sticky: 200;
+  --z-overlay: 300;
+  --z-modal: 400;
+  --z-toast: 500;
+}

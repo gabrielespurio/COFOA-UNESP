@@ -1,0 +1,297 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── User & Auth ───────────────────────────────────────────
+
+model User {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  passwordHash  String
+  role          Role     @default(PARTICIPANT)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  participant   Participant?
+  
+  @@map("users")
+}
+
+enum Role {
+  PARTICIPANT
+  ADMIN
+}
+
+// ─── Participant ───────────────────────────────────────────
+
+model Participant {
+  id              String    @id @default(cuid())
+  userId          String    @unique
+  fullName        String
+  cpf             String    @unique
+  birthDate       DateTime?
+  phone           String?
+  institution     String?
+  city            String?
+  state           String?
+  
+  // Academic fields (conditional)
+  course          String?
+  studentProofUrl String?
+  
+  // Professional fields (conditional)
+  croNumber       String?
+  croState        String?
+  croProofUrl     String?
+  
+  // Abroad fields (conditional)
+  abroadInstitution String?
+  abroadCountry     String?
+  abroadProofUrl    String?
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  registration    Registration?
+  scientificWorks ScientificWork[]
+  certificate     Certificate?
+  consents        ConsentRecord[]
+  
+  @@map("participants")
+}
+
+// ─── Registration Category ─────────────────────────────────
+
+model RegistrationCategory {
+  id                  String   @id @default(cuid())
+  name                String
+  type                CategoryType
+  priceTier           PriceTier
+  requiresCRO         Boolean  @default(false)
+  requiresStudentProof Boolean @default(false)
+  requiresAbroadProof  Boolean @default(false)
+  sortOrder           Int      @default(0)
+  active              Boolean  @default(true)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  
+  registrations       Registration[]
+  allowedCoupons      CouponCategory[]
+  
+  @@map("registration_categories")
+}
+
+enum CategoryType {
+  PRESENCIAL
+  ONLINE
+}
+
+enum PriceTier {
+  STANDARD
+  ONLINE_TIER1
+  ONLINE_TIER2
+  PENDING
+}
+
+// ─── Registration Batch (Lote) ─────────────────────────────
+
+model RegistrationBatch {
+  id          String      @id @default(cuid())
+  name        String
+  startDate   DateTime?
+  endDate     DateTime?
+  status      BatchStatus @default(UPCOMING)
+  
+  // Prices in cents (BRL)
+  priceStandard     Int
+  priceOnlineTier1  Int
+  priceOnlineTier2  Int
+  
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  
+  registrations Registration[]
+  
+  @@map("registration_batches")
+}
+
+enum BatchStatus {
+  UPCOMING
+  ACTIVE
+  CLOSED
+}
+
+// ─── Coupon ────────────────────────────────────────────────
+
+model Coupon {
+  id              String       @id @default(cuid())
+  code            String       @unique
+  description     String?
+  discountType    DiscountType
+  discountValue   Int          // Percentage (0-100) or fixed amount in cents
+  maxUses         Int?
+  usedCount       Int          @default(0)
+  startDate       DateTime?
+  endDate         DateTime?
+  active          Boolean      @default(true)
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  
+  allowedCategories CouponCategory[]
+  registrations     Registration[]
+  
+  @@map("coupons")
+}
+
+enum DiscountType {
+  PERCENTAGE
+  FIXED
+}
+
+model CouponCategory {
+  couponId    String
+  categoryId  String
+  
+  coupon      Coupon              @relation(fields: [couponId], references: [id], onDelete: Cascade)
+  category    RegistrationCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  
+  @@id([couponId, categoryId])
+  @@map("coupon_categories")
+}
+
+// ─── Registration ──────────────────────────────────────────
+
+model Registration {
+  id              String   @id @default(cuid())
+  participantId   String   @unique
+  categoryId      String
+  batchId         String
+  couponId        String?
+  amount          Int      // Final amount in cents
+  status          RegistrationStatus @default(PENDING)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  participant     Participant          @relation(fields: [participantId], references: [id], onDelete: Cascade)
+  category        RegistrationCategory @relation(fields: [categoryId], references: [id])
+  batch           RegistrationBatch    @relation(fields: [batchId], references: [id])
+  coupon          Coupon?              @relation(fields: [couponId], references: [id])
+  payment         Payment?
+  
+  @@map("registrations")
+}
+
+enum RegistrationStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+}
+
+// ─── Payment ───────────────────────────────────────────────
+
+model Payment {
+  id                String        @id @default(cuid())
+  registrationId    String        @unique
+  amount            Int           // Amount in cents
+  method            String?       // 'pix', 'credit_card', 'boleto'
+  status            PaymentStatus @default(PENDING)
+  gatewayId         String?       // External gateway reference
+  gatewayResponse   Json?         // Raw gateway response
+  paidAt            DateTime?
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+  
+  registration      Registration  @relation(fields: [registrationId], references: [id], onDelete: Cascade)
+  
+  @@map("payments")
+}
+
+enum PaymentStatus {
+  PENDING
+  PROCESSING
+  PAID
+  FAILED
+  CANCELLED
+  REFUNDED
+}
+
+// ─── Scientific Work ───────────────────────────────────────
+
+model ScientificWork {
+  id              String    @id @default(cuid())
+  participantId   String
+  title           String
+  abstract        String?   @db.Text
+  categoryArea    String?
+  authors         Json      // Array of { name, email, institution, isCorresponding }
+  advisor         String?
+  presenter       String?
+  modality        String?
+  fileUrl         String?
+  status          WorkStatus @default(DRAFT)
+  submittedAt     DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  participant     Participant @relation(fields: [participantId], references: [id], onDelete: Cascade)
+  
+  @@map("scientific_works")
+}
+
+enum WorkStatus {
+  DRAFT
+  SUBMITTED
+  UNDER_REVIEW
+  ACCEPTED
+  REJECTED
+}
+
+// ─── Certificate ───────────────────────────────────────────
+
+model Certificate {
+  id              String    @id @default(cuid())
+  participantId   String    @unique
+  type            CertificateType @default(PARTICIPATION)
+  fileUrl         String?
+  availableAt     DateTime?
+  generatedAt     DateTime?
+  downloadedAt    DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  participant     Participant @relation(fields: [participantId], references: [id], onDelete: Cascade)
+  
+  @@map("certificates")
+}
+
+enum CertificateType {
+  PARTICIPATION
+}
+
+// ─── Consent Record (LGPD) ─────────────────────────────────
+
+model ConsentRecord {
+  id              String      @id @default(cuid())
+  participantId   String
+  type            ConsentType
+  version         String
+  acceptedAt      DateTime    @default(now())
+  ipAddress       String?
+  
+  participant     Participant @relation(fields: [participantId], references: [id], onDelete: Cascade)
+  
+  @@map("consent_records")
+}
+
+enum ConsentType {
+  PRIVACY_POLICY
+  TERMS_OF_USE
+}

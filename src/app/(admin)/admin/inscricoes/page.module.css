@@ -1,0 +1,67 @@
+
+.tableContainer {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-gray-200);
+  overflow-x: auto;
+  margin-top: var(--spacing-xl);
+}
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--font-size-sm);
+}
+.table th {
+  text-align: left;
+  padding: var(--spacing-md) var(--spacing-lg);
+  background: var(--color-gray-50);
+  color: var(--color-text-secondary);
+  font-weight: var(--font-weight-medium);
+  border-bottom: 1px solid var(--color-gray-200);
+}
+.table td {
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-bottom: 1px solid var(--color-gray-200);
+  vertical-align: middle;
+}
+.table tr:last-child td {
+  border-bottom: none;
+}
+.nameCell {
+  font-weight: var(--font-weight-medium);
+  color: var(--color-primary);
+}
+.badgeAdmin {
+  background: var(--color-primary-dark);
+  color: white;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+}
+.badgeUser {
+  background: var(--color-gray-200);
+  color: var(--color-text-secondary);
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+}
+.badgeSuccess {
+  background: rgba(45, 138, 110, 0.1);
+  color: var(--color-success);
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+.badgeNeutral {
+  background: rgba(138, 155, 181, 0.1);
+  color: var(--color-text-muted);
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+}
+.emptyState {
+  text-align: center;
+  padding: var(--spacing-2xl);
+  color: var(--color-text-secondary);
+}

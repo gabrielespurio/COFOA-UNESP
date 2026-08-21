@@ -1,0 +1,16 @@
+.logoWrapper {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.svg {
+  display: block;
+}
+
+.symbol {
+  transform-origin: center;
+}
+
+.textGroup {
+  /* Inherits styles from SVG */
+}

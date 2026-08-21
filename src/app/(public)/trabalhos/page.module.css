@@ -1,0 +1,30 @@
+.section {
+  padding: var(--spacing-3xl) 0;
+}
+
+.emptyState {
+  text-align: center;
+  padding: var(--spacing-3xl) var(--spacing-xl);
+  background: var(--color-surface);
+  border: 1px dashed var(--color-gray-300);
+  border-radius: var(--radius-lg);
+  margin-top: var(--spacing-2xl);
+}
+
+.icon {
+  font-size: 3rem;
+  margin-bottom: var(--spacing-md);
+  opacity: 0.5;
+}
+
+.title {
+  color: var(--color-primary);
+  font-size: var(--font-size-xl);
+  margin-bottom: var(--spacing-sm);
+}
+
+.text {
+  color: var(--color-text-secondary);
+  max-width: 600px;
+  margin: 0 auto;
+}
