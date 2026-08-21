@@ -11,6 +11,7 @@ import styles from './layout.module.css';
 const MENU_ITEMS = [
   { label: 'Painel', href: '/area-participante' },
   { label: 'Minha Inscrição', href: '/area-participante/inscricao' },
+  { label: 'Pagamento', href: '/area-participante/pagamento' },
   { label: 'Meus Trabalhos', href: '/area-participante/trabalhos' },
   { label: 'Meu Perfil', href: '/area-participante/perfil' },
   { label: 'Certificado', href: '/area-participante/certificado' },
@@ -26,7 +27,7 @@ export function ParticipantSidebar({ profileCompleted, children }: { profileComp
     <>
       <aside className={cn(styles.sidebar, !sidebarOpen && styles.sidebarClosed, "md:translate-x-0")}>
         <div className={styles.sidebarHeader}>
-          <Logo variant="default" height={40} />
+          <Logo variant="full" height={40} />
         </div>
         <nav className={styles.nav}>
           {MENU_ITEMS.map((item) => {

@@ -19,7 +19,7 @@ export default function AuthLayout({
       <div className={styles.card}>
         <div className={styles.logoWrapper}>
           <Link href="/">
-            <Logo variant="default" height={48} />
+            <Logo variant="full" height={58} />
           </Link>
         </div>
         <div className={styles.header}>

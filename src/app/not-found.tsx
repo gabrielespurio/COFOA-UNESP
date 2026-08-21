@@ -7,7 +7,7 @@ export default function NotFound() {
   return (
     <div className={styles.layout}>
       <div className={styles.logoWrapper}>
-        <Logo variant="default" height={80} />
+        <Logo variant="full" height={80} />
       </div>
       <h1 className={styles.title}>404 - Página não encontrada</h1>
       <p className={styles.text}>

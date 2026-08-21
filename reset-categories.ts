@@ -1,0 +1,1 @@
+import { prisma } from './src/lib/prisma'; async function main() { console.log('Deleting existing registrations to clear constraints...'); await prisma.registration.deleteMany({}); console.log('Deleting categories...'); await prisma.registrationCategory.deleteMany({}); console.log('Done.'); } main().catch(console.error);

@@ -5,6 +5,8 @@ import { getSession } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import { getSupabaseAdmin } from '@/lib/supabase';
+import { createOrGetCustomer, createPayment } from '@/lib/asaas';
+import { getCurrentDate, getBatchStatus } from '@/lib/dateUtils';
 
 export async function updateProfile(prevState: any, formData: FormData) {
   const session = await getSession();
@@ -78,7 +80,10 @@ export async function createRegistration(formData: FormData) {
   const session = await getSession();
   if (!session) return { error: 'Usuário não autenticado.' };
 
-  const participant = await prisma.participant.findUnique({ where: { userId: session.userId } });
+  const participant = await prisma.participant.findUnique({ 
+    where: { userId: session.userId },
+    include: { user: true }
+  });
   if (!participant) return { error: 'Perfil incompleto. Preencha seus dados antes de se inscrever.' };
 
   const existing = await prisma.registration.findFirst({ where: { participantId: participant.id } });
@@ -127,36 +132,78 @@ export async function createRegistration(formData: FormData) {
       });
     }
 
-    // Usually we would calculate the amount based on the category and active batch.
-    let batch = await prisma.registrationBatch.findFirst({
-      orderBy: { createdAt: 'asc' }
-    });
+    // Fetch Category to determine price tier
+    const category = await prisma.registrationCategory.findUnique({ where: { id: categoryId } });
+    if (!category) return { error: 'Categoria inválida.' };
 
+    // Get Active Batch based on date
+    const currentDate = await getCurrentDate();
+    const batches = await prisma.registrationBatch.findMany();
+    let batch = batches.find(b => getBatchStatus(b.startDate?.toISOString() || null, b.endDate?.toISOString() || null, currentDate) === 'ACTIVE');
+    
+    // Fallback to first batch if none is ACTIVE (just as fallback)
     if (!batch) {
-      batch = await prisma.registrationBatch.create({
-        data: {
-          name: 'Lote Atual',
-          status: 'ACTIVE',
-          priceStandard: 19500,
-          priceOnlineTier1: 8000,
-          priceOnlineTier2: 10000,
-        }
-      });
+      batch = batches[0];
+    }
+    if (!batch) {
+      return { error: 'Não há lotes disponíveis para inscrição.' };
     }
 
-    await prisma.registration.create({
+    let finalAmount = 0;
+    switch(category.priceTier) {
+      case 'PRESENCIAL_TIER1': finalAmount = batch.pricePresencialTier1; break;
+      case 'PRESENCIAL_TIER2': finalAmount = batch.pricePresencialTier2; break;
+      case 'PRESENCIAL_TIER3': finalAmount = batch.pricePresencialTier3; break;
+      case 'ONLINE_TIER1': finalAmount = batch.priceOnlineTier1; break;
+      case 'ONLINE_TIER2': finalAmount = batch.priceOnlineTier2; break;
+    }
+
+    // 1. Create/Get Asaas Customer
+    const asaasCustomer = await createOrGetCustomer(
+      participant.fullName,
+      participant.cpf,
+      participant.user.email,
+      participant.phone
+    );
+
+    // 2. Set Due Date (3 days from now)
+    const dueDate = new Date();
+    dueDate.setDate(dueDate.getDate() + 3);
+    const dueDateStr = dueDate.toISOString().split('T')[0];
+
+    // 3. Create Payment in Asaas
+    const asaasPayment = await createPayment(
+      asaasCustomer.id,
+      finalAmount,
+      `Inscrição COFOA XV - ${category.name}`,
+      dueDateStr
+    );
+
+    // 4. Save Registration and Payment to DB
+    const registration = await prisma.registration.create({
       data: {
         participantId: participant.id,
         categoryId,
         batchId: batch.id,
         status: 'PENDING',
-        amount: 0,
+        amount: finalAmount,
       }
     });
+
+    await prisma.payment.create({
+      data: {
+        registrationId: registration.id,
+        amount: finalAmount,
+        gatewayId: asaasPayment.id,
+        gatewayResponse: asaasPayment as any,
+      }
+    });
+
     revalidatePath('/area-participante');
   } catch (err) {
     console.error(err);
-    return { error: 'Erro ao processar sua inscrição. Tente novamente.' };
+    return { error: 'Erro ao processar sua inscrição ou comunicação com gateway falhou.' };
   }
-  redirect('/area-participante');
+  
+  redirect('/area-participante/pagamento');
 }

@@ -38,7 +38,10 @@ export async function login(prevState: any, formData: FormData) {
     });
     
     // Determine redirect based on role
-    const defaultRedirect = user.role === 'ADMIN' ? '/admin' : '/area-participante';
+    let defaultRedirect = '/area-participante';
+    if (user.role === 'ADMIN') defaultRedirect = '/admin';
+    if (user.role === 'COMMITTEE') defaultRedirect = '/comissao';
+    
     const finalRedirectTo = formData.get('redirectTo') as string || defaultRedirect;
     
     // Pass to outside try-catch

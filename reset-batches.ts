@@ -1,0 +1,1 @@
+import { prisma } from './src/lib/prisma'; async function main() { console.log('Deleting batches...'); await prisma.registrationBatch.deleteMany({}); console.log('Done.'); } main().catch(console.error);

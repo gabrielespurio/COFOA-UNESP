@@ -29,57 +29,58 @@ export const EVENT = {
 
 export const REGISTRATION_CATEGORIES = [
   // Presenciais
-  { id: 'grad-foa', name: 'Graduando da Faculdade de Odontologia de Araçatuba — FOA UNESP', type: 'presencial' as const, priceTier: 'standard' as const },
-  { id: 'pos-foa', name: 'Pós-Graduando da Faculdade de Odontologia de Araçatuba — FOA UNESP', type: 'presencial' as const, priceTier: 'standard' as const },
-  { id: 'grad-ext', name: 'Graduando de Instituição Externa', type: 'presencial' as const, priceTier: 'standard' as const },
-  { id: 'pos-ext', name: 'Pós-Graduando de Instituição Externa', type: 'presencial' as const, priceTier: 'standard' as const },
-  { id: 'profissional', name: 'Profissional da Odontologia', type: 'presencial' as const, priceTier: 'standard' as const },
-  { id: 'docente-foa', name: 'Docente da Faculdade de Odontologia de Araçatuba — FOA UNESP', type: 'presencial' as const, priceTier: 'pending' as const },
+  { id: 'grad-pos-foa', name: 'Graduandos e Pós-Graduandos da FOA UNESP', type: 'presencial' as const, priceTier: 'presencial_tier1' as const },
+  { id: 'grad-pos-ext', name: 'Graduandos e Pós-Graduandos de outras instituições', type: 'presencial' as const, priceTier: 'presencial_tier2' as const },
+  { id: 'doc-prof', name: 'Docentes e Profissionais da Odontologia', type: 'presencial' as const, priceTier: 'presencial_tier3' as const },
+  
   // Online
-  { id: 'foa-exterior-1', name: 'Graduando ou Pós-Graduando da FOA UNESP em estágio no exterior — apresentação de 01 trabalho on-line', type: 'online' as const, priceTier: 'online_tier1' as const },
-  { id: 'foa-exterior-2', name: 'Graduando ou Pós-Graduando da FOA UNESP em estágio no exterior — apresentação de 02 trabalhos on-line', type: 'online' as const, priceTier: 'online_tier2' as const },
-  { id: 'ext-online-1', name: 'Comunidade Externa — apresentação de 01 trabalho on-line', type: 'online' as const, priceTier: 'online_tier1' as const },
-  { id: 'ext-online-2', name: 'Comunidade Externa — apresentação de 02 trabalhos on-line', type: 'online' as const, priceTier: 'online_tier2' as const },
-  { id: 'ext-banca', name: 'Comunidade Externa — banca avaliadora dos trabalhos on-line', type: 'online' as const, priceTier: 'online_tier2' as const },
-  { id: 'pos-exterior-banca', name: 'Pós-Graduando da FOA UNESP em estágio no exterior — banca avaliadora dos trabalhos on-line', type: 'online' as const, priceTier: 'online_tier2' as const },
+  { id: 'foa-ext-1', name: 'Alunos da FOA UNESP no exterior - Apresentação de 1 trabalho online', type: 'online' as const, priceTier: 'online_tier1' as const },
+  { id: 'foa-ext-2', name: 'Alunos da FOA UNESP no exterior - Apresentação de 2 trabalhos online', type: 'online' as const, priceTier: 'online_tier2' as const },
+  { id: 'com-ext-1', name: 'Comunidade Externa - Apresentação de 1 trabalho online', type: 'online' as const, priceTier: 'online_tier1' as const },
+  { id: 'com-ext-2', name: 'Comunidade Externa - Apresentação de 2 trabalhos online', type: 'online' as const, priceTier: 'online_tier2' as const },
+  { id: 'com-ext-banca', name: 'Comunidade Externa - Banca avaliadora dos trabalhos on-line', type: 'online' as const, priceTier: 'online_tier2' as const },
+  { id: 'foa-ext-banca', name: 'Alunos da FOA UNESP no exterior - Banca avaliadora dos trabalhos on-line', type: 'online' as const, priceTier: 'online_tier2' as const },
 ] as const;
 
 export const REGISTRATION_BATCHES = [
   {
     id: 'promotional',
     name: 'Lote Promocional',
-    startDate: null, // To be defined
-    endDate: null,   // To be defined
+    startDate: '2026-08-27T00:00:00-03:00',
+    endDate: '2026-10-09T23:59:59-03:00',
     prices: {
-      standard: 18500,     // R$ 185,00 in cents
-      online_tier1: 7000,  // R$ 70,00
-      online_tier2: 9000,  // R$ 90,00
+      presencial_tier1: 17500,
+      presencial_tier2: 18500,
+      presencial_tier3: 20000,
+      online_tier1: 7000,
+      online_tier2: 9500,
     },
-    status: 'upcoming' as const,
   },
   {
     id: 'first',
     name: '1º Lote',
-    startDate: null,
-    endDate: null,
+    startDate: '2026-10-10T00:00:00-03:00',
+    endDate: '2026-11-05T23:59:59-03:00',
     prices: {
-      standard: 19500,
+      presencial_tier1: 18500,
+      presencial_tier2: 19500,
+      presencial_tier3: 21000,
       online_tier1: 8000,
-      online_tier2: 10000,
+      online_tier2: 10500,
     },
-    status: 'upcoming' as const,
   },
   {
     id: 'second',
     name: '2º Lote',
-    startDate: null,
-    endDate: null,
+    startDate: '2026-11-06T00:00:00-03:00',
+    endDate: '2026-11-22T23:59:59-03:00',
     prices: {
-      standard: 22000,
-      online_tier1: 10000,
+      presencial_tier1: 21000,
+      presencial_tier2: 22000,
+      presencial_tier3: 23000,
+      online_tier1: 10500,
       online_tier2: 12000,
     },
-    status: 'upcoming' as const,
   },
 ] as const;
 

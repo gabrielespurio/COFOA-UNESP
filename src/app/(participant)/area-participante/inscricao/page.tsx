@@ -43,9 +43,15 @@ export default async function MinhaInscricaoPage() {
   if (categories.length === 0) {
     await prisma.registrationCategory.createMany({
       data: [
-        { id: 'cat-1', name: 'Graduando FOA', type: 'PRESENCIAL', priceTier: 'STANDARD', requiresStudentProof: true, requiresCRO: false, requiresAbroadProof: false, sortOrder: 1, active: true },
-        { id: 'cat-2', name: 'Profissional', type: 'PRESENCIAL', priceTier: 'STANDARD', requiresStudentProof: false, requiresCRO: true, requiresAbroadProof: false, sortOrder: 2, active: true },
-        { id: 'cat-3', name: 'Participante Online', type: 'ONLINE', priceTier: 'ONLINE_TIER1', requiresStudentProof: false, requiresCRO: false, requiresAbroadProof: false, sortOrder: 3, active: true },
+        { id: 'grad-pos-foa', name: 'Graduandos e Pós-Graduandos da FOA UNESP', type: 'PRESENCIAL', priceTier: 'PRESENCIAL_TIER1', requiresStudentProof: true, requiresCRO: false, requiresAbroadProof: false, sortOrder: 1, active: true },
+        { id: 'grad-pos-ext', name: 'Graduandos e Pós-Graduandos de outras instituições', type: 'PRESENCIAL', priceTier: 'PRESENCIAL_TIER2', requiresStudentProof: true, requiresCRO: false, requiresAbroadProof: false, sortOrder: 2, active: true },
+        { id: 'doc-prof', name: 'Docentes e Profissionais da Odontologia', type: 'PRESENCIAL', priceTier: 'PRESENCIAL_TIER3', requiresStudentProof: false, requiresCRO: true, requiresAbroadProof: false, sortOrder: 3, active: true },
+        { id: 'foa-ext-1', name: 'Alunos da FOA UNESP no exterior - Apresentação de 1 trabalho online', type: 'ONLINE', priceTier: 'ONLINE_TIER1', requiresStudentProof: true, requiresCRO: false, requiresAbroadProof: true, sortOrder: 4, active: true },
+        { id: 'foa-ext-2', name: 'Alunos da FOA UNESP no exterior - Apresentação de 2 trabalhos online', type: 'ONLINE', priceTier: 'ONLINE_TIER2', requiresStudentProof: true, requiresCRO: false, requiresAbroadProof: true, sortOrder: 5, active: true },
+        { id: 'com-ext-1', name: 'Comunidade Externa - Apresentação de 1 trabalho online', type: 'ONLINE', priceTier: 'ONLINE_TIER1', requiresStudentProof: false, requiresCRO: false, requiresAbroadProof: false, sortOrder: 6, active: true },
+        { id: 'com-ext-2', name: 'Comunidade Externa - Apresentação de 2 trabalhos online', type: 'ONLINE', priceTier: 'ONLINE_TIER2', requiresStudentProof: false, requiresCRO: false, requiresAbroadProof: false, sortOrder: 7, active: true },
+        { id: 'com-ext-banca', name: 'Comunidade Externa - Banca avaliadora dos trabalhos on-line', type: 'ONLINE', priceTier: 'ONLINE_TIER2', requiresStudentProof: false, requiresCRO: false, requiresAbroadProof: false, sortOrder: 8, active: true },
+        { id: 'foa-ext-banca', name: 'Alunos da FOA UNESP no exterior - Banca avaliadora dos trabalhos on-line', type: 'ONLINE', priceTier: 'ONLINE_TIER2', requiresStudentProof: true, requiresCRO: false, requiresAbroadProof: true, sortOrder: 9, active: true },
       ]
     });
     categories = await prisma.registrationCategory.findMany({

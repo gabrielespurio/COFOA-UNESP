@@ -35,7 +35,7 @@
 
 .heroEdition {
   font-family: var(--font-heading);
-  font-size: var(--text-lg);
+  font-size: var(--text-xl);
   font-weight: 300;
   color: var(--color-text-secondary);
   letter-spacing: 0.08em;
@@ -46,7 +46,7 @@
 
 @media (min-width: 768px) {
   .heroEdition {
-    font-size: var(--text-xl);
+    font-size: var(--text-2xl);
     letter-spacing: 0.12em;
   }
 }
@@ -332,9 +332,10 @@
   grid-template-columns: 1fr;
   gap: var(--space-6);
   margin-top: var(--space-12);
-  max-width: 960px;
+  max-width: 1080px;
   margin-left: auto;
   margin-right: auto;
+  align-items: stretch;
 }
 
 @media (min-width: 768px) {
@@ -346,85 +347,101 @@
 .batchCard {
   padding: var(--space-8);
   border: 1px solid var(--color-border);
-  text-align: center;
+  border-radius: var(--radius-xl);
+  text-align: left;
   position: relative;
-  transition: border-color var(--duration-normal) var(--ease-out);
+  background: var(--color-background);
+  transition: transform var(--duration-normal) var(--ease-out), box-shadow var(--duration-normal) var(--ease-out);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
 }
 
 .batchCard:hover {
-  border-color: var(--color-blue-mid);
+  box-shadow: var(--shadow-md);
 }
 
 .batchCardHighlight {
-  border-color: var(--color-accent-gold);
-  background: linear-gradient(180deg, rgba(196, 163, 90, 0.03) 0%, transparent 100%);
+  border: 2px solid var(--color-success);
+  transform: scale(1.02);
+  z-index: 10;
+  box-shadow: var(--shadow-lg);
 }
 
-.batchCardHighlight::before {
-  content: '';
+.batchCardSoldOut {
+  opacity: 0.6;
+  background: var(--color-surface);
+  filter: grayscale(100%);
+}
+
+.batchBadgeTop {
   position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 60px;
-  height: 2px;
-  background-color: var(--color-accent-gold);
+  top: -12px;
+  right: 24px;
+  background: var(--color-success);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .batchName {
   font-family: var(--font-heading);
-  font-size: var(--text-xl);
-  font-weight: 600;
+  font-size: var(--text-2xl);
+  font-weight: 700;
   color: var(--color-primary);
-  margin-bottom: var(--space-6);
-  margin-top: var(--space-4);
-}
-
-.batchPrice {
-  margin-bottom: var(--space-6);
-}
-
-.batchPriceLabel {
-  display: block;
-  font-size: var(--text-sm);
-  color: var(--color-text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
   margin-bottom: var(--space-2);
 }
 
-.batchPriceValue {
-  font-family: var(--font-heading);
-  font-size: var(--text-4xl);
-  font-weight: 700;
-  color: var(--color-primary);
-  line-height: 1;
+.batchDates {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-6);
+  padding-bottom: var(--space-6);
+  border-bottom: 1px solid var(--color-border-light);
 }
 
-.batchPriceSecondary {
-  border-top: 1px solid var(--color-border-light);
-  padding-top: var(--space-4);
+.batchFeaturesList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  flex-grow: 1;
 }
 
-.batchPriceRow {
+.batchFeatureItem {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  padding: var(--space-2) 0;
-  font-size: var(--text-sm);
+  align-items: flex-start;
+  gap: var(--space-4);
+  font-size: 0.875rem;
   color: var(--color-text-secondary);
 }
 
-.batchPriceRow span:last-child {
-  font-weight: 600;
-  color: var(--color-primary);
+.batchFeatureItem svg {
+  flex-shrink: 0;
+  color: var(--color-success);
+  margin-top: 2px;
 }
 
-.batchDates {
-  margin-top: var(--space-4);
-  font-size: var(--text-sm);
-  color: var(--color-text-muted);
-  font-style: italic;
+.batchFeatureName {
+  flex-grow: 1;
+  line-height: 1.4;
+}
+
+.batchFeaturePrice {
+  font-weight: 700;
+  color: var(--color-text-primary);
+  white-space: nowrap;
 }
 
 /* ─── Categories ────────────────────────────────────────── */

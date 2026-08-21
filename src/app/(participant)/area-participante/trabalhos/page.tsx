@@ -19,6 +19,8 @@ function getStatusBadge(status: string) {
       return <Badge variant="warning">Submetido</Badge>;
     case 'UNDER_REVIEW':
       return <Badge variant="info">Em Avaliação</Badge>;
+    case 'REVISION_REQUESTED':
+      return <Badge variant="warning">Com Ressalva</Badge>;
     case 'ACCEPTED':
       return <Badge variant="success">Aprovado</Badge>;
     case 'REJECTED':
@@ -95,6 +97,16 @@ export default async function MeusTrabalhosPage() {
                     </span>
                   </div>
                 </div>
+                
+                {work.reviewerComments && (
+                  <div style={{ marginTop: 'var(--space-4)', padding: 'var(--space-3)', background: 'var(--color-surface-alt)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}>
+                    <div style={{ fontSize: 'var(--font-size-sm)', fontWeight: 600, color: 'var(--color-primary-dark)', marginBottom: 'var(--space-2)' }}>Parecer da Avaliação:</div>
+                    <p style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-secondary)', whiteSpace: 'pre-wrap', lineHeight: 1.5 }}>
+                      {work.reviewerComments}
+                    </p>
+                  </div>
+                )}
+                
                 {work.fileUrl && (
                   <div className={styles.workActions}>
                     <a href={work.fileUrl} target="_blank" rel="noopener noreferrer" className={styles.linkAction}>

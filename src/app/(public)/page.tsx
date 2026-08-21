@@ -9,16 +9,24 @@ import { SectionDivider } from '@/components/common/GeometricElements/SectionDiv
 import { EVENT, REGISTRATION_CATEGORIES, REGISTRATION_BATCHES } from '@/lib/constants';
 import { formatCurrency } from '@/lib/utils';
 import { Countdown } from '@/components/ui/Countdown/Countdown';
+import { TimeTravelDebugger } from './TimeTravelDebugger';
+import { getCurrentDate, getBatchStatus, formatShortDate } from '@/lib/dateUtils';
+import { cookies } from 'next/headers';
 
-export default function HomePage() {
+export default async function HomePage() {
+  const currentDate = await getCurrentDate();
+  const cookieStore = await cookies();
+  const simulatedDateStr = cookieStore.get('simulated_date')?.value || null;
+
   return (
     <>
+      <TimeTravelDebugger initialDate={simulatedDateStr} />
       {/* ═══════════════════ HERO ═══════════════════ */}
       <section className={styles.hero} id="hero">
         <HeroGeometric />
         <div className={styles.heroContent}>
           <div className={styles.heroLogoWrapper}>
-            <Logo variant="full" height={120} />
+            <Logo variant="full" height={150} />
           </div>
 
           <p className={styles.heroEdition}>
@@ -177,36 +185,58 @@ export default function HomePage() {
 
           {/* Lotes */}
           <div className={styles.batchesGrid}>
-            {REGISTRATION_BATCHES.map((batch, index) => (
-              <div
-                key={batch.id}
-                className={`${styles.batchCard} ${index === 0 ? styles.batchCardHighlight : ''}`}
-              >
-                {index === 0 && (
-                  <Badge variant="gold">Lote Atual</Badge>
-                )}
-                <h3 className={styles.batchName}>{batch.name}</h3>
-                <div className={styles.batchPrice}>
-                  <span className={styles.batchPriceLabel}>Inscrição presencial</span>
-                  <span className={styles.batchPriceValue}>
-                    {formatCurrency(batch.prices.standard)}
-                  </span>
+            {REGISTRATION_BATCHES.map((batch) => {
+              const status = getBatchStatus(batch.startDate, batch.endDate, currentDate);
+              const isCurrent = status === 'ACTIVE';
+              const isSoldOut = status === 'SOLD_OUT';
+
+              return (
+                <div
+                  key={batch.id}
+                  className={`${styles.batchCard} ${isCurrent ? styles.batchCardHighlight : ''} ${isSoldOut ? styles.batchCardSoldOut : ''}`}
+                >
+                  {isCurrent && (
+                    <div className={styles.batchBadgeTop}>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                      </svg>
+                      Lote atual
+                    </div>
+                  )}
+                  {isSoldOut && (
+                    <div className={styles.batchBadgeTop} style={{ background: 'var(--color-text-muted)' }}>
+                      Esgotado
+                    </div>
+                  )}
+
+                  <h3 className={styles.batchName}>{batch.name}</h3>
+                  <p className={styles.batchDates}>
+                    {batch.startDate && batch.endDate 
+                      ? `${formatShortDate(batch.startDate)} a ${formatShortDate(batch.endDate)}` 
+                      : 'Datas a definir'}
+                  </p>
+
+                  <ul className={styles.batchFeaturesList}>
+                    {[
+                      { name: 'Graduandos e Pós da FOA UNESP', price: batch.prices.presencial_tier1 },
+                      { name: 'Graduandos e Pós Externos', price: batch.prices.presencial_tier2 },
+                      { name: 'Profissionais da Odontologia', price: batch.prices.presencial_tier3 },
+                      { name: '1 trabalho on-line', price: batch.prices.online_tier1 },
+                      { name: '2 trabalhos ou Banca on-line', price: batch.prices.online_tier2 },
+                    ].map((feature, idx) => (
+                      <li key={idx} className={styles.batchFeatureItem}>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        <span className={styles.batchFeatureName}>{feature.name}</span>
+                        <span className={styles.batchFeaturePrice}>{formatCurrency(feature.price)}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-                <div className={styles.batchPriceSecondary}>
-                  <div className={styles.batchPriceRow}>
-                    <span>On-line (1 trabalho)</span>
-                    <span>{formatCurrency(batch.prices.online_tier1)}</span>
-                  </div>
-                  <div className={styles.batchPriceRow}>
-                    <span>On-line (2 trabalhos)</span>
-                    <span>{formatCurrency(batch.prices.online_tier2)}</span>
-                  </div>
-                </div>
-                {batch.startDate === null && (
-                  <p className={styles.batchDates}>Datas a definir</p>
-                )}
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           {/* Categorias */}
@@ -221,9 +251,6 @@ export default function HomePage() {
                   {REGISTRATION_CATEGORIES.filter(c => c.type === 'presencial').map(cat => (
                     <li key={cat.id} className={styles.categoryItem}>
                       {cat.name}
-                      {cat.priceTier === 'pending' && (
-                        <Badge variant="warning" size="sm">Valor a confirmar</Badge>
-                      )}
                     </li>
                   ))}
                 </ul>

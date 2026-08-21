@@ -27,6 +27,7 @@ model User {
 enum Role {
   PARTICIPANT
   ADMIN
+  COMMITTEE
 }
 
 // ─── Participant ───────────────────────────────────────────
@@ -95,10 +96,11 @@ enum CategoryType {
 }
 
 enum PriceTier {
-  STANDARD
+  PRESENCIAL_TIER1
+  PRESENCIAL_TIER2
+  PRESENCIAL_TIER3
   ONLINE_TIER1
   ONLINE_TIER2
-  PENDING
 }
 
 // ─── Registration Batch (Lote) ─────────────────────────────
@@ -111,9 +113,11 @@ model RegistrationBatch {
   status      BatchStatus @default(UPCOMING)
   
   // Prices in cents (BRL)
-  priceStandard     Int
-  priceOnlineTier1  Int
-  priceOnlineTier2  Int
+  pricePresencialTier1  Int
+  pricePresencialTier2  Int
+  pricePresencialTier3  Int
+  priceOnlineTier1      Int
+  priceOnlineTier2      Int
   
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
@@ -237,6 +241,7 @@ model ScientificWork {
   modality        String?
   fileUrl         String?
   status          WorkStatus @default(DRAFT)
+  reviewerComments String?   @db.Text
   submittedAt     DateTime?
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
@@ -250,6 +255,7 @@ enum WorkStatus {
   DRAFT
   SUBMITTED
   UNDER_REVIEW
+  REVISION_REQUESTED
   ACCEPTED
   REJECTED
 }
