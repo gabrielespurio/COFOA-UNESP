@@ -59,6 +59,18 @@ export default async function MinhaInscricaoPage() {
     });
   }
 
+  // Seed batches if empty
+  const batchesCount = await prisma.registrationBatch.count();
+  if (batchesCount === 0) {
+    await prisma.registrationBatch.createMany({
+      data: [
+        { name: 'Lote Promocional', startDate: new Date('2026-08-27T00:00:00-03:00'), endDate: new Date('2026-10-09T23:59:59-03:00'), pricePresencialTier1: 17500, pricePresencialTier2: 18500, pricePresencialTier3: 20000, priceOnlineTier1: 7000, priceOnlineTier2: 9500 },
+        { name: '1º Lote', startDate: new Date('2026-10-10T00:00:00-03:00'), endDate: new Date('2026-11-05T23:59:59-03:00'), pricePresencialTier1: 18500, pricePresencialTier2: 19500, pricePresencialTier3: 21000, priceOnlineTier1: 8000, priceOnlineTier2: 10500 },
+        { name: '2º Lote', startDate: new Date('2026-11-06T00:00:00-03:00'), endDate: new Date('2026-11-22T23:59:59-03:00'), pricePresencialTier1: 21000, pricePresencialTier2: 22000, pricePresencialTier3: 23000, priceOnlineTier1: 10500, priceOnlineTier2: 12000 },
+      ]
+    });
+  }
+
   // Also we need an active batch to be able to register. We'll handle this dynamically in the server action later.
 
   return (

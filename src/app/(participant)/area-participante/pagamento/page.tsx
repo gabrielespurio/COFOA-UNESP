@@ -1,7 +1,6 @@
 import { getSession } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { redirect } from 'next/navigation';
-import { Card } from '@/components/ui/Card/Card';
 import { Badge } from '@/components/ui/Badge/Badge';
 import { Button } from '@/components/ui/Button/Button';
 import { formatCurrency } from '@/lib/utils';
@@ -32,15 +31,18 @@ export default async function PaymentPage() {
   if (!payment) {
     return (
       <div style={{ maxWidth: '800px', margin: '0 auto', paddingTop: '2rem' }}>
-        <Card title="Pagamento">
+        <div style={{ background: '#fff', border: '1px solid var(--color-border)', borderRadius: '8px', padding: '1.5rem', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
+          <h2 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '1rem' }}>Pagamento</h2>
           <p>Sua inscrição não gerou uma fatura. Entre em contato com a organização.</p>
-        </Card>
+        </div>
       </div>
     );
   }
 
   const asaasData = payment.gatewayResponse as unknown as AsaasPayment;
-  const isPaid = payment.status === 'PAID' || payment.status === 'CONFIRMED' || participant.registration.status === 'CONFIRMED';
+  const isPaid = payment.status === 'PAID' || participant.registration.status === 'CONFIRMED';
+
+  const cardStyle = { background: '#fff', border: '1px solid var(--color-border)', borderRadius: '8px', padding: '1.5rem', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' };
 
   return (
     <div style={{ maxWidth: '600px', margin: '0 auto', paddingTop: '2rem', display: 'flex', flexDirection: 'column', gap: '2rem' }}>
@@ -49,7 +51,7 @@ export default async function PaymentPage() {
         <p style={{ color: 'var(--color-text-secondary)' }}>Acompanhe o status da sua inscrição no COFOA XV.</p>
       </div>
 
-      <Card>
+      <div style={cardStyle}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
           <h2 style={{ fontSize: '1.25rem', fontWeight: 600 }}>Status da Inscrição</h2>
           {isPaid ? (
@@ -75,10 +77,11 @@ export default async function PaymentPage() {
             <span style={{ color: 'var(--color-primary)' }}>{formatCurrency(payment.amount)}</span>
           </div>
         </div>
-      </Card>
+      </div>
 
       {!isPaid && asaasData?.invoiceUrl && (
-        <Card title="Efetuar Pagamento">
+        <div style={cardStyle}>
+          <h2 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '1rem' }}>Efetuar Pagamento</h2>
           <p style={{ marginBottom: '1.5rem', color: 'var(--color-text-secondary)', lineHeight: 1.6 }}>
             Clique no botão abaixo para acessar a página segura do Asaas. 
             Lá você poderá escolher pagar via <strong>PIX</strong> (aprovação na hora), <strong>Cartão de Crédito</strong> ou <strong>Boleto</strong>.
@@ -86,7 +89,6 @@ export default async function PaymentPage() {
 
           <Button 
             href={asaasData.invoiceUrl}
-            target="_blank"
             variant="primary"
             size="lg"
             fullWidth
@@ -97,11 +99,11 @@ export default async function PaymentPage() {
           <p style={{ marginTop: '1rem', fontSize: '0.85rem', color: 'var(--color-text-muted)', textAlign: 'center' }}>
             Após o pagamento, o sistema atualizará automaticamente o status desta página.
           </p>
-        </Card>
+        </div>
       )}
 
       {isPaid && (
-        <Card>
+        <div style={cardStyle}>
           <div style={{ textAlign: 'center', padding: '2rem 1rem' }}>
             <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>✅</div>
             <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '0.5rem', color: 'var(--color-success)' }}>Pagamento Confirmado!</h3>
@@ -109,7 +111,7 @@ export default async function PaymentPage() {
               Sua vaga no COFOA XV está garantida. Fique de olho na aba "Trabalhos" para enviar sua pesquisa!
             </p>
           </div>
-        </Card>
+        </div>
       )}
     </div>
   );

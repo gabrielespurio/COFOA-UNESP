@@ -22,10 +22,7 @@ export default function AuthLayout({
             <Logo variant="full" height={58} />
           </Link>
         </div>
-        <div className={styles.header}>
-          <h1 className={styles.title}>Acesso ao Sistema</h1>
-          <p className={styles.subtitle}>Entre com suas credenciais para continuar.</p>
-        </div>
+
         {children}
       </div>
     </div>

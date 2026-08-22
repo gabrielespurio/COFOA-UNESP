@@ -27,8 +27,8 @@ export default async function ParticipantDashboardPage() {
   return (
     <div>
       <SectionHeading 
-        overline="Área do Participante"
-        title={participant ? `Olá, ${participant.fullName.split(' ')[0]}` : "Bem-vindo"}
+        overline="Painel de Controle"
+        title={participant ? `Bem-vindo a área do Participante - ${participant.fullName.split(' ')[0]}` : "Bem-vindo a área do Participante"}
       />
       
       {!participant && (

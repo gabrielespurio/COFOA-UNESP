@@ -11,10 +11,16 @@ import { formatCurrency } from '@/lib/utils';
 import { Countdown } from '@/components/ui/Countdown/Countdown';
 import { TimeTravelDebugger } from './TimeTravelDebugger';
 import { getCurrentDate, getBatchStatus, formatShortDate } from '@/lib/dateUtils';
+import { getSession } from '@/lib/auth';
 import { cookies } from 'next/headers';
 
 export default async function HomePage() {
   const currentDate = await getCurrentDate();
+  const session = await getSession();
+
+  const checkoutHref = session 
+    ? '/area-participante/inscricao' 
+    : '/login?redirectTo=/area-participante/inscricao';
   const cookieStore = await cookies();
   const simulatedDateStr = cookieStore.get('simulated_date')?.value || null;
 
@@ -54,8 +60,8 @@ export default async function HomePage() {
           </div>
 
           <div className={styles.heroActions}>
-            <Button variant="primary" size="lg" href="/inscricoes">
-              Inscreva-se
+            <Button variant="primary" size="lg" href={checkoutHref}>
+              Realizar inscrição
             </Button>
             <Button variant="outline" size="lg" href="/sobre">
               Saiba mais
@@ -271,7 +277,7 @@ export default async function HomePage() {
           </div>
 
           <div className={styles.sectionCta}>
-            <Button variant="primary" size="lg" href="/inscricoes">
+            <Button variant="primary" size="lg" href={checkoutHref}>
               Realizar inscrição
             </Button>
           </div>

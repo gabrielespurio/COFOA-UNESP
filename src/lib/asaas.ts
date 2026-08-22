@@ -2,9 +2,11 @@ const ASAAS_API_URL = process.env.ASAAS_ENV === 'sandbox'
   ? 'https://sandbox.asaas.com/api/v3'
   : 'https://api.asaas.com/v3';
 
-const headers = {
-  'Content-Type': 'application/json',
-  'access_token': process.env.ASAAS_API_KEY || ''
+const getHeaders = () => {
+  return {
+    'Content-Type': 'application/json',
+    'access_token': process.env.ASAAS_API_KEY || ''
+  };
 };
 
 export interface AsaasCustomer {
@@ -26,21 +28,26 @@ export interface AsaasPayment {
 }
 
 export async function createOrGetCustomer(name: string, cpf: string, email: string, phone?: string | null): Promise<AsaasCustomer> {
-  // Check if customer already exists by CPF
   const searchRes = await fetch(`${ASAAS_API_URL}/customers?cpfCnpj=${cpf}`, {
     method: 'GET',
-    headers
+    headers: getHeaders()
   });
-  const searchData = await searchRes.json();
+  
+  const searchRaw = await searchRes.text();
+  let searchData;
+  try {
+    searchData = JSON.parse(searchRaw);
+  } catch(e) {
+    throw new Error(`Asaas GET Customer Error: Invalid JSON. Status: ${searchRes.status}. Body: ${searchRaw}`);
+  }
 
-  if (searchData.data && searchData.data.length > 0) {
+  if (searchRes.ok && searchData.data && searchData.data.length > 0) {
     return searchData.data[0];
   }
 
-  // Create new customer
   const createRes = await fetch(`${ASAAS_API_URL}/customers`, {
     method: 'POST',
-    headers,
+    headers: getHeaders(),
     body: JSON.stringify({
       name,
       cpfCnpj: cpf,
@@ -50,13 +57,20 @@ export async function createOrGetCustomer(name: string, cpf: string, email: stri
     })
   });
 
-  if (!createRes.ok) {
-    const errorData = await createRes.json();
-    console.error('Error creating Asaas customer:', errorData);
-    throw new Error('Falha ao registrar cliente no gateway de pagamento.');
+  const createRaw = await createRes.text();
+  let createData;
+  try {
+    createData = JSON.parse(createRaw);
+  } catch (e) {
+    throw new Error(`Asaas POST Customer Error: Invalid JSON. Status: ${createRes.status}. Body: ${createRaw}`);
   }
 
-  return await createRes.json();
+  if (!createRes.ok) {
+    console.error('Error creating Asaas customer:', createData);
+    throw new Error(`Asaas Customer Error: ${JSON.stringify(createData)}`);
+  }
+
+  return createData;
 }
 
 export async function createPayment(
@@ -65,25 +79,32 @@ export async function createPayment(
   description: string, 
   dueDateStr: string
 ): Promise<AsaasPayment> {
-  const value = amountInCents / 100; // Asaas expects float values for BRL
+  const value = amountInCents / 100; 
 
   const createRes = await fetch(`${ASAAS_API_URL}/payments`, {
     method: 'POST',
-    headers,
+    headers: getHeaders(),
     body: JSON.stringify({
       customer: customerId,
-      billingType: 'UNDEFINED', // Let user choose between PIX, BOLETO, CREDIT_CARD on the hosted checkout
+      billingType: 'UNDEFINED',
       value: value,
       dueDate: dueDateStr,
       description: description,
     })
   });
 
-  if (!createRes.ok) {
-    const errorData = await createRes.json();
-    console.error('Error creating Asaas payment:', errorData);
-    throw new Error('Falha ao gerar cobrança no gateway de pagamento.');
+  const createRaw = await createRes.text();
+  let createData;
+  try {
+    createData = JSON.parse(createRaw);
+  } catch (e) {
+    throw new Error(`Asaas POST Payment Error: Invalid JSON. Status: ${createRes.status}. Body: ${createRaw}`);
   }
 
-  return await createRes.json();
+  if (!createRes.ok) {
+    console.error('Error creating Asaas payment:', createData);
+    throw new Error(`Asaas Payment Error: ${JSON.stringify(createData)}`);
+  }
+
+  return createData;
 }

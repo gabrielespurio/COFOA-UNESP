@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useActionState } from 'react';
+import React, { useActionState, useState } from 'react';
 import { Button } from '@/components/ui/Button/Button';
 import { updateProfile } from '@/actions/participant';
 import styles from './page.module.css';
@@ -18,8 +18,43 @@ interface ProfileFormProps {
   } | null;
 }
 
+const formatCPF = (value: string) => {
+  let v = value.replace(/\D/g, '').substring(0, 11);
+  if (v.length > 9) {
+    return v.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+  } else if (v.length > 6) {
+    return v.replace(/(\d{3})(\d{3})(\d{1,3})/, '$1.$2.$3');
+  } else if (v.length > 3) {
+    return v.replace(/(\d{3})(\d{1,3})/, '$1.$2');
+  }
+  return v;
+};
+
+const formatPhone = (value: string) => {
+  let v = value.replace(/\D/g, '').substring(0, 11);
+  if (v.length > 10) {
+    return v.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+  } else if (v.length > 6) {
+    return v.replace(/(\d{2})(\d{4})(\d{1,4})/, '($1) $2-$3');
+  } else if (v.length > 2) {
+    return v.replace(/(\d{2})(\d{1,5})/, '($1) $2');
+  }
+  return v;
+};
+
 export function ProfileForm({ initialData }: ProfileFormProps) {
   const [state, formAction, isPending] = useActionState(updateProfile, null);
+  
+  const [cpf, setCpf] = useState(initialData?.cpf ? formatCPF(initialData.cpf) : '');
+  const [phone, setPhone] = useState(initialData?.phone ? formatPhone(initialData.phone) : '');
+
+  const handleCpfChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCpf(formatCPF(e.target.value));
+  };
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPhone(formatPhone(e.target.value));
+  };
 
   const defaultBirthDate = initialData?.birthDate 
     ? new Date(initialData.birthDate).toISOString().split('T')[0] 
@@ -53,7 +88,8 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
             id="cpf" 
             name="cpf"
             className={styles.input} 
-            defaultValue={initialData?.cpf || ''}
+            value={cpf}
+            onChange={handleCpfChange}
             placeholder="000.000.000-00"
             required 
           />
@@ -78,7 +114,8 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
             id="phone" 
             name="phone"
             className={styles.input} 
-            defaultValue={initialData?.phone || ''}
+            value={phone}
+            onChange={handlePhoneChange}
             placeholder="(00) 00000-0000"
             required 
           />

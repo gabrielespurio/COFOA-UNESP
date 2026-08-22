@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import { Logo } from '@/components/common/Logo/Logo';
 import { Button } from '@/components/ui/Button/Button';
 import styles from './not-found.module.css';
@@ -13,11 +12,9 @@ export default function NotFound() {
       <p className={styles.text}>
         Desculpe, a página que você está procurando não existe ou foi movida.
       </p>
-      <Link href="/" passHref legacyBehavior>
-        <Button variant="primary" size="lg">
-          Voltar para o Início
-        </Button>
-      </Link>
+      <Button href="/" variant="primary" size="lg">
+        Voltar para o Início
+      </Button>
     </div>
   );
 }

@@ -11,6 +11,10 @@ export function LoginForm() {
 
   return (
     <div>
+      <div className={styles.header}>
+        <h1 className={styles.title}>Acesso ao Sistema</h1>
+        <p className={styles.subtitle}>Entre com suas credenciais para continuar.</p>
+      </div>
       <form className={styles.form} action={formAction}>
         {state?.error && (
           <div className={styles.errorAlert}>

@@ -11,6 +11,10 @@ export function RegisterForm() {
 
   return (
     <div>
+      <div className={styles.header}>
+        <h1 className={styles.title}>Crie sua Conta</h1>
+        <p className={styles.subtitle}>Preencha os dados abaixo para iniciar sua inscrição no XV COFOA.</p>
+      </div>
       <form className={styles.form} action={formAction}>
         {state?.error && (
           <div className={styles.errorAlert}>

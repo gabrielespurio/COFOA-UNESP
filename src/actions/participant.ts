@@ -8,6 +8,22 @@ import { getSupabaseAdmin } from '@/lib/supabase';
 import { createOrGetCustomer, createPayment } from '@/lib/asaas';
 import { getCurrentDate, getBatchStatus } from '@/lib/dateUtils';
 
+function isValidCPF(cpf: string) {
+  cpf = cpf.replace(/\D/g, '');
+  if (cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) return false;
+  let sum = 0, rest;
+  for (let i = 1; i <= 9; i++) sum = sum + parseInt(cpf.substring(i-1, i)) * (11 - i);
+  rest = (sum * 10) % 11;
+  if (rest === 10 || rest === 11) rest = 0;
+  if (rest !== parseInt(cpf.substring(9, 10))) return false;
+  sum = 0;
+  for (let i = 1; i <= 10; i++) sum = sum + parseInt(cpf.substring(i-1, i)) * (12 - i);
+  rest = (sum * 10) % 11;
+  if (rest === 10 || rest === 11) rest = 0;
+  if (rest !== parseInt(cpf.substring(10, 11))) return false;
+  return true;
+}
+
 export async function updateProfile(prevState: any, formData: FormData) {
   const session = await getSession();
   if (!session) {
@@ -27,6 +43,14 @@ export async function updateProfile(prevState: any, formData: FormData) {
 
   if (!fullName || !cpf || !phone || !birthDateStr) {
     return { error: 'Por favor, preencha todos os campos obrigatórios (Nome, CPF, Celular, Data de Nascimento).' };
+  }
+
+  if (!isValidCPF(cpf)) {
+    return { error: 'CPF inválido. Por favor, verifique os números digitados.' };
+  }
+
+  if (phone.replace(/\D/g, '').length < 10) {
+    return { error: 'Telefone inválido. Por favor, digite um número válido com DDD.' };
   }
 
   try {
@@ -200,9 +224,9 @@ export async function createRegistration(formData: FormData) {
     });
 
     revalidatePath('/area-participante');
-  } catch (err) {
+  } catch (err: any) {
     console.error(err);
-    return { error: 'Erro ao processar sua inscrição ou comunicação com gateway falhou.' };
+    return { error: err.message || 'Erro ao processar sua inscrição ou comunicação com gateway falhou.' };
   }
   
   redirect('/area-participante/pagamento');
