@@ -13,8 +13,8 @@
 }
 
 .contentGrid {
-  display: grid;
-  grid-template-columns: 2fr 1fr;
+  display: flex;
+  flex-direction: column;
   gap: var(--space-6);
 }
 
@@ -30,7 +30,7 @@
 }
 
 .workTitle {
-  font-size: var(--font-size-2xl);
+  font-size: var(--text-2xl);
   color: var(--color-primary-dark);
   line-height: 1.2;
 }
@@ -45,7 +45,7 @@
 }
 
 .metaRow {
-  font-size: var(--font-size-sm);
+  font-size: var(--text-sm);
   color: var(--color-text-secondary);
 }
 
@@ -56,7 +56,7 @@
 .abstractSection h3,
 .authorsSection h3,
 .fileSection h3 {
-  font-size: var(--font-size-lg);
+  font-size: var(--text-lg);
   color: var(--color-primary);
   margin-bottom: var(--space-2);
   border-bottom: 1px solid var(--color-border-light);
@@ -79,7 +79,7 @@
 
 .authorsSection li {
   color: var(--color-text-secondary);
-  font-size: var(--font-size-sm);
+  font-size: var(--text-sm);
 }
 
 .fileLinkBtn {
@@ -108,25 +108,13 @@
   flex-direction: column;
   gap: var(--space-4);
   box-shadow: var(--shadow-sm);
-  align-self: flex-start;
-  position: sticky;
-  top: var(--space-6);
 }
 
 .evalTitle {
-  font-size: var(--font-size-lg);
+  font-size: var(--text-lg);
   color: var(--color-primary-dark);
 }
 
-@media (max-width: 1024px) {
-  .contentGrid {
-    grid-template-columns: 1fr;
-  }
-  
-  .evaluationCard {
-    position: static;
-  }
-}
 
 @media (max-width: 640px) {
   .metaInfo {

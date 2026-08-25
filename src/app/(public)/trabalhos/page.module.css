@@ -1,26 +1,26 @@
 .section {
-  padding: var(--spacing-3xl) 0;
+  padding: var(--space-20) 0;
 }
 
 .emptyState {
   text-align: center;
-  padding: var(--spacing-3xl) var(--spacing-xl);
+  padding: var(--space-20) var(--space-12);
   background: var(--color-surface);
-  border: 1px dashed var(--color-gray-300);
+  border: 1px dashed var(--color-text-muted);
   border-radius: var(--radius-lg);
-  margin-top: var(--spacing-2xl);
+  margin-top: var(--space-16);
 }
 
 .icon {
   font-size: 3rem;
-  margin-bottom: var(--spacing-md);
+  margin-bottom: var(--space-6);
   opacity: 0.5;
 }
 
 .title {
   color: var(--color-primary);
-  font-size: var(--font-size-xl);
-  margin-bottom: var(--spacing-sm);
+  font-size: var(--text-xl);
+  margin-bottom: var(--space-4);
 }
 
 .text {

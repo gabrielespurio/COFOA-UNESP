@@ -181,6 +181,7 @@ model Registration {
   couponId        String?
   amount          Int      // Final amount in cents
   status          RegistrationStatus @default(PENDING)
+  paymentReceiptUrl String?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
   
@@ -231,6 +232,7 @@ enum PaymentStatus {
 
 model ScientificWork {
   id              String    @id @default(cuid())
+  displayCode     String?   @unique
   participantId   String
   title           String
   abstract        String?   @db.Text
@@ -239,7 +241,9 @@ model ScientificWork {
   advisor         String?
   presenter       String?
   modality        String?
-  fileUrl         String?
+  identifiedFileUrl   String?
+  unidentifiedFileUrl String?
+  enrollmentProofUrl  String?
   status          WorkStatus @default(DRAFT)
   reviewerComments String?   @db.Text
   submittedAt     DateTime?

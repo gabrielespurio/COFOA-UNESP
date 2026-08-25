@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/Badge/Badge';
 import { Button } from '@/components/ui/Button/Button';
 import { formatCurrency } from '@/lib/utils';
 import { AsaasPayment } from '@/lib/asaas';
+import { SyncPaymentButton } from './SyncPaymentButton';
 
 export default async function PaymentPage() {
   const session = await getSession();
@@ -96,8 +97,10 @@ export default async function PaymentPage() {
             Pagar Inscrição Agora
           </Button>
 
+          <SyncPaymentButton registrationId={participant.registration.id} />
+
           <p style={{ marginTop: '1rem', fontSize: '0.85rem', color: 'var(--color-text-muted)', textAlign: 'center' }}>
-            Após o pagamento, o sistema atualizará automaticamente o status desta página.
+            Se você já pagou e o status não atualizou automaticamente, clique em "Já paguei".
           </p>
         </div>
       )}

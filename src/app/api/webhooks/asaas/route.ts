@@ -33,10 +33,13 @@ export async function POST(request: Request) {
         }
       });
 
-      // Update registration status
+      // Update registration status and save receipt url
       await prisma.registration.update({
         where: { id: payment.registrationId },
-        data: { status: 'CONFIRMED' }
+        data: { 
+          status: 'CONFIRMED',
+          paymentReceiptUrl: payload.payment.transactionReceiptUrl || payload.payment.invoiceUrl || null
+        }
       });
 
       console.log(`Webhook Success: Payment ${paymentId} confirmed!`);

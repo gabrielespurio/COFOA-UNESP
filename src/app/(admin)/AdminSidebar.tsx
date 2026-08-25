@@ -11,8 +11,6 @@ const MENU_ITEMS = [
   { label: 'Dashboard', href: '/admin' },
   { label: 'Participantes', href: '/admin/participantes' },
   { label: 'Inscrições', href: '/admin/inscricoes' },
-  { label: 'Categorias', href: '/admin/categorias' },
-  { label: 'Lotes', href: '/admin/lotes' },
   { label: 'Trabalhos', href: '/admin/trabalhos' },
 ];
 
@@ -59,14 +57,7 @@ export function AdminSidebar({ children }: { children?: React.ReactNode }) {
       </aside>
       
       <main className={styles.main}>
-        <header className={styles.topbar}>
-          <button className={styles.menuButton} onClick={toggleSidebar}>
-            ☰
-          </button>
-          <div className={styles.adminInfo}>
-            <span>Secretaria COFOA</span>
-          </div>
-        </header>
+
         <div className={styles.content}>
           {children}
         </div>

@@ -27,9 +27,10 @@ function getStatusBadge(status: string) {
   }
 }
 
-export default async function AvaliacaoTrabalhoPage({ params }: { params: { id: string } }) {
+export default async function AvaliacaoTrabalhoPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   const work = await prisma.scientificWork.findUnique({
-    where: { id: params.id },
+    where: { id },
     include: {
       participant: {
         select: { fullName: true }
@@ -96,14 +97,27 @@ export default async function AvaliacaoTrabalhoPage({ params }: { params: { id: 
             </ul>
           </div>
           
-          {work.fileUrl && (
-            <div className={styles.fileSection}>
-              <h3>Arquivo Original</h3>
-              <a href={work.fileUrl} target="_blank" rel="noopener noreferrer" className={styles.fileLinkBtn}>
-                Abrir PDF em nova guia
+          <div className={styles.fileSection}>
+            <h3>Arquivos Anexados</h3>
+            {work.identifiedFileUrl && (
+              <a href={work.identifiedFileUrl} target="_blank" rel="noopener noreferrer" className={styles.fileLinkBtn} style={{ marginBottom: '0.5rem', display: 'block' }}>
+                Trabalho Identificado (PDF)
               </a>
-            </div>
-          )}
+            )}
+            {work.unidentifiedFileUrl && (
+              <a href={work.unidentifiedFileUrl} target="_blank" rel="noopener noreferrer" className={styles.fileLinkBtn} style={{ marginBottom: '0.5rem', display: 'block' }}>
+                Trabalho Não Identificado (PDF)
+              </a>
+            )}
+            {work.enrollmentProofUrl && (
+              <a href={work.enrollmentProofUrl} target="_blank" rel="noopener noreferrer" className={styles.fileLinkBtn} style={{ display: 'block' }}>
+                Comprovante de Matrícula (PDF)
+              </a>
+            )}
+            {(!work.identifiedFileUrl && !work.unidentifiedFileUrl && !work.enrollmentProofUrl) && (
+              <p style={{ color: 'var(--color-text-muted)' }}>Nenhum arquivo anexado.</p>
+            )}
+          </div>
         </div>
         
         {/* Right Column: Evaluation Form */}

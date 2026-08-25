@@ -21,7 +21,7 @@ export const Footer = ({ isLoggedIn = false }: FooterProps) => {
         <div className={styles.grid}>
           {/* Column 1: Brand & Info */}
           <div className={styles.brandCol}>
-            <Logo variant="monochrome" height={48} className={styles.logo} />
+            <Logo height={48} className={styles.logo} />
             <div className={styles.eventInfo}>
               <p className={styles.eventName}>{EVENT.fullName}</p>
               <p className={styles.eventDate}>{EVENT.dates.display}</p>
@@ -75,15 +75,11 @@ export const Footer = ({ isLoggedIn = false }: FooterProps) => {
             <ul className={styles.linkList}>
               <li className={styles.contactItem}>
                 <span className={styles.contactLabel}>E-mail</span>
-                <span className={styles.contactValue}>[A definir]</span>
-              </li>
-              <li className={styles.contactItem}>
-                <span className={styles.contactLabel}>Telefone</span>
-                <span className={styles.contactValue}>[A definir]</span>
+                <span className={styles.contactValue}>cofoa.unesp@gmail.com</span>
               </li>
               <li className={styles.contactItem}>
                 <span className={styles.contactLabel}>Instagram</span>
-                <span className={styles.contactValue}>@cofoa.unesp</span>
+                <span className={styles.contactValue}>@congressofoa</span>
               </li>
             </ul>
           </div>

@@ -107,11 +107,23 @@ export default async function MeusTrabalhosPage() {
                   </div>
                 )}
                 
-                {work.fileUrl && (
-                  <div className={styles.workActions}>
-                    <a href={work.fileUrl} target="_blank" rel="noopener noreferrer" className={styles.linkAction}>
-                      Ver Arquivo Submetido
-                    </a>
+                {(work.identifiedFileUrl || work.unidentifiedFileUrl || work.enrollmentProofUrl) && (
+                  <div className={styles.workActions} style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '1rem' }}>
+                    {work.identifiedFileUrl && (
+                      <a href={work.identifiedFileUrl} target="_blank" rel="noopener noreferrer" className={styles.linkAction}>
+                        Ver Trabalho Identificado
+                      </a>
+                    )}
+                    {work.unidentifiedFileUrl && (
+                      <a href={work.unidentifiedFileUrl} target="_blank" rel="noopener noreferrer" className={styles.linkAction}>
+                        Ver Trabalho Não Identificado
+                      </a>
+                    )}
+                    {work.enrollmentProofUrl && (
+                      <a href={work.enrollmentProofUrl} target="_blank" rel="noopener noreferrer" className={styles.linkAction}>
+                        Ver Comprovante
+                      </a>
+                    )}
                   </div>
                 )}
               </div>

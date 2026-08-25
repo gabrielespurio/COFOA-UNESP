@@ -13,12 +13,9 @@ export default async function CommitteeLayout({ children }: { children: ReactNod
 
   return (
     <div className={styles.layout}>
-      <CommitteeSidebar />
-      <div className={styles.mainWrapper}>
-        <main className={styles.mainContent}>
-          {children}
-        </main>
-      </div>
+      <CommitteeSidebar>
+        {children}
+      </CommitteeSidebar>
     </div>
   );
 }

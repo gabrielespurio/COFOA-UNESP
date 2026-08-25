@@ -27,7 +27,9 @@ export async function submitWork(formData: FormData) {
   const advisor = formData.get('advisor') as string;
   const presenter = formData.get('presenter') as string;
   const authorsStr = formData.get('authors') as string;
-  const file = formData.get('file') as File | null;
+  const identifiedFile = formData.get('identifiedFile') as File | null;
+  const unidentifiedFile = formData.get('unidentifiedFile') as File | null;
+  const enrollmentProof = formData.get('enrollmentProof') as File | null;
 
   if (!title || !abstractText || !categoryArea || !modality || !advisor || !presenter || !authorsStr) {
     return { error: 'Por favor, preencha todos os campos obrigatórios.' };
@@ -43,60 +45,77 @@ export async function submitWork(formData: FormData) {
     return { error: 'Erro ao processar lista de autores.' };
   }
 
-  if (!file || file.size === 0) {
-    return { error: 'É obrigatório anexar o PDF do trabalho.' };
+  if (!identifiedFile || identifiedFile.size === 0 || 
+      !unidentifiedFile || unidentifiedFile.size === 0 || 
+      !enrollmentProof || enrollmentProof.size === 0) {
+    return { error: 'É obrigatório anexar os 3 arquivos PDF (identificado, não identificado e comprovante).' };
   }
 
-  if (file.size > 10 * 1024 * 1024) {
-    return { error: 'O arquivo excede o limite de 10MB.' };
+  if (identifiedFile.size > 10 * 1024 * 1024 || 
+      unidentifiedFile.size > 10 * 1024 * 1024 || 
+      enrollmentProof.size > 10 * 1024 * 1024) {
+    return { error: 'Cada arquivo deve ter no máximo 10MB.' };
   }
 
   try {
     const supabaseAdmin = getSupabaseAdmin();
-    const fileExt = file.name.split('.').pop() || 'pdf';
-    const fileName = `${participant.id}-work-${Date.now()}.${fileExt}`;
-    const filePath = `works/${fileName}`;
+    const timestamp = Date.now();
+    
+    // Helper to upload a single file
+    const uploadFile = async (file: File, suffix: string) => {
+      const fileExt = file.name.split('.').pop() || 'pdf';
+      const fileName = `${participant.id}-work-${suffix}-${timestamp}.${fileExt}`;
+      const filePath = `works/${fileName}`;
+      const arrayBuffer = await file.arrayBuffer();
+      const buffer = Buffer.from(arrayBuffer);
 
-    const arrayBuffer = await file.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
+      const { error: uploadError } = await supabaseAdmin.storage
+        .from('trabalhos')
+        .upload(filePath, buffer, {
+          contentType: file.type || 'application/pdf',
+        });
 
-    const { error: uploadError } = await supabaseAdmin.storage
-      .from('trabalhos')
-      .upload(filePath, buffer, {
-        contentType: file.type || 'application/pdf',
-      });
+      if (uploadError) {
+        throw new Error(`Upload falhou para ${suffix}`);
+      }
 
-    if (uploadError) {
-      console.error('Supabase upload error:', uploadError);
-      return { error: 'Falha ao fazer upload do arquivo do trabalho.' };
-    }
+      const { data: publicUrlData } = supabaseAdmin.storage
+        .from('trabalhos')
+        .getPublicUrl(filePath);
 
-    const { data: publicUrlData } = supabaseAdmin.storage
-      .from('trabalhos')
-      .getPublicUrl(filePath);
+      return publicUrlData.publicUrl;
+    };
 
-    const fileUrl = publicUrlData.publicUrl;
+    const identifiedFileUrl = await uploadFile(identifiedFile, 'id');
+    const unidentifiedFileUrl = await uploadFile(unidentifiedFile, 'unid');
+    const enrollmentProofUrl = await uploadFile(enrollmentProof, 'proof');
+
+    const crypto = require('crypto');
+    const displayCode = `TRB-${crypto.randomBytes(3).toString('hex').toUpperCase()}`;
 
     await prisma.scientificWork.create({
       data: {
         participantId: participant.id,
+        displayCode,
         title,
         abstract: abstractText,
         categoryArea,
         modality,
         advisor,
         presenter,
-        authors: authorsStr, // Stores JSON as string/JSON type depending on Prisma mapping
-        fileUrl,
+        authors: authorsStr,
+        identifiedFileUrl,
+        unidentifiedFileUrl,
+        enrollmentProofUrl,
         status: 'SUBMITTED',
         submittedAt: new Date()
       }
     });
 
     revalidatePath('/area-participante/trabalhos');
-  } catch (err) {
+  } catch (err: any) {
     console.error('Error submitting work:', err);
-    return { error: 'Ocorreu um erro ao submeter o trabalho. Tente novamente.' };
+    return { error: err.message || 'Ocorreu um erro ao submeter o trabalho. Tente novamente.' };
   }
 
   redirect('/area-participante/trabalhos');

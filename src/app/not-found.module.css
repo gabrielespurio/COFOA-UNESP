@@ -5,24 +5,24 @@
   align-items: center;
   justify-content: center;
   background-color: var(--color-background);
-  padding: var(--spacing-xl);
+  padding: var(--space-12);
   text-align: center;
 }
 
 .logoWrapper {
-  margin-bottom: var(--spacing-2xl);
+  margin-bottom: var(--space-16);
 }
 
 .title {
   color: var(--color-primary);
-  font-size: var(--font-size-2xl);
-  font-weight: var(--font-weight-bold);
-  margin-bottom: var(--spacing-md);
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  margin-bottom: var(--space-6);
 }
 
 .text {
   color: var(--color-text-secondary);
-  font-size: var(--font-size-lg);
-  margin-bottom: var(--spacing-2xl);
+  font-size: var(--text-lg);
+  margin-bottom: var(--space-16);
   max-width: 500px;
 }

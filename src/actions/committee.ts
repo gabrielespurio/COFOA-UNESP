@@ -2,7 +2,6 @@
 
 import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
-import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import { WorkStatus } from '@prisma/client';
 
@@ -50,5 +49,5 @@ export async function evaluateWork(formData: FormData) {
     return { error: 'Ocorreu um erro ao salvar a avaliação.' };
   }
 
-  redirect('/comissao/trabalhos');
+  return { success: true };
 }

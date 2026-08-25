@@ -1,1 +1,28 @@
-import { prisma } from './src/lib/prisma'; import bcrypt from 'bcryptjs'; async function main() { const passwordHash = await bcrypt.hash('123456', 10); const email = 'comissao@teste.com'; const existingUser = await prisma.user.findUnique({ where: { email } }); if (existingUser) { console.log('User exists, updating role...'); await prisma.user.update({ where: { email }, data: { role: 'COMMITTEE' } }); } else { await prisma.user.create({ data: { email, passwordHash, role: 'COMMITTEE' } }); console.log('Created test committee user.'); } } main().catch(console.error);
+import { PrismaClient } from '@prisma/client';
+import bcrypt from 'bcryptjs';
+import { PrismaNeon } from '@prisma/adapter-neon';
+import dotenv from 'dotenv';
+dotenv.config();
+
+const connectionString = process.env.DATABASE_URL!;
+const adapter = new PrismaNeon({ connectionString });
+const prisma = new PrismaClient({ adapter });
+
+async function createCommittee() {
+  const existing = await prisma.user.findUnique({ where: { email: 'comissao@cofoa.com.br' } });
+  if (existing) {
+    console.log('Already exists');
+    return;
+  }
+  const passwordHash = await bcrypt.hash('cofoa2026', 10);
+  await prisma.user.create({
+    data: {
+      email: 'comissao@cofoa.com.br',
+      passwordHash,
+      role: 'COMMITTEE'
+    }
+  });
+  console.log('Created comissao@cofoa.com.br');
+}
+
+createCommittee().catch(console.error).finally(() => prisma.$disconnect());

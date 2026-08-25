@@ -38,8 +38,6 @@ export const REGISTRATION_CATEGORIES = [
   { id: 'foa-ext-2', name: 'Alunos da FOA UNESP no exterior - Apresentação de 2 trabalhos online', type: 'online' as const, priceTier: 'online_tier2' as const },
   { id: 'com-ext-1', name: 'Comunidade Externa - Apresentação de 1 trabalho online', type: 'online' as const, priceTier: 'online_tier1' as const },
   { id: 'com-ext-2', name: 'Comunidade Externa - Apresentação de 2 trabalhos online', type: 'online' as const, priceTier: 'online_tier2' as const },
-  { id: 'com-ext-banca', name: 'Comunidade Externa - Banca avaliadora dos trabalhos on-line', type: 'online' as const, priceTier: 'online_tier2' as const },
-  { id: 'foa-ext-banca', name: 'Alunos da FOA UNESP no exterior - Banca avaliadora dos trabalhos on-line', type: 'online' as const, priceTier: 'online_tier2' as const },
 ] as const;
 
 export const REGISTRATION_BATCHES = [
@@ -94,6 +92,7 @@ export const NAV_LINKS: readonly NavLink[] = [
   { href: '/', label: 'Início' },
   { href: '/#sobre', label: 'Sobre' },
   { href: '/#programacao', label: 'Programação' },
+  { href: '/#inscricoes', label: 'Lotes' },
   { href: '/inscricoes', label: 'Inscrições', requiresAuth: true },
   { href: '/trabalhos', label: 'Trabalhos', requiresAuth: true },
   { href: '/#local', label: 'Local' },

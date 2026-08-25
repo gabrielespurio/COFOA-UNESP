@@ -50,8 +50,6 @@ export default async function MinhaInscricaoPage() {
         { id: 'foa-ext-2', name: 'Alunos da FOA UNESP no exterior - Apresentação de 2 trabalhos online', type: 'ONLINE', priceTier: 'ONLINE_TIER2', requiresStudentProof: true, requiresCRO: false, requiresAbroadProof: true, sortOrder: 5, active: true },
         { id: 'com-ext-1', name: 'Comunidade Externa - Apresentação de 1 trabalho online', type: 'ONLINE', priceTier: 'ONLINE_TIER1', requiresStudentProof: false, requiresCRO: false, requiresAbroadProof: false, sortOrder: 6, active: true },
         { id: 'com-ext-2', name: 'Comunidade Externa - Apresentação de 2 trabalhos online', type: 'ONLINE', priceTier: 'ONLINE_TIER2', requiresStudentProof: false, requiresCRO: false, requiresAbroadProof: false, sortOrder: 7, active: true },
-        { id: 'com-ext-banca', name: 'Comunidade Externa - Banca avaliadora dos trabalhos on-line', type: 'ONLINE', priceTier: 'ONLINE_TIER2', requiresStudentProof: false, requiresCRO: false, requiresAbroadProof: false, sortOrder: 8, active: true },
-        { id: 'foa-ext-banca', name: 'Alunos da FOA UNESP no exterior - Banca avaliadora dos trabalhos on-line', type: 'ONLINE', priceTier: 'ONLINE_TIER2', requiresStudentProof: true, requiresCRO: false, requiresAbroadProof: true, sortOrder: 9, active: true },
       ]
     });
     categories = await prisma.registrationCategory.findMany({

@@ -6,7 +6,7 @@
 
 .warningBox {
   padding: var(--space-6);
-  background: var(--color-danger);
+  background: var(--color-error);
   color: white;
   border-radius: var(--radius-md);
   font-weight: 500;
@@ -33,7 +33,7 @@
 }
 
 .sectionTitle {
-  font-size: var(--font-size-lg);
+  font-size: var(--text-lg);
   color: var(--color-primary-dark);
   border-bottom: 1px solid var(--color-border);
   padding-bottom: var(--space-2);
@@ -57,7 +57,7 @@
 }
 
 .label {
-  font-size: var(--font-size-sm);
+  font-size: var(--text-sm);
   font-weight: 600;
   color: var(--color-text-secondary);
 }
@@ -68,7 +68,7 @@
   padding: var(--space-3) var(--space-4);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
-  font-size: var(--font-size-md);
+  font-size: var(--text-base);
   background: var(--color-surface-alt);
   color: var(--color-text-primary);
   transition: border-color 0.2s, box-shadow 0.2s;
@@ -99,7 +99,7 @@
 .errorAlert {
   padding: var(--space-4);
   background: rgba(220, 38, 38, 0.1);
-  color: var(--color-danger);
+  color: var(--color-error);
   border: 1px solid rgba(220, 38, 38, 0.2);
   border-radius: var(--radius-md);
   font-weight: 500;
@@ -128,7 +128,7 @@
   right: var(--space-2);
   background: none;
   border: none;
-  color: var(--color-danger);
+  color: var(--color-error);
   cursor: pointer;
   padding: var(--space-1);
 }
@@ -141,7 +141,7 @@
   display: flex;
   gap: var(--space-2);
   align-items: center;
-  font-size: var(--font-size-sm);
+  font-size: var(--text-sm);
   color: var(--color-text-secondary);
 }
 

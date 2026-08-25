@@ -13,16 +13,39 @@ interface Author {
 }
 
 const THEMATIC_AREAS = [
+  'Ciências Básicas (Histologia/Fisiologia/Bioquímica/Anatomia/Microbiologia/Farmacologia)',
   'Cirurgia e Traumatologia Buco-Maxilo-Facial',
-  'Dentística',
+  'Dentística / Harmonização Orofacial',
   'Endodontia',
-  'Odontopediatria',
-  'Ortodontia',
-  'Periodontia',
-  'Prótese Dentária',
-  'Saúde Coletiva',
-  'Radiologia e Imaginologia',
-  'Patologia e Estomatologia'
+  'Estomatologia / Patologia / Radiologia',
+  'Eugênio Zerlotti / Categoria em inglês / Presencial',
+  'Odontopediatria / Ortodontia',
+  'Pacientes com necessidades especiais / Odontologia hospitalar / Odontogeriatria',
+  'Periodontia / Implantodontia',
+  'Prótese dentária / Materiais dentários / Oclusão / ATM',
+  'Saúde Coletiva / Odontologia Legal'
+];
+
+const MODALITIES = [
+  'Caso clínico - ONLINE - ORAL - Nível de Graduação',
+  'Caso clínico - ONLINE - ORAL - Nível de Pós-graduação',
+  'Caso clínico - ONLINE - PAINEL - Nível de Graduação',
+  'Caso clínico - ONLINE - PAINEL - Nível de Pós-graduação',
+  'Caso clínico - PRESENCIAL - ORAL - Nível de Graduação',
+  'Caso clínico - PRESENCIAL - ORAL - Nível de Pós-graduação',
+  'Caso clínico - PRESENCIAL - PAINEL - Nível de Pós-graduação',
+  'Caso clínico - PRESENCIAL - PAINEL - Nível de Graduação',
+  'Pesquisa científica - ONLINE - ORAL - Nível de Graduação',
+  'Pesquisa científica - ONLINE - ORAL - Nível de Pós-graduação',
+  'Pesquisa científica - ONLINE - PAINEL - Nível de Graduação',
+  'Pesquisa científica - ONLINE - PAINEL - Nível de Pós-graduação',
+  'Pesquisa científica - PRESENCIAL - PAINEL - Nível de Graduação',
+  'Pesquisa científica - PRESENCIAL - ORAL - Nível de Graduação',
+  'Pesquisa científica - PRESENCIAL - ORAL - Nível de Pós-graduação',
+  'Pesquisa científica - PRESENCIAL - PAINEL - Nível de Pós-graduação',
+  'Projeto de Extensão - PAINEL EXPOSTO - PRESENCIAL',
+  'Projeto de Extensão - ONLINE - Painel APRESENTADO',
+  'Projeto de Extensão - Painel APRESENTADO - PRESENCIAL'
 ];
 
 export function WorkSubmissionForm({ participantId }: { participantId: string }) {
@@ -113,9 +136,9 @@ export function WorkSubmissionForm({ participantId }: { participantId: string })
             <label className={styles.label}>Modalidade *</label>
             <select name="modality" className={styles.select} required defaultValue="">
               <option value="" disabled>Selecione a modalidade...</option>
-              <option value="Painel Científico (Pôster)">Painel Científico (Pôster)</option>
-              <option value="Apresentação Oral">Apresentação Oral</option>
-              <option value="Mesa Demonstrativa">Mesa Demonstrativa</option>
+              {MODALITIES.map(modality => (
+                <option key={modality} value={modality}>{modality}</option>
+              ))}
             </select>
           </div>
         </div>
@@ -208,13 +231,35 @@ export function WorkSubmissionForm({ participantId }: { participantId: string })
       
       {/* File Upload */}
       <div className={styles.section}>
-        <h3 className={styles.sectionTitle}>3. Arquivo do Trabalho</h3>
+        <h3 className={styles.sectionTitle}>3. Arquivos do Trabalho</h3>
         
         <div className={styles.formGroup}>
-          <label className={styles.label}>Anexar PDF (Máx. 10MB) *</label>
+          <label className={styles.label}>Trabalho Identificado (PDF - Máx. 10MB) *</label>
           <input 
             type="file" 
-            name="file" 
+            name="identifiedFile" 
+            accept=".pdf"
+            className={styles.fileInput}
+            required 
+          />
+        </div>
+
+        <div className={styles.formGroup}>
+          <label className={styles.label}>Trabalho Não Identificado (PDF - Máx. 10MB) *</label>
+          <input 
+            type="file" 
+            name="unidentifiedFile" 
+            accept=".pdf"
+            className={styles.fileInput}
+            required 
+          />
+        </div>
+
+        <div className={styles.formGroup}>
+          <label className={styles.label}>Comprovante de Matrícula (PDF - Máx. 10MB) *</label>
+          <input 
+            type="file" 
+            name="enrollmentProof" 
             accept=".pdf"
             className={styles.fileInput}
             required 

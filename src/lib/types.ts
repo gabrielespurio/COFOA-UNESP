@@ -101,7 +101,9 @@ export interface ScientificWork {
   advisor?: string;
   presenter?: string;
   modality?: string;
-  fileUrl?: string;
+  identifiedFileUrl?: string;
+  unidentifiedFileUrl?: string;
+  enrollmentProofUrl?: string;
   submittedAt: string;
   status: 'draft' | 'submitted' | 'under_review' | 'accepted' | 'rejected';
 }
