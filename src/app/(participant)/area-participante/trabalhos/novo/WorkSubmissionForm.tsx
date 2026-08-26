@@ -2,7 +2,7 @@
 
 import React, { useState, useTransition } from 'react';
 import { Button } from '@/components/ui/Button/Button';
-import { submitWork } from '@/actions/works';
+import { submitWork, resubmitWork } from '@/actions/works';
 import styles from './page.module.css';
 
 interface Author {
@@ -48,13 +48,17 @@ const MODALITIES = [
   'Projeto de Extensão - Painel APRESENTADO - PRESENCIAL'
 ];
 
-export function WorkSubmissionForm({ participantId }: { participantId: string }) {
+export function WorkSubmissionForm({ participantId, initialData, workId }: { participantId: string, initialData?: any, workId?: string }) {
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState('');
   
-  const [authors, setAuthors] = useState<Author[]>([
-    { name: '', email: '', institution: '', isCorresponding: true }
-  ]);
+  const isEditing = !!initialData;
+
+  const [authors, setAuthors] = useState<Author[]>(
+    initialData?.authors 
+      ? (typeof initialData.authors === 'string' ? JSON.parse(initialData.authors) : initialData.authors)
+      : [{ name: '', email: '', institution: '', isCorresponding: true }]
+  );
   
   const addAuthor = () => {
     setAuthors([...authors, { name: '', email: '', institution: '', isCorresponding: false }]);
@@ -63,7 +67,6 @@ export function WorkSubmissionForm({ participantId }: { participantId: string })
   const removeAuthor = (index: number) => {
     const newAuthors = [...authors];
     newAuthors.splice(index, 1);
-    // If we removed the corresponding author, make the first one corresponding
     if (authors[index].isCorresponding && newAuthors.length > 0) {
       newAuthors[0].isCorresponding = true;
     }
@@ -74,7 +77,6 @@ export function WorkSubmissionForm({ participantId }: { participantId: string })
     const newAuthors = [...authors];
     
     if (field === 'isCorresponding' && value === true) {
-      // Uncheck all others
       newAuthors.forEach(a => a.isCorresponding = false);
     }
     
@@ -88,15 +90,25 @@ export function WorkSubmissionForm({ participantId }: { participantId: string })
     
     const formData = new FormData(e.currentTarget);
     formData.append('authors', JSON.stringify(authors));
+    if (workId) {
+      formData.append('workId', workId);
+    }
     
-    const file = formData.get('file') as File;
-    if (file && file.size > 10 * 1024 * 1024) {
-      setError('O arquivo excede o limite de 10MB.');
+    const checkFile = (name: string) => {
+      const file = formData.get(name) as File;
+      if (file && file.size > 10 * 1024 * 1024) {
+        return true;
+      }
+      return false;
+    }
+
+    if (checkFile('identifiedFile') || checkFile('unidentifiedFile') || checkFile('enrollmentProof')) {
+      setError('Um ou mais arquivos excedem o limite de 10MB.');
       return;
     }
     
     startTransition(async () => {
-      const result = await submitWork(formData);
+      const result = isEditing ? await resubmitWork(formData) : await submitWork(formData);
       if (result?.error) {
         setError(result.error);
       }
@@ -113,18 +125,18 @@ export function WorkSubmissionForm({ participantId }: { participantId: string })
         
         <div className={styles.formGroup}>
           <label className={styles.label}>Título do Trabalho *</label>
-          <input type="text" name="title" className={styles.input} required />
+          <input type="text" name="title" className={styles.input} required defaultValue={initialData?.title || ''} />
         </div>
         
         <div className={styles.formGroup}>
           <label className={styles.label}>Resumo (Abstract) *</label>
-          <textarea name="abstract" className={styles.textarea} required></textarea>
+          <textarea name="abstract" className={styles.textarea} required defaultValue={initialData?.abstract || ''}></textarea>
         </div>
         
         <div className={styles.row}>
           <div className={styles.formGroup}>
             <label className={styles.label}>Área Temática *</label>
-            <select name="categoryArea" className={styles.select} required defaultValue="">
+            <select name="categoryArea" className={styles.select} required defaultValue={initialData?.categoryArea || ""}>
               <option value="" disabled>Selecione uma área...</option>
               {THEMATIC_AREAS.map(area => (
                 <option key={area} value={area}>{area}</option>
@@ -134,7 +146,7 @@ export function WorkSubmissionForm({ participantId }: { participantId: string })
           
           <div className={styles.formGroup}>
             <label className={styles.label}>Modalidade *</label>
-            <select name="modality" className={styles.select} required defaultValue="">
+            <select name="modality" className={styles.select} required defaultValue={initialData?.modality || ""}>
               <option value="" disabled>Selecione a modalidade...</option>
               {MODALITIES.map(modality => (
                 <option key={modality} value={modality}>{modality}</option>
@@ -146,11 +158,11 @@ export function WorkSubmissionForm({ participantId }: { participantId: string })
         <div className={styles.row}>
           <div className={styles.formGroup}>
             <label className={styles.label}>Orientador *</label>
-            <input type="text" name="advisor" className={styles.input} required />
+            <input type="text" name="advisor" className={styles.input} required defaultValue={initialData?.advisor || ''} />
           </div>
           <div className={styles.formGroup}>
             <label className={styles.label}>Apresentador *</label>
-            <input type="text" name="presenter" className={styles.input} required />
+            <input type="text" name="presenter" className={styles.input} required defaultValue={initialData?.presenter || ''} />
           </div>
         </div>
       </div>
@@ -232,44 +244,49 @@ export function WorkSubmissionForm({ participantId }: { participantId: string })
       {/* File Upload */}
       <div className={styles.section}>
         <h3 className={styles.sectionTitle}>3. Arquivos do Trabalho</h3>
+        {isEditing && (
+          <p style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-primary)', marginBottom: '1rem' }}>
+            Atenção: Como você está corrigindo um trabalho, só envie os arquivos caso precise atualizá-los. Se não anexar um arquivo novo, o anterior será mantido.
+          </p>
+        )}
         
         <div className={styles.formGroup}>
-          <label className={styles.label}>Trabalho Identificado (PDF - Máx. 10MB) *</label>
+          <label className={styles.label}>Trabalho Identificado (PDF - Máx. 10MB) {!isEditing && '*'}</label>
           <input 
             type="file" 
             name="identifiedFile" 
             accept=".pdf"
             className={styles.fileInput}
-            required 
+            required={!isEditing} 
           />
         </div>
 
         <div className={styles.formGroup}>
-          <label className={styles.label}>Trabalho Não Identificado (PDF - Máx. 10MB) *</label>
+          <label className={styles.label}>Trabalho Não Identificado (PDF - Máx. 10MB) {!isEditing && '*'}</label>
           <input 
             type="file" 
             name="unidentifiedFile" 
             accept=".pdf"
             className={styles.fileInput}
-            required 
+            required={!isEditing} 
           />
         </div>
 
         <div className={styles.formGroup}>
-          <label className={styles.label}>Comprovante de Matrícula (PDF - Máx. 10MB) *</label>
+          <label className={styles.label}>Comprovante de Matrícula (PDF - Máx. 10MB) {!isEditing && '*'}</label>
           <input 
             type="file" 
             name="enrollmentProof" 
             accept=".pdf"
             className={styles.fileInput}
-            required 
+            required={!isEditing} 
           />
         </div>
       </div>
       
       <div className={styles.actions}>
         <Button variant="primary" size="lg" type="submit" loading={isPending}>
-          Submeter Trabalho
+          {isEditing ? 'Reenviar Trabalho' : 'Submeter Trabalho'}
         </Button>
       </div>
     </form>

@@ -16,15 +16,15 @@ function getStatusBadge(status: string) {
     case 'DRAFT':
       return <Badge variant="info">Rascunho</Badge>;
     case 'SUBMITTED':
-      return <Badge variant="warning">Submetido</Badge>;
+      return <Badge variant="warning">Submetido</Badge>; // Legacy
     case 'UNDER_REVIEW':
-      return <Badge variant="info">Em Avaliação</Badge>;
+      return <Badge variant="info">Em Análise</Badge>;
     case 'REVISION_REQUESTED':
-      return <Badge variant="warning">Com Ressalva</Badge>;
+      return <Badge variant="warning">Aprovado com Ressalvas</Badge>;
     case 'ACCEPTED':
       return <Badge variant="success">Aprovado</Badge>;
     case 'REJECTED':
-      return <Badge variant="error">Não Aprovado</Badge>;
+      return <Badge variant="error">Reprovado</Badge>;
     default:
       return <Badge variant="info">{status}</Badge>;
   }
@@ -104,6 +104,14 @@ export default async function MeusTrabalhosPage() {
                     <p style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-secondary)', whiteSpace: 'pre-wrap', lineHeight: 1.5 }}>
                       {work.reviewerComments}
                     </p>
+                    
+                    {work.status === 'REVISION_REQUESTED' && (
+                      <div style={{ marginTop: '1rem' }}>
+                        <Button variant="outline" size="sm" href={`/area-participante/trabalhos/${work.id}/editar`} fullWidth>
+                          Corrigir e Reenviar
+                        </Button>
+                      </div>
+                    )}
                   </div>
                 )}
                 

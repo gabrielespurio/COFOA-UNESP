@@ -9,11 +9,11 @@ import styles from '../page.module.css';
 function getStatusBadge(status: string) {
   switch (status) {
     case 'SUBMITTED':
-      return <Badge variant="warning">Pendente</Badge>;
+      return <Badge variant="warning">Submetido</Badge>; // Legacy
     case 'UNDER_REVIEW':
       return <Badge variant="info">Em Análise</Badge>;
     case 'REVISION_REQUESTED':
-      return <Badge variant="warning">Com Ressalva</Badge>;
+      return <Badge variant="warning">Aprovado com Ressalvas</Badge>;
     case 'ACCEPTED':
       return <Badge variant="success">Aprovado</Badge>;
     case 'REJECTED':
