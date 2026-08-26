@@ -25,7 +25,7 @@ export default function ProgramacaoPage() {
         </h3>
         <p style={{ color: 'var(--color-text-secondary)', lineHeight: 1.6 }}>
           A grade científica do COFOA XV está sendo cuidadosamente preparada pela nossa comissão.<br />
-          Em breve divulgaremos todos os detalhes das palestras e workshops.
+          Em breve divulgaremos todos os detalhes das palestras.
         </p>
       </div>
     </div>
