@@ -72,9 +72,6 @@ export function ParticipantSidebar({ profileCompleted, children }: { profileComp
           <button className={styles.menuButton} onClick={toggleSidebar}>
             ☰
           </button>
-          <div className={styles.userMenu}>
-            <div className={styles.userAvatar}>P</div>
-          </div>
         </header>
         <div className={styles.content}>
           {children}

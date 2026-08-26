@@ -69,9 +69,6 @@ export function CommitteeSidebar({ children }: { children?: React.ReactNode }) {
           <button className={styles.menuButton} onClick={() => setSidebarOpen(!sidebarOpen)}>
             ☰
           </button>
-          <div className={styles.userMenu}>
-            <div className={styles.userAvatar}>C</div>
-          </div>
         </header>
         <div className={styles.content}>
           {children}
