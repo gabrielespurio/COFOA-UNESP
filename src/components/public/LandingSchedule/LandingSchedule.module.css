@@ -16,12 +16,9 @@
 
 .tabsContainer {
   display: flex;
-  overflow-x: auto;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: var(--space-4);
-  scrollbar-width: none;
-}
-.tabsContainer::-webkit-scrollbar {
-  display: none;
 }
 
 .tabButton {
@@ -107,8 +104,10 @@
 }
 
 .carouselTrack {
+  --card-width: 350px;
+  --card-gap: 32px;
   display: flex;
-  gap: 32px;
+  gap: var(--card-gap);
   transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
   will-change: transform;
 }
@@ -119,7 +118,7 @@
   background: #111;
   border: 1px solid #222;
   border-radius: var(--radius-lg);
-  width: 350px;
+  width: var(--card-width);
   flex-shrink: 0;
   overflow: hidden;
   transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1);
@@ -260,4 +259,24 @@
 .dotActive {
   background: var(--color-primary);
   transform: scale(1.5);
+}
+
+@media (max-width: 768px) {
+  .carouselTrack {
+    --card-width: 280px;
+    --card-gap: 16px;
+  }
+  
+  .tabButton {
+    min-width: calc(50% - var(--space-2));
+    align-items: center;
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .carouselTrack {
+    --card-width: 240px;
+    --card-gap: 12px;
+  }
 }

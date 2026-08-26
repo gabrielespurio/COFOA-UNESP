@@ -170,7 +170,7 @@ export function LandingSchedule() {
         <div className={styles.carouselContainer}>
           <div 
             className={styles.carouselTrack}
-            style={{ transform: `translateX(calc(50% - 175px - ${activeCardIndex * 382}px))` }}
+            style={{ transform: `translateX(calc(50% - (var(--card-width, 350px) / 2) - (${activeCardIndex} * (var(--card-width, 350px) + var(--card-gap, 32px)))))` }}
           >
             {events.map((event, index) => {
               const isActive = index === activeCardIndex;
