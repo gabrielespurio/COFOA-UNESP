@@ -4,8 +4,11 @@ import { prisma } from '@/lib/prisma';
 export async function POST(request: Request) {
   try {
     // In a real production scenario, you MUST validate the Asaas Webhook Token (asaas-access-token header)
-    // const asaasToken = request.headers.get('asaas-access-token');
-    // if (asaasToken !== process.env.ASAAS_WEBHOOK_SECRET) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const asaasToken = request.headers.get('asaas-access-token');
+    if (asaasToken !== process.env.ASAAS_WEBHOOK_SECRET) {
+      console.error('Webhook Error: Unauthorized access attempt');
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
 
     const payload = await request.json();
 

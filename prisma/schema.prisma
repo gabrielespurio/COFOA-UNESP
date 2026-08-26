@@ -14,8 +14,13 @@ datasource db {
 model User {
   id            String   @id @default(cuid())
   email         String   @unique
-  passwordHash  String
+  passwordHash  String?
+  googleId      String?  @unique
   role          Role     @default(PARTICIPANT)
+  failedLoginAttempts Int       @default(0)
+  lockedUntil         DateTime?
+  passwordResetCode   String?
+  passwordResetExpires DateTime?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 

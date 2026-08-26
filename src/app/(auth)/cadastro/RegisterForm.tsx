@@ -2,6 +2,7 @@
 
 import React, { useActionState } from 'react';
 import Link from 'next/link';
+import { GoogleAuthButton } from '@/components/auth/GoogleAuthButton';
 import { Button } from '@/components/ui/Button/Button';
 import { register } from '@/actions/auth';
 import styles from './page.module.css';
@@ -15,6 +16,7 @@ export function RegisterForm() {
         <h1 className={styles.title}>Crie sua Conta</h1>
         <p className={styles.subtitle}>Preencha os dados abaixo para iniciar sua inscrição no XV COFOA.</p>
       </div>
+      <GoogleAuthButton label="Cadastrar com o Google" />
       <form className={styles.form} action={formAction}>
         {state?.error && (
           <div className={styles.errorAlert}>

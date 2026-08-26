@@ -47,6 +47,8 @@ export const metadata: Metadata = {
   },
 };
 
+import Script from 'next/script';
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -54,7 +56,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR" className={`${inter.variable} ${outfit.variable}`}>
-      <body>{children}</body>
+      <body>
+        <Script src="https://accounts.google.com/gsi/client" strategy="beforeInteractive" />
+        {children}
+      </body>
     </html>
   );
 }

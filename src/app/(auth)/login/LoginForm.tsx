@@ -2,6 +2,7 @@
 
 import React, { useActionState } from 'react';
 import Link from 'next/link';
+import { GoogleAuthButton } from '@/components/auth/GoogleAuthButton';
 import { Button } from '@/components/ui/Button/Button';
 import { login } from '@/actions/auth';
 import styles from './page.module.css';
@@ -15,6 +16,7 @@ export function LoginForm() {
         <h1 className={styles.title}>Acesso ao Sistema</h1>
         <p className={styles.subtitle}>Entre com suas credenciais para continuar.</p>
       </div>
+      <GoogleAuthButton />
       <form className={styles.form} action={formAction}>
         {state?.error && (
           <div className={styles.errorAlert}>
@@ -34,7 +36,10 @@ export function LoginForm() {
           />
         </div>
         <div className={styles.field}>
-          <label className={styles.label} htmlFor="password">Senha</label>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+            <label className={styles.label} htmlFor="password" style={{ marginBottom: 0 }}>Senha</label>
+            <Link href="/esqueci-minha-senha" className={styles.link} style={{ fontSize: '0.875rem' }}>Esqueci minha senha</Link>
+          </div>
           <input 
             type="password" 
             id="password" 
