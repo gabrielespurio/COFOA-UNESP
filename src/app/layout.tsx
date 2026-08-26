@@ -56,8 +56,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR" className={`${inter.variable} ${outfit.variable}`}>
+      <head>
+        <Script src="https://accounts.google.com/gsi/client" strategy="afterInteractive" />
+      </head>
       <body>
-        <Script src="https://accounts.google.com/gsi/client" strategy="beforeInteractive" />
         {children}
       </body>
     </html>
