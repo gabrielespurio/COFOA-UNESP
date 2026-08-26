@@ -17,6 +17,14 @@ export default async function PerfilPage() {
     where: { userId: session.userId },
   });
 
+  let serializedParticipant = null;
+  if (participant) {
+    serializedParticipant = {
+      ...participant,
+      birthDate: participant.birthDate.toISOString(),
+    };
+  }
+
   return (
     <div>
       <SectionHeading 
@@ -24,7 +32,7 @@ export default async function PerfilPage() {
         subtitle={!participant ? "Por favor, complete seu perfil para acessar as outras áreas do painel." : "Mantenha seus dados atualizados."} 
       />
       <div style={{ marginTop: '2rem' }}>
-        <ProfileForm initialData={participant} />
+        <ProfileForm initialData={serializedParticipant as any} />
       </div>
     </div>
   );

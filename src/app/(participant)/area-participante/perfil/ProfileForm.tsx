@@ -10,7 +10,7 @@ interface ProfileFormProps {
     fullName: string;
     cpf: string;
     phone: string | null;
-    birthDate: Date | null;
+    birthDate: Date | string | null;
     institution: string | null;
     city: string | null;
     state: string | null;
@@ -18,7 +18,8 @@ interface ProfileFormProps {
   } | null;
 }
 
-const formatCPF = (value: string) => {
+const formatCPF = (value: string | null | undefined) => {
+  if (!value) return '';
   let v = value.replace(/\D/g, '').substring(0, 11);
   if (v.length > 9) {
     return v.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
@@ -30,7 +31,8 @@ const formatCPF = (value: string) => {
   return v;
 };
 
-const formatPhone = (value: string) => {
+const formatPhone = (value: string | null | undefined) => {
+  if (!value) return '';
   let v = value.replace(/\D/g, '').substring(0, 11);
   if (v.length > 10) {
     return v.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
@@ -45,8 +47,8 @@ const formatPhone = (value: string) => {
 export function ProfileForm({ initialData }: ProfileFormProps) {
   const [state, formAction, isPending] = useActionState(updateProfile, null);
   
-  const [cpf, setCpf] = useState(initialData?.cpf ? formatCPF(initialData.cpf) : '');
-  const [phone, setPhone] = useState(initialData?.phone ? formatPhone(initialData.phone) : '');
+  const [cpf, setCpf] = useState(formatCPF(initialData?.cpf));
+  const [phone, setPhone] = useState(formatPhone(initialData?.phone));
 
   const handleCpfChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCpf(formatCPF(e.target.value));
@@ -56,9 +58,15 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
     setPhone(formatPhone(e.target.value));
   };
 
-  const defaultBirthDate = initialData?.birthDate 
-    ? new Date(initialData.birthDate).toISOString().split('T')[0] 
-    : '';
+  let defaultBirthDate = '';
+  if (initialData?.birthDate) {
+    try {
+      const d = new Date(initialData.birthDate);
+      if (!isNaN(d.getTime())) {
+        defaultBirthDate = d.toISOString().split('T')[0];
+      }
+    } catch (err) {}
+  }
 
   return (
     <form className={styles.form} action={formAction}>
