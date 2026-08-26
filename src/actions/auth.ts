@@ -14,7 +14,7 @@ const googleClient = new OAuth2Client(process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID);
 const loginSchema = z.object({
   email: z.string().email('E-mail inválido.'),
   password: z.string().min(1, 'A senha é obrigatória.'),
-  redirectTo: z.string().optional(),
+  redirectTo: z.string().nullable().optional(),
 });
 
 const registerSchema = z.object({
