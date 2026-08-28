@@ -11,7 +11,13 @@ const MENU_ITEMS = [
   { label: 'Dashboard', href: '/admin' },
   { label: 'Participantes', href: '/admin/participantes' },
   { label: 'Inscrições', href: '/admin/inscricoes' },
+  { label: 'Categorias', href: '/admin/categorias' },
+  { label: 'Lotes de Inscrição', href: '/admin/lotes' },
+  { label: 'Pagamentos', href: '/admin/pagamentos' },
+  { label: 'Cupons', href: '/admin/cupons' },
   { label: 'Trabalhos', href: '/admin/trabalhos' },
+  { label: 'Certificados', href: '/admin/certificados' },
+  { label: 'Configurações', href: '/admin/configuracoes' },
 ];
 
 export function AdminSidebar({ children }: { children?: React.ReactNode }) {
