@@ -56,6 +56,22 @@ export default function RootLayout({
   return (
     <html lang="pt-BR" className={`${inter.variable} ${outfit.variable}`}>
       <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.addEventListener('error', function(e) {
+                if (e.message && (e.message.includes('fetch') || e.message.includes('chunk') || e.message.includes('load'))) {
+                  window.location.reload();
+                }
+              }, true);
+              window.addEventListener('unhandledrejection', function(e) {
+                if (e.reason && e.reason.message && (e.reason.message.includes('fetch') || e.reason.message.includes('chunk') || e.reason.message.includes('load'))) {
+                  window.location.reload();
+                }
+              }, true);
+            `,
+          }}
+        />
       </head>
       <body>
         {children}

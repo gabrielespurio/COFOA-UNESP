@@ -32,23 +32,36 @@ export function GoogleAuthButton({ clientId }: { clientId?: string }) {
   }, [router]);
 
   const initGoogle = useCallback(() => {
-    if (typeof window === 'undefined') return;
-    const google = (window as any).google;
-    if (!google || !containerRef.current || !effectiveClientId) return;
+    let attempts = 0;
+    
+    const tryInit = () => {
+      attempts++;
+      if (typeof window === 'undefined') return;
+      
+      const google = (window as any).google;
+      
+      if (google && google.accounts && containerRef.current && effectiveClientId) {
+        try {
+          google.accounts.id.initialize({
+            client_id: effectiveClientId,
+            callback: handleCredentialResponse,
+          });
 
-    try {
-      google.accounts.id.initialize({
-        client_id: effectiveClientId,
-        callback: handleCredentialResponse,
-      });
-
-      google.accounts.id.renderButton(
-        containerRef.current,
-        { theme: 'outline', size: 'large', text: 'continue_with' }
-      );
-    } catch (err) {
-      console.error('Error rendering Google Auth Button:', err);
-    }
+          google.accounts.id.renderButton(
+            containerRef.current,
+            { theme: 'outline', size: 'large', text: 'continue_with' }
+          );
+        } catch (err) {
+          console.error('Error rendering Google Auth Button:', err);
+        }
+      } else if (attempts < 10) {
+        // Poll every 300ms up to 10 times (3 seconds total)
+        setTimeout(tryInit, 300);
+      }
+    };
+    
+    // Start polling immediately
+    tryInit();
   }, [effectiveClientId, handleCredentialResponse]);
 
   if (!effectiveClientId) {
