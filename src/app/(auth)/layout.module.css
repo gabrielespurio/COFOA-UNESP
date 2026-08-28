@@ -58,3 +58,18 @@
 .backLink:hover {
   color: var(--color-primary);
 }
+
+@media (max-width: 640px), (max-height: 800px) {
+  .card {
+    padding: var(--space-8) var(--space-6);
+  }
+}
+
+@media (max-height: 700px) {
+  .layout {
+    padding: var(--space-4);
+  }
+  .card {
+    padding: var(--space-6) var(--space-6);
+  }
+}

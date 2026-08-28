@@ -3,14 +3,14 @@
 import React, { useEffect, useState, useTransition } from 'react';
 import { googleLogin } from '@/actions/auth';
 import { useRouter } from 'next/navigation';
+import Script from 'next/script';
 
 export function GoogleAuthButton({ label = 'Continuar com o Google' }: { label?: string }) {
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
-  useEffect(() => {
-    // Initialize Google Identity Services
+  const initializeGoogle = () => {
     if (typeof window !== 'undefined' && (window as any).google) {
       (window as any).google.accounts.id.initialize({
         client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
@@ -22,6 +22,10 @@ export function GoogleAuthButton({ label = 'Continuar com o Google' }: { label?:
         { theme: 'outline', size: 'large', width: '100%', text: 'continue_with' }
       );
     }
+  };
+
+  useEffect(() => {
+    initializeGoogle();
   }, []);
 
   const handleCredentialResponse = (response: any) => {
@@ -38,6 +42,11 @@ export function GoogleAuthButton({ label = 'Continuar com o Google' }: { label?:
 
   return (
     <div style={{ width: '100%', marginBottom: '1.5rem' }}>
+      <Script 
+        src="https://accounts.google.com/gsi/client" 
+        strategy="afterInteractive" 
+        onLoad={initializeGoogle} 
+      />
       {error && (
         <div style={{ 
           padding: '0.75rem', 
