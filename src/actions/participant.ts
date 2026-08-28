@@ -139,7 +139,7 @@ export async function createRegistration(formData: FormData) {
 
       if (uploadError) {
         console.error('Supabase upload error:', uploadError);
-        return { error: 'Falha ao fazer upload do comprovante.' };
+        return { error: `Falha ao fazer upload do comprovante. Detalhe: ${uploadError.message || JSON.stringify(uploadError)}` };
       }
 
       const { data: publicUrlData } = supabaseAdmin.storage
