@@ -3,39 +3,53 @@
 import React, { useEffect, useRef, useState, useTransition, useCallback } from 'react';
 import { googleLogin } from '@/actions/auth';
 import { useRouter } from 'next/navigation';
+import Script from 'next/script';
 
 export function GoogleAuthButton({ clientId }: { clientId?: string }) {
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
+  const containerRef = useRef<HTMLDivElement>(null);
 
   // Hardcoded fallback
   const hardcodedClientId = '983276458416-m64bek5v62srvphkudldp84ikm64gabn.apps.googleusercontent.com';
   const effectiveClientId = clientId || process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || hardcodedClientId;
 
-  useEffect(() => {
-    // Setup the global callback for Google Identity Services
-    (window as any).handleGoogleCredentialResponse = (response: any) => {
-      setError(null);
-      startTransition(async () => {
-        try {
-          const result = await googleLogin(response.credential);
-          if (result?.error) {
-            setError(result.error);
-          } else {
-            router.push('/area-participante');
-          }
-        } catch {
-          setError('Erro ao processar login com Google.');
+  const handleCredentialResponse = useCallback((response: any) => {
+    setError(null);
+    startTransition(async () => {
+      try {
+        const result = await googleLogin(response.credential);
+        if (result?.error) {
+          setError(result.error);
+        } else {
+          router.push('/area-participante');
         }
-      });
-    };
-
-    return () => {
-      // Cleanup
-      delete (window as any).handleGoogleCredentialResponse;
-    };
+      } catch {
+        setError('Erro ao processar login com Google.');
+      }
+    });
   }, [router]);
+
+  const initGoogle = useCallback(() => {
+    if (typeof window === 'undefined') return;
+    const google = (window as any).google;
+    if (!google || !containerRef.current || !effectiveClientId) return;
+
+    try {
+      google.accounts.id.initialize({
+        client_id: effectiveClientId,
+        callback: handleCredentialResponse,
+      });
+
+      google.accounts.id.renderButton(
+        containerRef.current,
+        { theme: 'outline', size: 'large', text: 'continue_with' }
+      );
+    } catch (err) {
+      console.error('Error rendering Google Auth Button:', err);
+    }
+  }, [effectiveClientId, handleCredentialResponse]);
 
   if (!effectiveClientId) {
     return null;
@@ -43,8 +57,12 @@ export function GoogleAuthButton({ clientId }: { clientId?: string }) {
 
   return (
     <div style={{ width: '100%', marginBottom: '1.5rem' }}>
-      {/* Load the script safely using Next.js Script */}
-      <script src="https://accounts.google.com/gsi/client" async defer></script>
+      {/* Load the script safely using Next.js Script. onReady fires when script is loaded AND when component mounts if already loaded */}
+      <Script 
+        src="https://accounts.google.com/gsi/client" 
+        strategy="afterInteractive" 
+        onReady={initGoogle}
+      />
       
       {error && (
         <div style={{ 
@@ -68,23 +86,8 @@ export function GoogleAuthButton({ clientId }: { clientId?: string }) {
           opacity: isPending ? 0.5 : 1,
           pointerEvents: isPending ? 'none' : 'auto'
       }}>
-        {/* Declarative HTML API for Google Sign-In */}
-        <div id="g_id_onload"
-             data-client_id={effectiveClientId}
-             data-context="signin"
-             data-ux_mode="popup"
-             data-callback="handleGoogleCredentialResponse"
-             data-auto_prompt="false">
-        </div>
-
-        <div className="g_id_signin"
-             data-type="standard"
-             data-shape="rectangular"
-             data-theme="outline"
-             data-text="continue_with"
-             data-size="large"
-             data-logo_alignment="left">
-        </div>
+        {/* The container for the JavaScript API */}
+        <div ref={containerRef}></div>
       </div>
 
       <div style={{ 
