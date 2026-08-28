@@ -31,33 +31,52 @@ export const Button = React.forwardRef<HTMLButtonElement | HTMLAnchorElement, Bu
     },
     ref
   ) => {
+    const [isNavigating, setIsNavigating] = React.useState(false);
+    const isLoading = loading || isNavigating;
+
     const classNames = cn(
       styles.button,
       styles[variant],
       styles[size],
       fullWidth && styles.fullWidth,
-      loading && styles.loading,
+      isLoading && styles.loading,
       className
     );
 
     const content = (
       <>
-        {loading ? (
+        {isLoading ? (
           <span className={styles.spinner} aria-hidden="true" />
         ) : (
           icon && iconPosition === 'left' && <span className={styles.icon}>{icon}</span>
         )}
         <span className={styles.content}>{children}</span>
-        {!loading && icon && iconPosition === 'right' && <span className={styles.icon}>{icon}</span>}
+        {!isLoading && icon && iconPosition === 'right' && <span className={styles.icon}>{icon}</span>}
       </>
     );
 
     if (href) {
+      const handleAnchorClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+        if (props.onClick) {
+          props.onClick(e);
+        }
+        
+        // Force a hard navigation with a visual delay to completely bypass Next.js ChunkLoadErrors
+        if (!e.defaultPrevented) {
+          e.preventDefault();
+          setIsNavigating(true);
+          setTimeout(() => {
+            window.location.href = href;
+          }, 800);
+        }
+      };
+
       return (
         <a 
           href={href} 
           className={classNames} 
           ref={ref as React.Ref<HTMLAnchorElement>} 
+          onClick={handleAnchorClick}
           {...(props as React.AnchorHTMLAttributes<HTMLAnchorElement>)}
         >
           {content}
