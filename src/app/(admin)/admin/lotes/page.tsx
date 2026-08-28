@@ -1,20 +1,20 @@
 import { Metadata } from 'next';
 import { SectionHeading } from '@/components/ui/SectionHeading/SectionHeading';
+import { getBatches } from '@/actions/adminBatches';
+import { LotesClient } from './LotesClient';
 
 export const metadata: Metadata = {
-  title: 'Lotes',
+  title: 'Lotes de Inscrição',
 };
 
-export default function AdminLotesPage() {
+export default async function AdminLotesPage() {
+  const batches = await getBatches();
+
   return (
     <div>
-      <SectionHeading title="Lotes" />
-      <div style={{
-        marginTop: '2rem', padding: '3rem', textAlign: 'center', 
-        background: 'var(--color-surface)', borderRadius: 'var(--radius-lg)',
-        border: '1px dashed var(--color-gray-300)'
-      }}>
-        <p style={{ color: 'var(--color-text-secondary)' }}>Módulo de lotes em desenvolvimento</p>
+      <SectionHeading title="Lotes de Inscrição" />
+      <div style={{ marginTop: '2rem' }}>
+        <LotesClient initialBatches={batches} />
       </div>
     </div>
   );
