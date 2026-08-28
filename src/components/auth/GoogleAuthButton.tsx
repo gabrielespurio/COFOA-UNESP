@@ -11,8 +11,9 @@ export function GoogleAuthButton({ clientId }: { clientId?: string }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const initializedRef = useRef(false);
 
-  // Use the prop, fallback to process.env if available
-  const effectiveClientId = clientId || process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
+  // Use the prop, fallback to process.env, or fallback to hardcoded string to bypass Hostinger issues
+  const hardcodedClientId = '983276458416-m64bek5v62srvphkudldp84ikm64gabn.apps.googleusercontent.com';
+  const effectiveClientId = clientId || process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || hardcodedClientId;
 
   const handleCredentialResponse = useCallback((response: any) => {
     setError(null);
