@@ -15,6 +15,8 @@ import { getCurrentDate, getBatchStatus, formatShortDate } from '@/lib/dateUtils
 import { getSession } from '@/lib/auth';
 import { cookies } from 'next/headers';
 
+export const dynamic = 'force-dynamic';
+
 export default async function HomePage() {
   const currentDate = await getCurrentDate();
   const session = await getSession();
