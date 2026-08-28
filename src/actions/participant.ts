@@ -182,9 +182,9 @@ export async function createRegistration(formData: FormData) {
       case 'ONLINE_TIER2': finalAmount = batch.priceOnlineTier2; break;
     }
 
-    // Override for 'teste' category (R$ 1,00)
+    // Override for 'teste' category (R$ 5,00 - minimum Asaas value)
     if (category.name.toLowerCase().includes('teste')) {
-      finalAmount = 100;
+      finalAmount = 500;
     }
 
     // 1. Create/Get Asaas Customer
@@ -231,7 +231,32 @@ export async function createRegistration(formData: FormData) {
     revalidatePath('/area-participante');
   } catch (err: any) {
     console.error(err);
-    return { error: err.message || 'Erro ao processar sua inscrição ou comunicação com gateway falhou.' };
+    let errorMessage = err.message || 'Erro ao processar sua inscrição ou comunicação com gateway falhou.';
+    
+    // Try to parse ugly Asaas JSON errors into friendly messages
+    try {
+      if (errorMessage.includes('Asaas Payment Error:')) {
+        const jsonPart = errorMessage.split('Asaas Payment Error:')[1]?.trim();
+        if (jsonPart) {
+          const parsed = JSON.parse(jsonPart);
+          if (parsed?.errors?.[0]?.description) {
+            errorMessage = parsed.errors[0].description;
+          }
+        }
+      } else if (errorMessage.includes('Asaas Customer Error:')) {
+        const jsonPart = errorMessage.split('Asaas Customer Error:')[1]?.trim();
+        if (jsonPart) {
+          const parsed = JSON.parse(jsonPart);
+          if (parsed?.errors?.[0]?.description) {
+            errorMessage = parsed.errors[0].description;
+          }
+        }
+      }
+    } catch(e) {
+      // Ignore parsing errors and fallback to original message
+    }
+
+    return { error: errorMessage };
   }
   
   redirect('/area-participante/pagamento');
