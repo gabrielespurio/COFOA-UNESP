@@ -1,6 +1,8 @@
 import { Metadata } from 'next';
 import { RegisterForm } from './RegisterForm';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: 'Criar Conta',
 };
