@@ -3,10 +3,10 @@ const ASAAS_API_URL = process.env.ASAAS_ENV === 'sandbox'
   : 'https://api.asaas.com/v3';
 
 const getHeaders = () => {
-  const envKey = process.env.ASAAS_API_KEY;
-  // Fallback obscuro para evitar bloqueio do GitHub Push Protection (ele procura a string inteira junta)
-  const fallback = '$aact_' + 'hmlg_000MzkwODA2MWY2OGM3MWRlMDU2NWM3MzJlNzZmNGZhZGY6OjI1NDc3NWY0LWQxMjQtNDdhMy04MDU0LTljNzRmMjcyMWEzYTo6JGFhY2hfZGU3MjljZDItNWFjNS00NjVlLWEwM2MtMGNhNWVkOTU0YWEx';
-  const key = (envKey && envKey.length > 5 && !envKey.startsWith("'")) ? envKey : fallback;
+  const key = process.env.ASAAS_API_KEY;
+  if (!key) {
+    throw new Error('ASAAS_API_KEY não está configurada. Defina a variável de ambiente.');
+  }
 
   return {
     'Content-Type': 'application/json',
