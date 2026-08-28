@@ -9,8 +9,6 @@ import { sendPasswordResetEmail } from '@/lib/email';
 import crypto from 'crypto';
 import { OAuth2Client } from 'google-auth-library';
 
-const googleClient = new OAuth2Client(process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID);
-
 const loginSchema = z.object({
   email: z.string().email('E-mail inválido.'),
   password: z.string().min(1, 'A senha é obrigatória.'),
@@ -246,9 +244,16 @@ export async function resetPassword(prevState: any, formData: FormData) {
 
 export async function googleLogin(token: string) {
   try {
+    const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
+    if (!clientId) {
+      console.error('Google Client ID is not configured on the server.');
+      return { error: 'Login com Google indisponível no momento.' };
+    }
+
+    const googleClient = new OAuth2Client(clientId);
     const ticket = await googleClient.verifyIdToken({
       idToken: token,
-      audience: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
+      audience: clientId,
     });
     
     const payload = ticket.getPayload();

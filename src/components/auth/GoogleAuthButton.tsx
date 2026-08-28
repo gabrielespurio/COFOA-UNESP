@@ -11,16 +11,26 @@ export function GoogleAuthButton({ label = 'Continuar com o Google' }: { label?:
   const router = useRouter();
 
   const initializeGoogle = () => {
-    if (typeof window !== 'undefined' && (window as any).google) {
-      (window as any).google.accounts.id.initialize({
-        client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
-        callback: handleCredentialResponse,
-      });
+    try {
+      const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
+      if (!clientId) {
+        console.warn('Google Client ID is missing. Google Login button will not be rendered.');
+        return; // Don't crash, just don't render the button
+      }
 
-      (window as any).google.accounts.id.renderButton(
-        document.getElementById('google-button-container'),
-        { theme: 'outline', size: 'large', width: '100%', text: 'continue_with' }
-      );
+      if (typeof window !== 'undefined' && (window as any).google) {
+        (window as any).google.accounts.id.initialize({
+          client_id: clientId,
+          callback: handleCredentialResponse,
+        });
+
+        (window as any).google.accounts.id.renderButton(
+          document.getElementById('google-button-container'),
+          { theme: 'outline', size: 'large', width: '100%', text: 'continue_with' }
+        );
+      }
+    } catch (err) {
+      console.error('Error initializing Google Auth:', err);
     }
   };
 
