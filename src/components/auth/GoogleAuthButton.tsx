@@ -56,7 +56,7 @@ export function GoogleAuthButton({ clientId }: { clientId?: string }) {
 
         google.accounts.id.renderButton(
           containerRef.current,
-          { theme: 'outline', size: 'large', width: '100%', text: 'continue_with' }
+          { theme: 'outline', size: 'large', text: 'continue_with' }
         );
       } catch (err) {
         console.error('Error initializing Google Auth:', err);
