@@ -1,62 +1,97 @@
 'use client';
 
-import React, { useEffect, useState, useTransition } from 'react';
+import React, { useEffect, useRef, useState, useTransition, useCallback } from 'react';
 import { googleLogin } from '@/actions/auth';
 import { useRouter } from 'next/navigation';
-import Script from 'next/script';
 
-export function GoogleAuthButton({ label = 'Continuar com o Google' }: { label?: string }) {
+const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
+
+export function GoogleAuthButton() {
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const initializedRef = useRef(false);
 
-  const initializeGoogle = () => {
-    try {
-      const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
-      if (!clientId) {
-        console.warn('Google Client ID is missing. Google Login button will not be rendered.');
-        return; // Don't crash, just don't render the button
+  const handleCredentialResponse = useCallback((response: any) => {
+    setError(null);
+    startTransition(async () => {
+      try {
+        const result = await googleLogin(response.credential);
+        if (result?.error) {
+          setError(result.error);
+        } else {
+          router.push('/area-participante');
+        }
+      } catch {
+        setError('Erro ao processar login com Google.');
       }
+    });
+  }, [router]);
 
-      if (typeof window !== 'undefined' && (window as any).google) {
-        (window as any).google.accounts.id.initialize({
-          client_id: clientId,
+  useEffect(() => {
+    // Don't render Google button if no client ID is configured
+    if (!GOOGLE_CLIENT_ID) {
+      return;
+    }
+
+    // Prevent double initialization
+    if (initializedRef.current) {
+      return;
+    }
+
+    const initGoogle = () => {
+      try {
+        const google = (window as any).google;
+        if (!google || !containerRef.current) return;
+
+        initializedRef.current = true;
+
+        google.accounts.id.initialize({
+          client_id: GOOGLE_CLIENT_ID,
           callback: handleCredentialResponse,
         });
 
-        (window as any).google.accounts.id.renderButton(
-          document.getElementById('google-button-container'),
+        google.accounts.id.renderButton(
+          containerRef.current,
           { theme: 'outline', size: 'large', width: '100%', text: 'continue_with' }
         );
+      } catch (err) {
+        console.error('Error initializing Google Auth:', err);
       }
-    } catch (err) {
-      console.error('Error initializing Google Auth:', err);
+    };
+
+    // If the Google script is already loaded, initialize immediately
+    if ((window as any).google?.accounts) {
+      initGoogle();
+      return;
     }
-  };
 
-  useEffect(() => {
-    initializeGoogle();
-  }, []);
+    // Otherwise, load the script manually via DOM
+    const existingScript = document.querySelector('script[src="https://accounts.google.com/gsi/client"]');
+    if (!existingScript) {
+      const script = document.createElement('script');
+      script.src = 'https://accounts.google.com/gsi/client';
+      script.async = true;
+      script.defer = true;
+      script.onload = initGoogle;
+      script.onerror = () => {
+        console.error('Failed to load Google Identity Services script');
+      };
+      document.head.appendChild(script);
+    } else {
+      // Script element exists but might not be loaded yet
+      existingScript.addEventListener('load', initGoogle);
+    }
+  }, [handleCredentialResponse]);
 
-  const handleCredentialResponse = (response: any) => {
-    setError(null);
-    startTransition(async () => {
-      const result = await googleLogin(response.credential);
-      if (result?.error) {
-        setError(result.error);
-      } else {
-        router.push('/area-participante');
-      }
-    });
-  };
+  // If no Google Client ID, don't render anything related to Google
+  if (!GOOGLE_CLIENT_ID) {
+    return null;
+  }
 
   return (
     <div style={{ width: '100%', marginBottom: '1.5rem' }}>
-      <Script 
-        src="https://accounts.google.com/gsi/client" 
-        strategy="afterInteractive" 
-        onLoad={initializeGoogle} 
-      />
       {error && (
         <div style={{ 
           padding: '0.75rem', 
@@ -71,17 +106,16 @@ export function GoogleAuthButton({ label = 'Continuar com o Google' }: { label?:
       )}
       
       <div 
-        id="google-button-container" 
+        ref={containerRef}
         style={{ 
           display: 'flex', 
           justifyContent: 'center', 
           width: '100%',
+          minHeight: '44px',
           opacity: isPending ? 0.5 : 1,
           pointerEvents: isPending ? 'none' : 'auto'
         }}
-      >
-        {/* Google button will be rendered here */}
-      </div>
+      />
 
       <div style={{ 
         display: 'flex', 
