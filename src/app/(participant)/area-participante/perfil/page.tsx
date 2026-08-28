@@ -21,7 +21,7 @@ export default async function PerfilPage() {
   if (participant) {
     serializedParticipant = {
       ...participant,
-      birthDate: participant.birthDate.toISOString(),
+      birthDate: participant.birthDate ? participant.birthDate.toISOString() : null,
     };
   }
 

@@ -52,7 +52,9 @@ export async function login(prevState: any, formData: FormData) {
       return { error: 'Por segurança sua conta foi bloqueada devido a muitas tentativas inválidas. Clique em "Esqueci minha senha" para recuperar o acesso.' };
     }
 
-    const isValidPassword = await bcrypt.compare(password, user.passwordHash);
+    const isValidPassword = user.passwordHash 
+      ? await bcrypt.compare(password, user.passwordHash)
+      : false;
 
     if (!isValidPassword) {
       const newAttempts = user.failedLoginAttempts + 1;
