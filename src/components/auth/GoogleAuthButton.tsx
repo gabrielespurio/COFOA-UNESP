@@ -4,14 +4,15 @@ import React, { useEffect, useRef, useState, useTransition, useCallback } from '
 import { googleLogin } from '@/actions/auth';
 import { useRouter } from 'next/navigation';
 
-const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
-
-export function GoogleAuthButton() {
+export function GoogleAuthButton({ clientId }: { clientId?: string }) {
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
   const containerRef = useRef<HTMLDivElement>(null);
   const initializedRef = useRef(false);
+
+  // Use the prop, fallback to process.env if available
+  const effectiveClientId = clientId || process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
 
   const handleCredentialResponse = useCallback((response: any) => {
     setError(null);
@@ -31,7 +32,7 @@ export function GoogleAuthButton() {
 
   useEffect(() => {
     // Don't render Google button if no client ID is configured
-    if (!GOOGLE_CLIENT_ID) {
+    if (!effectiveClientId) {
       return;
     }
 
@@ -48,7 +49,7 @@ export function GoogleAuthButton() {
         initializedRef.current = true;
 
         google.accounts.id.initialize({
-          client_id: GOOGLE_CLIENT_ID,
+          client_id: effectiveClientId,
           callback: handleCredentialResponse,
         });
 
@@ -83,10 +84,10 @@ export function GoogleAuthButton() {
       // Script element exists but might not be loaded yet
       existingScript.addEventListener('load', initGoogle);
     }
-  }, [handleCredentialResponse]);
+  }, [handleCredentialResponse, effectiveClientId]);
 
   // If no Google Client ID, don't render anything related to Google
-  if (!GOOGLE_CLIENT_ID) {
+  if (!effectiveClientId) {
     return null;
   }
 

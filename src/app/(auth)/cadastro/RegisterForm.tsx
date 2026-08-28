@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/Button/Button';
 import { register } from '@/actions/auth';
 import styles from './page.module.css';
 
-export function RegisterForm() {
+export function RegisterForm({ googleClientId }: { googleClientId?: string }) {
   const [state, formAction, isPending] = useActionState(register, null);
 
   return (
@@ -16,7 +16,7 @@ export function RegisterForm() {
         <h1 className={styles.title}>Crie sua Conta</h1>
         <p className={styles.subtitle}>Preencha os dados abaixo para iniciar sua inscrição no XV COFOA.</p>
       </div>
-      <GoogleAuthButton />
+      <GoogleAuthButton clientId={googleClientId} />
       <form className={styles.form} action={formAction}>
         {state?.error && (
           <div className={styles.errorAlert}>

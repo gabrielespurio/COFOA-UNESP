@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/Button/Button';
 import { login } from '@/actions/auth';
 import styles from './page.module.css';
 
-export function LoginForm() {
+export function LoginForm({ googleClientId }: { googleClientId?: string }) {
   const [state, formAction, isPending] = useActionState(login, null);
 
   return (
@@ -16,7 +16,7 @@ export function LoginForm() {
         <h1 className={styles.title}>Acesso ao Sistema</h1>
         <p className={styles.subtitle}>Entre com suas credenciais para continuar.</p>
       </div>
-      <GoogleAuthButton />
+      <GoogleAuthButton clientId={googleClientId} />
       <form className={styles.form} action={formAction}>
         {state?.error && (
           <div className={styles.errorAlert}>
