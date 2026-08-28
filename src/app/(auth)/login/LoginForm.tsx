@@ -54,13 +54,8 @@ export function LoginForm({ googleClientId }: { googleClientId?: string }) {
           Entrar
         </Button>
       </form>
-      <div className={styles.footer} style={{ flexDirection: 'column', gap: '0.5rem' }}>
-        <div>
-          Ainda não tem conta? <Link href="/cadastro" className={styles.link}>Faça seu cadastro</Link>
-        </div>
-        <div style={{ fontSize: '0.7rem', color: '#cbd5e1' }}>
-          Sistema v19 (Anti-Cache Ativado)
-        </div>
+      <div className={styles.footer}>
+        Ainda não tem conta? <Link href="/cadastro" className={styles.link}>Faça seu cadastro</Link>
       </div>
     </div>
   );
