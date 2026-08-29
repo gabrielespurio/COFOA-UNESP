@@ -91,7 +91,7 @@ export async function login(prevState: any, formData: FormData) {
     // Determine redirect based on role
     let defaultRedirect = '/area-participante';
     if (user.role === 'ADMIN') defaultRedirect = '/admin';
-    if (user.role === 'COMMITTEE') defaultRedirect = '/comissao';
+    if (user.role === 'COMMITTEE') defaultRedirect = '/selecionar-perfil';
     
     const finalRedirectTo = formData.get('redirectTo') as string || defaultRedirect;
     
@@ -309,7 +309,11 @@ export async function googleLogin(token: string) {
       role: user.role,
     });
     
-    return { success: true };
+    let redirectUrl = '/area-participante';
+    if (user.role === 'ADMIN') redirectUrl = '/admin';
+    if (user.role === 'COMMITTEE') redirectUrl = '/selecionar-perfil';
+    
+    return { success: true, redirectUrl };
   } catch (error) {
     console.error('Google login error:', error);
     return { error: 'Ocorreu um erro ao processar o login com o Google.' };

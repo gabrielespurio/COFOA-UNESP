@@ -142,23 +142,27 @@ export function UsersTable({ initialUsers }: { initialUsers: UserWithParticipant
                     {user.role === 'ADMIN' ? (
                       <span style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-muted)', fontStyle: 'italic' }}>Administrador</span>
                     ) : (
-                      <select
-                        disabled={updatingId === user.id}
-                        value={user.role}
-                        onChange={(e) => handleRoleChange(user.id, e.target.value as Role)}
-                        style={{
-                          fontSize: 'var(--font-size-sm)',
-                          border: '1px solid var(--color-border)',
-                          borderRadius: 'var(--radius-sm)',
-                          padding: '0.25rem 0.5rem',
-                          backgroundColor: 'white',
-                          opacity: updatingId === user.id ? 0.5 : 1,
-                          cursor: updatingId === user.id ? 'not-allowed' : 'pointer'
-                        }}
-                      >
-                        <option value="PARTICIPANT">Tornar Participante</option>
-                        <option value="COMMITTEE">Tornar Comissão</option>
-                      </select>
+                      <label style={{ 
+                        display: 'inline-flex', 
+                        alignItems: 'center', 
+                        cursor: updatingId === user.id ? 'not-allowed' : 'pointer',
+                        opacity: updatingId === user.id ? 0.5 : 1
+                      }}>
+                        <input
+                          type="checkbox"
+                          disabled={updatingId === user.id}
+                          checked={user.role === 'COMMITTEE'}
+                          onChange={(e) => handleRoleChange(user.id, e.target.checked ? 'COMMITTEE' : 'PARTICIPANT')}
+                          style={{
+                            marginRight: '0.5rem',
+                            cursor: 'pointer',
+                            accentColor: 'var(--color-primary)'
+                          }}
+                        />
+                        <span style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-primary)' }}>
+                          Habilitar Avaliador
+                        </span>
+                      </label>
                     )}
                   </td>
                 </tr>

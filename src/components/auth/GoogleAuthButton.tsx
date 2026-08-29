@@ -23,7 +23,7 @@ export function GoogleAuthButton({ clientId }: { clientId?: string }) {
         if (result?.error) {
           setError(result.error);
         } else {
-          router.push('/area-participante');
+          router.push(result.redirectUrl || '/area-participante');
         }
       } catch {
         setError('Erro ao processar login com Google.');
