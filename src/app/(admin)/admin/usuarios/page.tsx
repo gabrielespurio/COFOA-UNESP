@@ -30,7 +30,6 @@ export default async function UsuariosPage() {
     <div>
       <SectionHeading 
         title="Gestão de Usuários e Perfis" 
-        subtitle="Nesta página você pode visualizar todos os usuários cadastrados e gerenciar suas permissões no sistema (ex: promover para Comissão)." 
       />
 
       <UsersTable initialUsers={users} />

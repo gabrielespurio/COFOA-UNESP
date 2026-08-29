@@ -172,45 +172,43 @@ export function UsersTable({ initialUsers }: { initialUsers: UserWithParticipant
         </table>
       </div>
 
-      {totalPages > 1 && (
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '1rem', marginTop: '1.5rem' }}>
-          <button 
-            onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-            disabled={currentPage === 1}
-            style={{
-              padding: '0.5rem 1rem',
-              borderRadius: 'var(--radius-md)',
-              border: '1px solid var(--color-border)',
-              background: currentPage === 1 ? 'var(--color-surface-alt)' : 'white',
-              cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
-              color: currentPage === 1 ? 'var(--color-text-secondary)' : 'var(--color-text-primary)',
-              fontWeight: 500
-            }}
-          >
-            Anterior
-          </button>
-          
-          <span style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-secondary)' }}>
-            Página <strong>{currentPage}</strong> de <strong>{totalPages}</strong>
-          </span>
-          
-          <button 
-            onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-            disabled={currentPage === totalPages}
-            style={{
-              padding: '0.5rem 1rem',
-              borderRadius: 'var(--radius-md)',
-              border: '1px solid var(--color-border)',
-              background: currentPage === totalPages ? 'var(--color-surface-alt)' : 'white',
-              cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
-              color: currentPage === totalPages ? 'var(--color-text-secondary)' : 'var(--color-text-primary)',
-              fontWeight: 500
-            }}
-          >
-            Próxima
-          </button>
-        </div>
-      )}
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '1rem', marginTop: '1.5rem' }}>
+        <button 
+          onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+          disabled={currentPage === 1}
+          style={{
+            padding: '0.5rem 1rem',
+            borderRadius: 'var(--radius-md)',
+            border: '1px solid var(--color-border)',
+            background: currentPage === 1 ? 'var(--color-surface-alt)' : 'white',
+            cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
+            color: currentPage === 1 ? 'var(--color-text-secondary)' : 'var(--color-text-primary)',
+            fontWeight: 500
+          }}
+        >
+          Anterior
+        </button>
+        
+        <span style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-secondary)' }}>
+          Página <strong>{currentPage}</strong> de <strong>{totalPages}</strong>
+        </span>
+        
+        <button 
+          onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+          disabled={currentPage === totalPages}
+          style={{
+            padding: '0.5rem 1rem',
+            borderRadius: 'var(--radius-md)',
+            border: '1px solid var(--color-border)',
+            background: currentPage === totalPages ? 'var(--color-surface-alt)' : 'white',
+            cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
+            color: currentPage === totalPages ? 'var(--color-text-secondary)' : 'var(--color-text-primary)',
+            fontWeight: 500
+          }}
+        >
+          Próxima
+        </button>
+      </div>
     </>
   );
 }
