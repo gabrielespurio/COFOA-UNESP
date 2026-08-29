@@ -9,6 +9,7 @@ import styles from './layout.module.css';
 
 const MENU_ITEMS = [
   { label: 'Dashboard', href: '/admin' },
+  { label: 'Usuários', href: '/admin/usuarios' },
   { label: 'Participantes', href: '/admin/participantes' },
   { label: 'Inscrições', href: '/admin/inscricoes' },
   { label: 'Categorias', href: '/admin/categorias' },
