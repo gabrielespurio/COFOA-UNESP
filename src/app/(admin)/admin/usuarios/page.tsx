@@ -1,5 +1,6 @@
 import { prisma } from '@/lib/prisma';
 import { UsersTable } from './UsersTable';
+import { SectionHeading } from '@/components/ui/SectionHeading/SectionHeading';
 
 export const metadata = {
   title: 'Gestão de Usuários | Admin COFOA',
@@ -27,12 +28,10 @@ export default async function UsuariosPage() {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Gestão de Usuários e Perfis</h1>
-      </div>
-      <p className="text-gray-600 mb-6">
-        Nesta página você pode visualizar todos os usuários cadastrados e gerenciar suas permissões no sistema (ex: promover para Comissão).
-      </p>
+      <SectionHeading 
+        title="Gestão de Usuários e Perfis" 
+        subtitle="Nesta página você pode visualizar todos os usuários cadastrados e gerenciar suas permissões no sistema (ex: promover para Comissão)." 
+      />
 
       <UsersTable initialUsers={users} />
     </div>

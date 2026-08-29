@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { updateUserRole } from '@/actions/users';
 import { Role } from '@prisma/client';
+import styles from '../participantes/page.module.css';
 
 type UserWithParticipant = {
   id: string;
@@ -20,6 +21,8 @@ export function UsersTable({ initialUsers }: { initialUsers: UserWithParticipant
   const [searchTerm, setSearchTerm] = useState('');
   const [updatingId, setUpdatingId] = useState<string | null>(null);
   const [message, setMessage] = useState<{ text: string; type: 'success' | 'error' } | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   const filteredUsers = initialUsers.filter(user => {
     const search = searchTerm.toLowerCase();
@@ -29,6 +32,14 @@ export function UsersTable({ initialUsers }: { initialUsers: UserWithParticipant
       (user.participant?.cpf || '').includes(search)
     );
   });
+
+  const totalPages = Math.ceil(filteredUsers.length / itemsPerPage) || 1;
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedUsers = filteredUsers.slice(startIndex, startIndex + itemsPerPage);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm]);
 
   const handleRoleChange = async (userId: string, newRole: Role) => {
     if (!window.confirm(`Tem certeza que deseja alterar o perfil deste usuário para ${newRole}?`)) {
@@ -44,7 +55,6 @@ export function UsersTable({ initialUsers }: { initialUsers: UserWithParticipant
       setMessage({ text: result.error, type: 'error' });
     } else {
       setMessage({ text: 'Perfil atualizado com sucesso.', type: 'success' });
-      // A página fará o revalidate e atualizará os dados reais automaticamente
     }
 
     setUpdatingId(null);
@@ -53,71 +63,98 @@ export function UsersTable({ initialUsers }: { initialUsers: UserWithParticipant
   const getRoleBadge = (role: Role) => {
     switch (role) {
       case 'ADMIN':
-        return <span className="px-2 py-1 bg-red-100 text-red-800 text-xs font-semibold rounded">Admin</span>;
+        return <span className={styles.badgeAdmin}>Admin</span>;
       case 'COMMITTEE':
-        return <span className="px-2 py-1 bg-purple-100 text-purple-800 text-xs font-semibold rounded">Comissão</span>;
+        return <span className={styles.badgeSuccess}>Comissão</span>;
       default:
-        return <span className="px-2 py-1 bg-gray-100 text-gray-800 text-xs font-semibold rounded">Participante</span>;
+        return <span className={styles.badgeUser}>Participante</span>;
     }
   };
 
   return (
-    <div className="bg-white rounded-lg shadow p-6">
-      <div className="mb-4">
+    <>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', gap: '1rem', flexWrap: 'wrap' }}>
         <input
           type="text"
           placeholder="Pesquisar por nome, e-mail ou CPF..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full md:w-1/2 p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+          style={{
+            flex: '1 1 300px',
+            maxWidth: '500px',
+            padding: '0.75rem 1rem',
+            borderRadius: 'var(--radius-md)',
+            border: '1px solid var(--color-border)',
+            fontFamily: 'inherit',
+            fontSize: 'var(--font-size-sm)'
+          }}
         />
+        <div style={{ color: 'var(--color-text-secondary)', fontSize: 'var(--font-size-sm)' }}>
+          {filteredUsers.length} {filteredUsers.length === 1 ? 'usuário encontrado' : 'usuários encontrados'}
+        </div>
       </div>
 
       {message && (
-        <div className={`p-4 mb-4 rounded ${message.type === 'error' ? 'bg-red-50 text-red-700' : 'bg-green-50 text-green-700'}`}>
+        <div style={{ 
+          padding: '1rem', 
+          marginBottom: '1.5rem', 
+          borderRadius: 'var(--radius-md)',
+          backgroundColor: message.type === 'error' ? 'rgba(239, 68, 68, 0.1)' : 'rgba(45, 138, 110, 0.1)',
+          color: message.type === 'error' ? 'var(--color-error)' : 'var(--color-success)',
+          fontWeight: 500,
+          fontSize: 'var(--font-size-sm)'
+        }}>
           {message.text}
         </div>
       )}
 
-      <div className="overflow-x-auto">
-        <table className="w-full text-left border-collapse">
+      <div className={styles.tableContainer}>
+        <table className={styles.table}>
           <thead>
-            <tr className="bg-gray-50 border-b">
-              <th className="p-3 font-semibold text-gray-700">Nome / E-mail</th>
-              <th className="p-3 font-semibold text-gray-700">CPF</th>
-              <th className="p-3 font-semibold text-gray-700">Perfil Atual</th>
-              <th className="p-3 font-semibold text-gray-700 text-right">Ação</th>
+            <tr>
+              <th>Nome / E-mail</th>
+              <th>CPF</th>
+              <th>Perfil Atual</th>
+              <th style={{ textAlign: 'right' }}>Ação</th>
             </tr>
           </thead>
           <tbody>
-            {filteredUsers.length === 0 ? (
+            {paginatedUsers.length === 0 ? (
               <tr>
-                <td colSpan={4} className="p-6 text-center text-gray-500">
+                <td colSpan={4} className={styles.emptyState} style={{ textAlign: 'center', padding: '2rem' }}>
                   Nenhum usuário encontrado.
                 </td>
               </tr>
             ) : (
-              filteredUsers.map(user => (
-                <tr key={user.id} className="border-b hover:bg-gray-50">
-                  <td className="p-3">
-                    <div className="font-medium text-gray-900">{user.participant?.fullName || 'Nome não cadastrado'}</div>
-                    <div className="text-sm text-gray-500">{user.email}</div>
+              paginatedUsers.map(user => (
+                <tr key={user.id}>
+                  <td className={styles.nameCell}>
+                    <div style={{ fontWeight: 500, color: 'var(--color-primary)' }}>{user.participant?.fullName || 'Nome não cadastrado'}</div>
+                    <div style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-secondary)', marginTop: '0.25rem' }}>{user.email}</div>
                   </td>
-                  <td className="p-3 text-gray-600">
+                  <td style={{ color: 'var(--color-text-secondary)' }}>
                     {user.participant?.cpf || '-'}
                   </td>
-                  <td className="p-3">
+                  <td>
                     {getRoleBadge(user.role)}
                   </td>
-                  <td className="p-3 text-right">
+                  <td style={{ textAlign: 'right' }}>
                     {user.role === 'ADMIN' ? (
-                      <span className="text-xs text-gray-400 italic">Administrador</span>
+                      <span style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-muted)', fontStyle: 'italic' }}>Administrador</span>
                     ) : (
                       <select
                         disabled={updatingId === user.id}
                         value={user.role}
                         onChange={(e) => handleRoleChange(user.id, e.target.value as Role)}
-                        className="text-sm border border-gray-300 rounded p-1 bg-white disabled:opacity-50"
+                        style={{
+                          fontSize: 'var(--font-size-sm)',
+                          border: '1px solid var(--color-border)',
+                          borderRadius: 'var(--radius-sm)',
+                          padding: '0.25rem 0.5rem',
+                          backgroundColor: 'white',
+                          opacity: updatingId === user.id ? 0.5 : 1,
+                          cursor: updatingId === user.id ? 'not-allowed' : 'pointer'
+                        }}
                       >
                         <option value="PARTICIPANT">Tornar Participante</option>
                         <option value="COMMITTEE">Tornar Comissão</option>
@@ -130,6 +167,46 @@ export function UsersTable({ initialUsers }: { initialUsers: UserWithParticipant
           </tbody>
         </table>
       </div>
-    </div>
+
+      {totalPages > 1 && (
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '1rem', marginTop: '1.5rem' }}>
+          <button 
+            onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+            disabled={currentPage === 1}
+            style={{
+              padding: '0.5rem 1rem',
+              borderRadius: 'var(--radius-md)',
+              border: '1px solid var(--color-border)',
+              background: currentPage === 1 ? 'var(--color-surface-alt)' : 'white',
+              cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
+              color: currentPage === 1 ? 'var(--color-text-secondary)' : 'var(--color-text-primary)',
+              fontWeight: 500
+            }}
+          >
+            Anterior
+          </button>
+          
+          <span style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-secondary)' }}>
+            Página <strong>{currentPage}</strong> de <strong>{totalPages}</strong>
+          </span>
+          
+          <button 
+            onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+            disabled={currentPage === totalPages}
+            style={{
+              padding: '0.5rem 1rem',
+              borderRadius: 'var(--radius-md)',
+              border: '1px solid var(--color-border)',
+              background: currentPage === totalPages ? 'var(--color-surface-alt)' : 'white',
+              cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
+              color: currentPage === totalPages ? 'var(--color-text-secondary)' : 'var(--color-text-primary)',
+              fontWeight: 500
+            }}
+          >
+            Próxima
+          </button>
+        </div>
+      )}
+    </>
   );
 }
