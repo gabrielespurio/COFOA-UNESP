@@ -96,7 +96,7 @@ export function WorkSubmissionForm({ participantId, initialData, workId }: { par
     
     const checkFile = (name: string) => {
       const file = formData.get(name) as File;
-      if (file && file.size > 10 * 1024 * 1024) {
+      if (file && file.size > 12 * 1024 * 1024) {
         return true;
       }
       return false;

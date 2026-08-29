@@ -51,9 +51,9 @@ export async function submitWork(formData: FormData) {
     return { error: 'É obrigatório anexar os 3 arquivos PDF (identificado, não identificado e comprovante).' };
   }
 
-  if (identifiedFile.size > 10 * 1024 * 1024 || 
-      unidentifiedFile.size > 10 * 1024 * 1024 || 
-      enrollmentProof.size > 10 * 1024 * 1024) {
+  if (identifiedFile.size > 12 * 1024 * 1024 || 
+      unidentifiedFile.size > 12 * 1024 * 1024 || 
+      enrollmentProof.size > 12 * 1024 * 1024) {
     return { error: 'Cada arquivo deve ter no máximo 10MB.' };
   }
 
@@ -177,9 +177,9 @@ export async function resubmitWork(formData: FormData) {
   const hasNewUnidentifiedFile = unidentifiedFile && unidentifiedFile.size > 0;
   const hasNewEnrollmentProof = enrollmentProof && enrollmentProof.size > 0;
 
-  if (hasNewIdentifiedFile && identifiedFile.size > 10 * 1024 * 1024) return { error: 'Arquivo identificado excede 10MB.' };
-  if (hasNewUnidentifiedFile && unidentifiedFile.size > 10 * 1024 * 1024) return { error: 'Arquivo não identificado excede 10MB.' };
-  if (hasNewEnrollmentProof && enrollmentProof.size > 10 * 1024 * 1024) return { error: 'Comprovante excede 10MB.' };
+  if (hasNewIdentifiedFile && identifiedFile.size > 12 * 1024 * 1024) return { error: 'Arquivo identificado excede 10MB.' };
+  if (hasNewUnidentifiedFile && unidentifiedFile.size > 12 * 1024 * 1024) return { error: 'Arquivo não identificado excede 10MB.' };
+  if (hasNewEnrollmentProof && enrollmentProof.size > 12 * 1024 * 1024) return { error: 'Comprovante excede 10MB.' };
 
   try {
     const supabaseAdmin = getSupabaseAdmin();
