@@ -1,8 +1,10 @@
 'use client';
 
-import React, { useState, useTransition } from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/Button/Button';
 import { submitWork, resubmitWork } from '@/actions/works';
+import { generateUploadUrls } from '@/actions/upload';
+import { supabase } from '@/lib/supabase';
 import styles from './page.module.css';
 
 interface Author {
@@ -49,7 +51,7 @@ const MODALITIES = [
 ];
 
 export function WorkSubmissionForm({ participantId, initialData, workId }: { participantId: string, initialData?: any, workId?: string }) {
-  const [isPending, startTransition] = useTransition();
+  const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState('');
   
   const isEditing = !!initialData;
@@ -84,11 +86,12 @@ export function WorkSubmissionForm({ participantId, initialData, workId }: { par
     setAuthors(newAuthors);
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError('');
     
-    const formData = new FormData(e.currentTarget);
+    const form = e.currentTarget;
+    const formData = new FormData(form);
     formData.append('authors', JSON.stringify(authors));
     if (workId) {
       formData.append('workId', workId);
@@ -107,17 +110,66 @@ export function WorkSubmissionForm({ participantId, initialData, workId }: { par
       return;
     }
     
-    startTransition(async () => {
-      try {
-        const result = isEditing ? await resubmitWork(formData) : await submitWork(formData);
-        if (result?.error) {
-          setError(result.error);
+    setIsUploading(true);
+    
+    try {
+      const filesToUpload: { suffix: string, fileExt: string, file: File, name: string }[] = [];
+      
+      const prepareFile = (name: string, suffix: string) => {
+        const file = formData.get(name) as File | null;
+        if (file && file.size > 0) {
+          const fileExt = file.name.split('.').pop() || 'pdf';
+          filesToUpload.push({ suffix, fileExt, file, name });
         }
-      } catch (err: any) {
-        console.error('Form submission failed:', err);
-        setError('Ocorreu um erro de conexão. O arquivo pode ser muito grande ou a internet oscilou. Detalhe: ' + (err.message || 'Erro desconhecido.'));
       }
-    });
+
+      prepareFile('identifiedFile', 'id');
+      prepareFile('unidentifiedFile', 'unid');
+      prepareFile('enrollmentProof', 'proof');
+
+      if (filesToUpload.length > 0) {
+        const { urls, error: urlError } = await generateUploadUrls(filesToUpload.map(f => ({ suffix: f.suffix, fileExt: f.fileExt })));
+        
+        if (urlError || !urls) {
+          throw new Error(urlError || 'Falha ao gerar links de upload seguros.');
+        }
+
+        for (const fileObj of filesToUpload) {
+          const urlInfo = urls.find(u => u.suffix === fileObj.suffix);
+          if (!urlInfo) throw new Error('Informações de upload incompletas.');
+
+          const { error: uploadError } = await supabase.storage
+            .from('trabalhos')
+            .uploadToSignedUrl(urlInfo.filePath, urlInfo.token, fileObj.file, {
+               upsert: true
+            });
+            
+          if (uploadError) {
+            console.error('Supabase upload error:', uploadError);
+            throw new Error(`Falha ao enviar arquivo. O arquivo pode ser grande demais ou a rede oscilou.`);
+          }
+          
+          const { data: publicUrlData } = supabase.storage.from('trabalhos').getPublicUrl(urlInfo.filePath);
+          formData.set(fileObj.name + 'Url', publicUrlData.publicUrl);
+        }
+      }
+      
+      // Remove the physical files to prevent exceeding server body limits
+      formData.delete('identifiedFile');
+      formData.delete('unidentifiedFile');
+      formData.delete('enrollmentProof');
+
+      // Submit the lightweight form to the server action
+      const result = isEditing ? await resubmitWork(formData) : await submitWork(formData);
+      if (result?.error) {
+        setError(result.error);
+      }
+    } catch (err: any) {
+      console.error('Upload process failed:', err);
+      setError(err.message || 'Erro no envio. Verifique sua conexão e o tamanho dos arquivos.');
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   return (
@@ -290,7 +342,7 @@ export function WorkSubmissionForm({ participantId, initialData, workId }: { par
       </div>
       
       <div className={styles.actions}>
-        <Button variant="primary" size="lg" type="submit" loading={isPending}>
+        <Button variant="primary" size="lg" type="submit" loading={isUploading}>
           {isEditing ? 'Reenviar Trabalho' : 'Submeter Trabalho'}
         </Button>
       </div>
