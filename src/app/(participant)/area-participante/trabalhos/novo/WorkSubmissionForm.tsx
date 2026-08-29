@@ -108,9 +108,14 @@ export function WorkSubmissionForm({ participantId, initialData, workId }: { par
     }
     
     startTransition(async () => {
-      const result = isEditing ? await resubmitWork(formData) : await submitWork(formData);
-      if (result?.error) {
-        setError(result.error);
+      try {
+        const result = isEditing ? await resubmitWork(formData) : await submitWork(formData);
+        if (result?.error) {
+          setError(result.error);
+        }
+      } catch (err: any) {
+        console.error('Form submission failed:', err);
+        setError('Ocorreu um erro de conexão. O arquivo pode ser muito grande ou a internet oscilou. Detalhe: ' + (err.message || 'Erro desconhecido.'));
       }
     });
   };
