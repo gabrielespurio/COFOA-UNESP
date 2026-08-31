@@ -19,15 +19,17 @@ export function OrganizationSection() {
     <div className={styles.orgWrapper}>
       <div className={styles.professorsGrid}>
         {PROFESSORS.map((prof, idx) => (
-          <div key={idx} className={styles.professorCard}>
+          <div key={idx} className={styles.professorItem}>
             <div className={styles.imageWrapper}>
-              <Image 
-                src={`/images/professores/${prof.file}`} 
-                alt={prof.name} 
-                fill 
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                className={styles.professorImage}
-              />
+              <div className={styles.imageInner}>
+                <Image 
+                  src={`/images/professores/${prof.file}`} 
+                  alt={prof.name} 
+                  fill 
+                  sizes="160px"
+                  className={styles.professorImage}
+                />
+              </div>
             </div>
             <div className={styles.professorInfo}>
               <h4 className={styles.professorName}>{prof.name}</h4>

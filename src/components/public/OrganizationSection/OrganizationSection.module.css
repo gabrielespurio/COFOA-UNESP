@@ -4,33 +4,86 @@
 
 .professorsGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: var(--space-6);
-  margin-top: var(--space-8);
+  /* Smaller columns since they want smaller circles */
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--space-8);
+  margin-top: var(--space-12);
+  justify-items: center;
 }
 
-.professorCard {
+.professorItem {
   display: flex;
   flex-direction: column;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  transition: transform var(--duration-fast) var(--ease-out), box-shadow var(--duration-fast) var(--ease-out);
+  align-items: center;
+  text-align: center;
+  max-width: 220px;
 }
 
-.professorCard:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-md);
-  border-color: var(--color-primary);
-}
-
+/* 
+  Container for the circular image and the neon border.
+  We use a relative wrapper to place the glowing pseudo-element behind the image.
+*/
 .imageWrapper {
   position: relative;
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  margin-bottom: var(--space-4);
+  /* The transition helps with the hover effect */
+  transition: transform var(--duration-fast) var(--ease-out);
+  z-index: 1;
+}
+
+/* The glowing neon gradient border */
+.imageWrapper::before {
+  content: "";
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  right: -4px;
+  bottom: -4px;
+  border-radius: 50%;
+  /* Using project colors for a nice gradient */
+  background: linear-gradient(45deg, var(--color-primary), var(--color-accent-gold), var(--color-blue-cyan));
+  z-index: -1;
+  /* Neon shadow effect */
+  filter: blur(8px);
+  opacity: 0.7;
+  transition: opacity var(--duration-fast) var(--ease-out), filter var(--duration-fast) var(--ease-out);
+}
+
+.imageWrapper::after {
+  content: "";
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  border-radius: 50%;
+  /* A slightly more solid border underneath the image to frame it */
+  background: linear-gradient(45deg, var(--color-primary), var(--color-accent-gold), var(--color-blue-cyan));
+  z-index: -1;
+}
+
+/* Hover effects for the neon circle */
+.professorItem:hover .imageWrapper {
+  transform: translateY(-4px) scale(1.05);
+}
+
+.professorItem:hover .imageWrapper::before {
+  opacity: 1;
+  filter: blur(12px);
+}
+
+/* The actual image container which clips the image to a circle */
+.imageInner {
+  position: relative;
   width: 100%;
-  aspect-ratio: 3/4;
+  height: 100%;
+  border-radius: 50%;
   overflow: hidden;
   background: var(--color-background);
+  /* A slight inner shadow could look nice, but hidden overflow handles the clip */
 }
 
 .professorImage {
@@ -38,17 +91,14 @@
   transition: transform var(--duration-slow) var(--ease-out);
 }
 
-.professorCard:hover .professorImage {
-  transform: scale(1.05);
+.professorItem:hover .professorImage {
+  transform: scale(1.1);
 }
 
 .professorInfo {
-  padding: var(--space-4);
-  text-align: center;
-  flex-grow: 1;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  align-items: center;
 }
 
 .professorName {
