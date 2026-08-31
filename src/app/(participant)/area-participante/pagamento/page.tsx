@@ -7,6 +7,8 @@ import { formatCurrency } from '@/lib/utils';
 import { AsaasPayment } from '@/lib/asaas';
 import { SyncPaymentButton } from './SyncPaymentButton';
 
+import { CancelRegistrationButton } from './CancelRegistrationButton';
+
 export default async function PaymentPage() {
   const session = await getSession();
   if (!session) redirect('/login');
@@ -34,7 +36,8 @@ export default async function PaymentPage() {
       <div style={{ maxWidth: '800px', margin: '0 auto', paddingTop: '2rem' }}>
         <div style={{ background: '#fff', border: '1px solid var(--color-border)', borderRadius: '8px', padding: '1.5rem', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
           <h2 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '1rem' }}>Pagamento</h2>
-          <p>Sua inscrição não gerou uma fatura. Entre em contato com a organização.</p>
+          <p>Sua inscrição atual não gerou uma fatura ou ela foi excluída no sistema do banco.</p>
+          <CancelRegistrationButton />
         </div>
       </div>
     );

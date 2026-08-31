@@ -307,3 +307,27 @@ export async function syncPaymentStatus(registrationId: string) {
     return { error: err.message || 'Falha ao sincronizar pagamento.' };
   }
 }
+
+export async function cancelRegistration() {
+  const session = await getSession();
+  if (!session) return { error: 'Usuário não autenticado.' };
+
+  const registration = await prisma.registration.findFirst({
+    where: { participant: { userId: session.userId }, status: 'PENDING' }
+  });
+
+  if (!registration) {
+    return { error: 'Nenhuma inscrição pendente encontrada.' };
+  }
+
+  try {
+    await prisma.registration.delete({
+      where: { id: registration.id }
+    });
+    revalidatePath('/area-participante');
+    return { success: true };
+  } catch (error) {
+    console.error('Error cancelling registration:', error);
+    return { error: 'Erro ao cancelar inscrição.' };
+  }
+}
