@@ -14,6 +14,7 @@ import { TimeTravelDebugger } from './TimeTravelDebugger';
 import { getCurrentDate, getBatchStatus, formatShortDate } from '@/lib/dateUtils';
 import { getSession } from '@/lib/auth';
 import { cookies } from 'next/headers';
+import { OrganizationSection } from '@/components/public/OrganizationSection/OrganizationSection';
 
 export const dynamic = 'force-dynamic';
 
@@ -155,6 +156,20 @@ export default async function HomePage() {
               <p>Reafirma o compromisso com a excelência na formação stricto sensu, estimulando a produção científica e o intercâmbio de conhecimento.</p>
             </div>
           </div>
+        </Container>
+      </section>
+
+      <SectionDivider flip />
+
+      {/* ═══════════════════ ORGANIZAÇÃO ═══════════════════ */}
+      <section className={styles.section} id="organizacao">
+        <Container>
+          <SectionHeading
+            overline="Organização"
+            title="Disciplina de Cirurgia e Traumatologia Bucomaxilofacial - FOA/UNESP"
+            alignment="center"
+          />
+          <OrganizationSection />
         </Container>
       </section>
 
