@@ -5,13 +5,13 @@ import Image from 'next/image';
 import styles from './OrganizationSection.module.css';
 
 const PROFESSORS = [
-  { name: 'Prof. Dr. André Luís da Silva Fabris', file: 'Prof. Dr. André Luís da Silva Fabris.jpeg' },
-  { name: 'Prof. Dr. Francisley Ávila Souza', file: 'Prof. Dr. Francisley Ávila Souza.jpeg' },
-  { name: 'Prof. Dr. Idelmo Rangel Garcia Júnior', file: 'Prof. Dr. Idelmo Rangel Garcia Júnior.jpeg' },
-  { name: 'Prof. Dr. Osvaldo Magro Filho', file: 'Prof. Dr. Osvaldo Magro Filho.jpeg' },
-  { name: 'Profa. Dra. Alessandra Aranega', file: 'Profa. Dra. Alessandra Aranega.jpeg' },
-  { name: 'Profa. Dra. Ana Paula Farnezi Bassi', file: 'Profa. Dra. Ana Paula Farnezi Bassi.jpeg' },
-  { name: 'Profa. Dra. Daniela Ponzoni', file: 'Profa. Dra. Daniela Ponzoni.jpeg' },
+  { name: 'Prof. Dr. André Luís da Silva Fabris', file: 'Prof. Dr. André Luís da Silva Fabris.png' },
+  { name: 'Prof. Dr. Francisley Ávila Souza', file: 'Prof. Dr. Francisley Ávila Souza.png' },
+  { name: 'Prof. Dr. Idelmo Rangel Garcia Júnior', file: 'Prof. Dr. Idelmo Rangel Garcia Júnior.png' },
+  { name: 'Prof. Dr. Osvaldo Magro Filho', file: 'Prof. Dr. Osvaldo Magro Filho.png' },
+  { name: 'Profa. Dra. Alessandra Aranega', file: 'Profa. Dra. Alessandra Aranega.png' },
+  { name: 'Profa. Dra. Ana Paula Farnezi Bassi', file: 'Profa. Dra. Ana Paula Farnezi Bassi.png' },
+  { name: 'Profa. Dra. Daniela Ponzoni', file: 'Profa. Dra. Daniela Ponzoni.png' },
 ];
 
 export function OrganizationSection() {
@@ -23,7 +23,7 @@ export function OrganizationSection() {
             <div className={styles.imageWrapper}>
               <div className={styles.imageInner}>
                 <Image 
-                  src={`/images/professores/${prof.file}`} 
+                  src={`/images/professores_nobg/${prof.file}`} 
                   alt={prof.name} 
                   fill 
                   sizes="160px"
