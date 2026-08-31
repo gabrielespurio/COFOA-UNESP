@@ -4,7 +4,6 @@
 
 .professorsGrid {
   display: grid;
-  /* Smaller columns since they want smaller circles */
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: var(--space-8);
   margin-top: var(--space-12);
@@ -29,23 +28,55 @@
   height: 160px;
   border-radius: 50%;
   margin-bottom: var(--space-4);
-  /* The transition helps with the hover effect */
-  transition: transform var(--duration-fast) var(--ease-out), box-shadow var(--duration-fast) var(--ease-out);
-  z-index: 1;
   background-color: var(--color-background);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  transition: transform var(--duration-fast) var(--ease-out), box-shadow var(--duration-fast) var(--ease-out), background-color var(--duration-fast) var(--ease-out);
+  z-index: 1;
 }
 
+/* The glowing neon gradient border */
+.imageWrapper::before {
+  content: "";
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  right: -4px;
+  bottom: -4px;
+  border-radius: 50%;
+  background: linear-gradient(45deg, var(--color-primary), var(--color-accent-gold), var(--color-blue-cyan));
+  z-index: -1;
+  filter: blur(8px);
+  opacity: 0.7;
+  transition: opacity var(--duration-fast) var(--ease-out);
+}
 
+.imageWrapper::after {
+  content: "";
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  border-radius: 50%;
+  background: linear-gradient(45deg, var(--color-primary), var(--color-accent-gold), var(--color-blue-cyan));
+  z-index: -1;
+  transition: opacity var(--duration-fast) var(--ease-out);
+}
 
 /* Hover effects for the 3D circle */
 .professorItem:hover .imageWrapper {
+  /* Increase the size of the white circle */
   transform: translateY(-8px) scale(1.05);
   box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
   background-color: #ffffff;
 }
 
-/* The actual image container which clips the image to a circle */
+/* Remove the neon gradient on hover */
+.professorItem:hover .imageWrapper::before,
+.professorItem:hover .imageWrapper::after {
+  opacity: 0;
+}
+
+/* The actual image container which clips the image to a circle by default */
 .imageInner {
   position: relative;
   width: 100%;
@@ -53,22 +84,27 @@
   border-radius: 50%;
   overflow: hidden;
   background-color: transparent;
-  /* Creates a gap between the image and the border if needed */
-  border: 4px solid transparent;
-  /* Make sure the inner sizing is preserved */
+  /* Creates a gap between the image and the border */
+  border: 4px solid var(--color-background);
   box-sizing: border-box;
-  transition: background-color var(--duration-fast) var(--ease-out);
+  transition: border-color var(--duration-fast) var(--ease-out);
+}
+
+.professorItem:hover .imageInner {
+  /* Let the image pop out of the circle */
+  overflow: visible;
+  border-color: #ffffff;
 }
 
 .professorImage {
   object-fit: cover;
-  /* Favor the top of the image so heads don't get cut off */
   object-position: top center;
   transition: transform var(--duration-slow) var(--ease-out);
 }
 
+/* Display the whole image and make it pop out on hover */
 .professorItem:hover .professorImage {
-  transform: scale(1.1);
+  transform: scale(1.15) translateY(-5%);
 }
 
 .professorInfo {
@@ -85,5 +121,3 @@
   margin: 0 0 var(--space-1) 0;
   line-height: 1.3;
 }
-
-
