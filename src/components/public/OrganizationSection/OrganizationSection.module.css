@@ -64,10 +64,10 @@
 
 /* Hover effects for the 3D circle */
 .professorItem:hover .imageWrapper {
-  /* Increase the size of the white circle */
+  /* Let the image pop without a background */
   transform: translateY(-8px) scale(1.05);
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
-  background-color: #ffffff;
+  box-shadow: none;
+  background-color: transparent;
 }
 
 /* Remove the neon gradient on hover */
@@ -93,7 +93,8 @@
 .professorItem:hover .imageInner {
   /* Let the image pop out of the circle */
   overflow: visible;
-  border-color: #ffffff;
+  border-color: transparent;
+  background-color: transparent;
 }
 
 .professorImage {
