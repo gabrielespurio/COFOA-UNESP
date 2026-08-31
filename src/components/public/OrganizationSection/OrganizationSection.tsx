@@ -33,7 +33,6 @@ export function OrganizationSection() {
             </div>
             <div className={styles.professorInfo}>
               <h4 className={styles.professorName}>{prof.name}</h4>
-              <p className={styles.professorRole}>Professor(a)</p>
             </div>
           </div>
         ))}
