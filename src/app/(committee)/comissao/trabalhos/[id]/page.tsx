@@ -81,7 +81,7 @@ export default async function AvaliacaoTrabalhoPage({ params }: { params: Promis
           </div>
           
           <div className={styles.abstractSection}>
-            <h3>Resumo (Abstract)</h3>
+            <h3>Resumo</h3>
             <p>{work.abstract}</p>
           </div>
           
@@ -110,8 +110,13 @@ export default async function AvaliacaoTrabalhoPage({ params }: { params: Promis
               </a>
             )}
             {work.enrollmentProofUrl && (
-              <a href={work.enrollmentProofUrl} target="_blank" rel="noopener noreferrer" className={styles.fileLinkBtn} style={{ display: 'block' }}>
+              <a href={work.enrollmentProofUrl} target="_blank" rel="noopener noreferrer" className={styles.fileLinkBtn} style={{ marginBottom: '0.5rem', display: 'block' }}>
                 Comprovante de Matrícula (PDF)
+              </a>
+            )}
+            {work.requiresEthics && work.ethicsCommitteeFileUrl && (
+              <a href={work.ethicsCommitteeFileUrl} target="_blank" rel="noopener noreferrer" className={styles.fileLinkBtn} style={{ display: 'block' }}>
+                Comitê de Ética (PDF)
               </a>
             )}
             {(!work.identifiedFileUrl && !work.unidentifiedFileUrl && !work.enrollmentProofUrl) && (

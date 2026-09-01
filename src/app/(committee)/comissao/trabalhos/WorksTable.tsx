@@ -91,7 +91,7 @@ function WorkEvaluationModal({ work, onClose }: { work: any, onClose: () => void
             </div>
             
             <div>
-              <h4 style={{ fontSize: '1rem', color: 'var(--color-primary)', borderBottom: '1px solid var(--color-border)', paddingBottom: '0.5rem', margin: '0 0 1rem 0' }}>Resumo (Abstract)</h4>
+              <h4 style={{ fontSize: '1rem', color: 'var(--color-primary)', borderBottom: '1px solid var(--color-border)', paddingBottom: '0.5rem', margin: '0 0 1rem 0' }}>Resumo</h4>
               <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.875rem', lineHeight: 1.6, whiteSpace: 'pre-wrap', margin: 0 }}>{work.abstract}</p>
             </div>
             
@@ -124,6 +124,11 @@ function WorkEvaluationModal({ work, onClose }: { work: any, onClose: () => void
                 {work.enrollmentProofUrl && (
                   <a href={work.enrollmentProofUrl} target="_blank" rel="noopener noreferrer" style={{ display: 'block', padding: '0.75rem 1rem', background: 'var(--color-primary)', color: 'white', textDecoration: 'none', borderRadius: 'var(--radius-md)', fontWeight: 600, textAlign: 'center' }}>
                     Comprovante de Matrícula (PDF)
+                  </a>
+                )}
+                {work.requiresEthics && work.ethicsCommitteeFileUrl && (
+                  <a href={work.ethicsCommitteeFileUrl} target="_blank" rel="noopener noreferrer" style={{ display: 'block', padding: '0.75rem 1rem', background: 'var(--color-primary)', color: 'white', textDecoration: 'none', borderRadius: 'var(--radius-md)', fontWeight: 600, textAlign: 'center' }}>
+                    Comitê de Ética (PDF)
                   </a>
                 )}
               </div>

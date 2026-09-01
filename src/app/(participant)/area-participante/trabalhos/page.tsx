@@ -143,6 +143,11 @@ export default async function MeusTrabalhosPage() {
                         Ver Comprovante
                       </a>
                     )}
+                    {work.requiresEthics && work.ethicsCommitteeFileUrl && (
+                      <a href={work.ethicsCommitteeFileUrl} target="_blank" rel="noopener noreferrer" className={styles.linkAction}>
+                        Ver Comitê de Ética
+                      </a>
+                    )}
                   </div>
                 )}
               </div>
