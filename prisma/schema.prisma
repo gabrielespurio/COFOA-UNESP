@@ -249,6 +249,8 @@ model ScientificWork {
   identifiedFileUrl   String?
   unidentifiedFileUrl String?
   enrollmentProofUrl  String?
+  requiresEthics      Boolean   @default(false)
+  ethicsCommitteeFileUrl String?
   status          WorkStatus @default(DRAFT)
   reviewerComments String?   @db.Text
   submittedAt     DateTime?

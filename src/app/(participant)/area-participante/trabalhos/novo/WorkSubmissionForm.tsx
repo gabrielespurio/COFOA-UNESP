@@ -60,6 +60,8 @@ export function WorkSubmissionForm({ participantId, initialData, workId }: { par
       : [{ name: '', email: '', institution: '', isCorresponding: true }]
   );
   
+  const [requiresEthics, setRequiresEthics] = useState<boolean>(initialData?.requiresEthics || false);
+  
   const addAuthor = () => {
     setAuthors([...authors, { name: '', email: '', institution: '', isCorresponding: false }]);
   };
@@ -91,6 +93,7 @@ export function WorkSubmissionForm({ participantId, initialData, workId }: { par
     const form = e.currentTarget;
     const formData = new FormData(form);
     formData.append('authors', JSON.stringify(authors));
+    formData.append('requiresEthics', requiresEthics ? 'true' : 'false');
     if (workId) {
       formData.append('workId', workId);
     }
@@ -124,6 +127,9 @@ export function WorkSubmissionForm({ participantId, initialData, workId }: { par
       prepareFile('identifiedFile', 'id');
       prepareFile('unidentifiedFile', 'unid');
       prepareFile('enrollmentProof', 'proof');
+      if (requiresEthics) {
+        prepareFile('ethicsCommitteeFile', 'ethics');
+      }
 
       if (filesToUpload.length > 0) {
         const { urls, error: urlError } = await generateUploadUrls(filesToUpload.map(f => ({ suffix: f.suffix, fileExt: f.fileExt })));
@@ -156,6 +162,7 @@ export function WorkSubmissionForm({ participantId, initialData, workId }: { par
       formData.delete('identifiedFile');
       formData.delete('unidentifiedFile');
       formData.delete('enrollmentProof');
+      formData.delete('ethicsCommitteeFile');
 
       // Submit the lightweight form to the server action
       const result = isEditing ? await resubmitWork(formData) : await submitWork(formData);
@@ -303,6 +310,32 @@ export function WorkSubmissionForm({ participantId, initialData, workId }: { par
           <p style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-primary)', marginBottom: '1rem' }}>
             Atenção: Como você está corrigindo um trabalho, só envie os arquivos caso precise atualizá-los. Se não anexar um arquivo novo, o anterior será mantido.
           </p>
+        )}
+        
+        <div className={styles.formGroup}>
+          <label className={styles.label}>Para esse trabalho, se aplica trabalho de ética? *</label>
+          <select 
+            className={styles.input} 
+            value={requiresEthics ? "sim" : "nao"} 
+            onChange={(e) => setRequiresEthics(e.target.value === 'sim')}
+            required
+          >
+            <option value="nao">Não</option>
+            <option value="sim">Sim</option>
+          </select>
+        </div>
+
+        {requiresEthics && (
+          <div className={styles.formGroup}>
+            <label className={styles.label}>COMITE DE ETICA (PDF - Máx. 10MB) {!isEditing && '*'}</label>
+            <input 
+              type="file" 
+              name="ethicsCommitteeFile" 
+              accept=".pdf"
+              className={styles.fileInput}
+              required={!isEditing} 
+            />
+          </div>
         )}
         
         <div className={styles.formGroup}>

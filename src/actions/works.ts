@@ -35,9 +35,15 @@ export async function submitWork(formData: FormData) {
   const identifiedFileUrl = formData.get('identifiedFileUrl') as string | null;
   const unidentifiedFileUrl = formData.get('unidentifiedFileUrl') as string | null;
   const enrollmentProofUrl = formData.get('enrollmentProofUrl') as string | null;
+  const requiresEthics = formData.get('requiresEthics') === 'true';
+  const ethicsCommitteeFileUrl = formData.get('ethicsCommitteeFileUrl') as string | null;
 
   if (!title || !abstractText || !categoryArea || !modality || !advisor || !presenter || !authorsStr) {
     return { error: 'Por favor, preencha todos os campos obrigatórios.' };
+  }
+
+  if (requiresEthics && !ethicsCommitteeFileUrl) {
+    return { error: 'O upload do anexo do Comitê de Ética é obrigatório quando aplicado.' };
   }
 
   let authors = [];
@@ -72,6 +78,8 @@ export async function submitWork(formData: FormData) {
         identifiedFileUrl,
         unidentifiedFileUrl,
         enrollmentProofUrl,
+        requiresEthics,
+        ethicsCommitteeFileUrl,
         status: 'UNDER_REVIEW',
         submittedAt: new Date()
       }
@@ -121,10 +129,11 @@ export async function resubmitWork(formData: FormData) {
   const presenter = formData.get('presenter') as string;
   const authorsStr = formData.get('authors') as string;
   
-  // These will only be present if new files were uploaded
   const newIdentifiedFileUrl = formData.get('identifiedFileUrl') as string | null;
   const newUnidentifiedFileUrl = formData.get('unidentifiedFileUrl') as string | null;
   const newEnrollmentProofUrl = formData.get('enrollmentProofUrl') as string | null;
+  const newEthicsCommitteeFileUrl = formData.get('ethicsCommitteeFileUrl') as string | null;
+  const requiresEthics = formData.get('requiresEthics') === 'true';
 
   if (!title || !abstractText || !categoryArea || !modality || !advisor || !presenter || !authorsStr) {
     return { error: 'Por favor, preencha todos os campos obrigatórios.' };
@@ -144,10 +153,16 @@ export async function resubmitWork(formData: FormData) {
     let identifiedFileUrl = existingWork.identifiedFileUrl;
     let unidentifiedFileUrl = existingWork.unidentifiedFileUrl;
     let enrollmentProofUrl = existingWork.enrollmentProofUrl;
+    let ethicsCommitteeFileUrl = existingWork.ethicsCommitteeFileUrl;
 
     if (newIdentifiedFileUrl) identifiedFileUrl = newIdentifiedFileUrl;
     if (newUnidentifiedFileUrl) unidentifiedFileUrl = newUnidentifiedFileUrl;
     if (newEnrollmentProofUrl) enrollmentProofUrl = newEnrollmentProofUrl;
+    if (newEthicsCommitteeFileUrl) ethicsCommitteeFileUrl = newEthicsCommitteeFileUrl;
+
+    if (requiresEthics && !ethicsCommitteeFileUrl) {
+      return { error: 'O upload do anexo do Comitê de Ética é obrigatório quando aplicado.' };
+    }
 
     await prisma.scientificWork.update({
       where: { id: workId },
@@ -162,6 +177,8 @@ export async function resubmitWork(formData: FormData) {
         identifiedFileUrl,
         unidentifiedFileUrl,
         enrollmentProofUrl,
+        requiresEthics,
+        ethicsCommitteeFileUrl,
         status: 'UNDER_REVIEW', // Voltar para avaliação
         submittedAt: new Date()
       }
