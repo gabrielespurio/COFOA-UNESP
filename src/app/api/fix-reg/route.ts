@@ -9,16 +9,26 @@ export async function GET(request: Request) {
 
   const user = await prisma.user.findUnique({
     where: { email },
-    include: { participant: { include: { registration: true } } }
+    include: { participant: { include: { registration: { include: { payment: true } } } } }
   });
 
   if (!user || !user.participant || !user.participant.registration) {
     return NextResponse.json({ error: 'No registration found' });
   }
 
-  await prisma.registration.delete({
-    where: { id: user.participant.registration.id }
+  const regId = user.participant.registration.id;
+  
+  await prisma.registration.update({
+    where: { id: regId },
+    data: { status: 'CONFIRMED' }
   });
 
-  return NextResponse.json({ success: true, deletedId: user.participant.registration.id });
+  if (user.participant.registration.payment) {
+    await prisma.payment.update({
+      where: { id: user.participant.registration.payment.id },
+      data: { status: 'PAID' }
+    });
+  }
+
+  return NextResponse.json({ success: true, message: 'Inscrição marcada como PAGA e CONFIRMADA com sucesso!' });
 }

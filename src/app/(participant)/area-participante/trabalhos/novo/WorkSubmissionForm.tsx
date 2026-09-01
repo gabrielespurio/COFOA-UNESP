@@ -45,9 +45,7 @@ const MODALITIES = [
   'Pesquisa científica - PRESENCIAL - ORAL - Nível de Graduação',
   'Pesquisa científica - PRESENCIAL - ORAL - Nível de Pós-graduação',
   'Pesquisa científica - PRESENCIAL - PAINEL - Nível de Pós-graduação',
-  'Projeto de Extensão - PAINEL EXPOSTO - PRESENCIAL',
-  'Projeto de Extensão - ONLINE - Painel APRESENTADO',
-  'Projeto de Extensão - Painel APRESENTADO - PRESENCIAL'
+  'Projeto de Extensão - PAINEL EXPOSTO - PRESENCIAL'
 ];
 
 export function WorkSubmissionForm({ participantId, initialData, workId }: { participantId: string, initialData?: any, workId?: string }) {
