@@ -20,15 +20,15 @@ export async function GET(request: Request) {
   
   await prisma.registration.update({
     where: { id: regId },
-    data: { status: 'CONFIRMED' }
+    data: { status: 'PENDING' }
   });
 
   if (user.participant.registration.payment) {
     await prisma.payment.update({
       where: { id: user.participant.registration.payment.id },
-      data: { status: 'PAID' }
+      data: { status: 'PENDING' }
     });
   }
 
-  return NextResponse.json({ success: true, message: 'Inscrição marcada como PAGA e CONFIRMADA com sucesso!' });
+  return NextResponse.json({ success: true, message: 'Inscrição revertida para PENDENTE com sucesso!' });
 }

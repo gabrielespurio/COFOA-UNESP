@@ -182,10 +182,6 @@ export async function createRegistration(formData: FormData) {
       case 'ONLINE_TIER2': finalAmount = batch.priceOnlineTier2; break;
     }
 
-    // Override for 'teste' category (R$ 5,00 - minimum Asaas value)
-    if (category.name.toLowerCase().includes('teste')) {
-      finalAmount = 500;
-    }
 
     // 1. Create/Get Asaas Customer
     const asaasCustomer = await createOrGetCustomer(
