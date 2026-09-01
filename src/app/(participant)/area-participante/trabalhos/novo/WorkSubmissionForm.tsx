@@ -185,13 +185,22 @@ export function WorkSubmissionForm({ participantId, initialData, workId }: { par
       <div className={styles.section}>
         <h3 className={styles.sectionTitle}>1. Dados do Trabalho</h3>
         
+        <div style={{ marginBottom: '1.5rem', padding: '1rem', backgroundColor: 'var(--color-surface-alt)', borderLeft: '4px solid var(--color-primary)', borderRadius: 'var(--radius-md)' }}>
+          <p style={{ margin: 0, fontSize: 'var(--font-size-sm)', color: 'var(--color-text)' }}>
+            Antes de submeter, é obrigatória a leitura atenta das regras de submissão. <br/>
+            <a href="/Edital finalizado.pdf" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 'bold', textDecoration: 'underline' }}>
+              Clique aqui para acessar o Edital
+            </a>.
+          </p>
+        </div>
+
         <div className={styles.formGroup}>
           <label className={styles.label}>Título do Trabalho *</label>
           <input type="text" name="title" className={styles.input} required defaultValue={initialData?.title || ''} />
         </div>
         
         <div className={styles.formGroup}>
-          <label className={styles.label}>Resumo (Abstract) *</label>
+          <label className={styles.label}>Resumo *</label>
           <textarea name="abstract" className={styles.textarea} required defaultValue={initialData?.abstract || ''}></textarea>
         </div>
         
