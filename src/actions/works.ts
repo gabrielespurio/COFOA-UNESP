@@ -25,10 +25,6 @@ export async function submitWork(formData: FormData) {
     return { error: 'Você precisa confirmar o pagamento da sua inscrição para submeter trabalhos.' };
   }
 
-  if (participant.scientificWorks.length >= 1) {
-    return { error: 'Você já submeteu um trabalho. O limite é de 1 trabalho por inscrição.' };
-  }
-
   const title = formData.get('title') as string;
   const abstractText = formData.get('abstract') as string;
   const categoryArea = formData.get('categoryArea') as string;

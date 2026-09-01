@@ -41,17 +41,6 @@ export default async function NovoTrabalhoPage() {
     );
   }
 
-  if (participant.scientificWorks.length >= 1) {
-    return (
-      <div className={styles.container}>
-        <SectionHeading title="Submissão Bloqueada" />
-        <div className={styles.warningBox}>
-          <p>Você já submeteu o seu trabalho. O limite é de apenas 1 trabalho por inscrição.</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className={styles.container}>
       <SectionHeading 

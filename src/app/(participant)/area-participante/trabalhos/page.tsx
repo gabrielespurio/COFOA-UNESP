@@ -58,7 +58,7 @@ export default async function MeusTrabalhosPage() {
           subtitle="Acompanhe o status das suas submissões científicas."
           alignment="left"
         />
-        {isConfirmed && works.length === 0 && (
+        {isConfirmed && (
           <Button variant="primary" href="/area-participante/trabalhos/novo">
             + Novo Trabalho
           </Button>
