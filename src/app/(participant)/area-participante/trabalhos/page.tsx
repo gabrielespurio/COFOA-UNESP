@@ -36,11 +36,14 @@ export default async function MeusTrabalhosPage() {
 
   const participant = await prisma.participant.findUnique({
     where: { userId: session.userId },
+    include: { registration: true }
   });
 
   if (!participant) {
     redirect('/area-participante/perfil');
   }
+
+  const isConfirmed = participant.registration?.status === 'CONFIRMED';
 
   const works = await prisma.scientificWork.findMany({
     where: { participantId: participant.id },
@@ -55,9 +58,11 @@ export default async function MeusTrabalhosPage() {
           subtitle="Acompanhe o status das suas submissões científicas."
           alignment="left"
         />
-        <Button variant="primary" href="/area-participante/trabalhos/novo">
-          + Novo Trabalho
-        </Button>
+        {isConfirmed && works.length === 0 && (
+          <Button variant="primary" href="/area-participante/trabalhos/novo">
+            + Novo Trabalho
+          </Button>
+        )}
       </div>
 
       <div className={styles.content}>
@@ -72,9 +77,15 @@ export default async function MeusTrabalhosPage() {
             </svg>
             <h3>Nenhum trabalho submetido</h3>
             <p>Você ainda não enviou nenhum trabalho científico para avaliação.</p>
-            <Button variant="outline" href="/area-participante/trabalhos/novo">
-              Submeter Primeiro Trabalho
-            </Button>
+            {isConfirmed ? (
+              <Button variant="outline" href="/area-participante/trabalhos/novo">
+                Submeter Primeiro Trabalho
+              </Button>
+            ) : (
+              <p style={{ marginTop: '1rem', color: '#856404', background: '#fff3cd', padding: '1rem', borderRadius: '8px', border: '1px solid #ffeeba' }}>
+                Para submeter trabalhos, é necessário confirmar o pagamento da sua inscrição.
+              </p>
+            )}
           </div>
         ) : (
           <div className={styles.worksGrid}>

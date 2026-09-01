@@ -13,11 +13,20 @@ export async function submitWork(formData: FormData) {
   }
 
   const participant = await prisma.participant.findUnique({
-    where: { userId: session.userId }
+    where: { userId: session.userId },
+    include: { registration: true, scientificWorks: true }
   });
 
   if (!participant) {
     return { error: 'Perfil de participante não encontrado.' };
+  }
+
+  if (!participant.registration || participant.registration.status !== 'CONFIRMED') {
+    return { error: 'Você precisa confirmar o pagamento da sua inscrição para submeter trabalhos.' };
+  }
+
+  if (participant.scientificWorks.length >= 1) {
+    return { error: 'Você já submeteu um trabalho. O limite é de 1 trabalho por inscrição.' };
   }
 
   const title = formData.get('title') as string;
