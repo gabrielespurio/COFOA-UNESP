@@ -233,6 +233,7 @@
   line-height: 1.8;
   color: var(--color-text-secondary);
   margin-bottom: var(--space-4);
+  text-align: justify;
 }
 
 .placeholder {
