@@ -34,153 +34,191 @@ function WorkEvaluationModal({ work, onClose }: { work: any, onClose: () => void
 
   return (
     <div style={{
-      position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.6)', 
+      position: 'fixed', inset: 0, backgroundColor: 'rgba(15, 23, 42, 0.6)', 
       backdropFilter: 'blur(4px)', zIndex: 100, display: 'flex', 
       alignItems: 'center', justifyContent: 'center', padding: '1rem'
     }}>
       <div style={{
-        background: 'var(--color-surface)', width: '100%', maxWidth: '900px', 
-        maxHeight: '90vh', overflowY: 'auto', borderRadius: 'var(--radius-lg)', 
-        boxShadow: 'var(--shadow-lg)', display: 'flex', flexDirection: 'column'
+        background: '#ffffff', width: '100%', maxWidth: '900px', 
+        maxHeight: '90vh', overflowY: 'auto', borderRadius: '12px', 
+        boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)', 
+        display: 'flex', flexDirection: 'column'
       }}>
         {/* Header */}
         <div style={{ 
-          padding: '1.5rem 1.5rem 0.5rem 1.5rem', 
-          display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start',
-          position: 'sticky', top: 0, background: 'var(--color-surface)', zIndex: 10
+          padding: '1.5rem', borderBottom: '1px solid #f1f5f9', 
+          display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+          position: 'sticky', top: 0, background: '#ffffff', zIndex: 10
         }}>
           <div>
-            <h2 style={{ fontSize: '1.5rem', color: 'var(--color-primary-dark)', margin: 0 }}>Análise de Trabalho</h2>
-            <p style={{ color: 'var(--color-text-secondary)', margin: '0.25rem 0 0 0', fontSize: '0.875rem' }}>Revise as informações antes de dar seu parecer.</p>
+            <h2 style={{ fontSize: '1.25rem', color: '#0f172a', margin: 0, fontWeight: 700 }}>Análise de Trabalho</h2>
+            <p style={{ color: '#64748b', margin: '0.25rem 0 0 0', fontSize: '0.875rem' }}>Revise as informações antes de dar seu parecer.</p>
           </div>
           <button 
             onClick={onClose}
             style={{ 
-              background: 'var(--color-surface-alt)', border: 'none', width: '36px', height: '36px', 
+              background: '#f1f5f9', border: 'none', width: '32px', height: '32px', 
               borderRadius: '50%', cursor: 'pointer', display: 'flex', alignItems: 'center', 
-              justifyContent: 'center', fontSize: '1.25rem', color: 'var(--color-text-primary)'
+              justifyContent: 'center', fontSize: '1.25rem', color: '#64748b', transition: 'all 0.2s'
             }}
+            onMouseOver={(e) => e.currentTarget.style.background = '#e2e8f0'}
+            onMouseOut={(e) => e.currentTarget.style.background = '#f1f5f9'}
           >
             ✕
           </button>
         </div>
 
-        {/* Tabs */}
-        <div style={{
-          display: 'flex', gap: '2rem', padding: '0 1.5rem',
-          borderBottom: '1px solid var(--color-border)',
-          background: 'var(--color-surface)',
-          position: 'sticky', top: '80px', zIndex: 9
-        }}>
-          <button 
-            onClick={() => setActiveTab('info')}
-            style={{
-              padding: '1rem 0', background: 'transparent', border: 'none',
-              borderBottom: activeTab === 'info' ? '3px solid var(--color-primary)' : '3px solid transparent',
-              color: activeTab === 'info' ? 'var(--color-primary-dark)' : 'var(--color-text-secondary)',
-              fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem',
-              transition: 'all 0.2s', fontSize: '1rem'
-            }}
-          >
-            📄 Informações do Trabalho
-          </button>
-          <button 
-            onClick={() => setActiveTab('history')}
-            style={{
-              padding: '1rem 0', background: 'transparent', border: 'none',
-              borderBottom: activeTab === 'history' ? '3px solid var(--color-primary)' : '3px solid transparent',
-              color: activeTab === 'history' ? 'var(--color-primary-dark)' : 'var(--color-text-secondary)',
-              fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem',
-              transition: 'all 0.2s', fontSize: '1rem'
-            }}
-          >
-            🕒 Histórico de Avaliações
-            {work.evaluations && work.evaluations.length > 0 && (
-              <span style={{ 
-                background: activeTab === 'history' ? 'var(--color-primary)' : 'var(--color-border)', 
-                color: activeTab === 'history' ? 'white' : 'var(--color-text-secondary)', 
-                padding: '0.1rem 0.5rem', borderRadius: '12px', fontSize: '0.75rem', marginLeft: '0.25rem' 
-              }}>
-                {work.evaluations.length}
-              </span>
-            )}
-          </button>
-        </div>
-        
-        {/* Content Container */}
-        <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '2rem', background: 'var(--color-surface)' }}>
+        {/* Content Container (Tabs + Content) */}
+        <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+          
+          {/* Pill Tabs */}
+          <div style={{
+            display: 'inline-flex', background: '#f1f5f9', padding: '0.25rem', 
+            borderRadius: '8px', alignSelf: 'flex-start', gap: '0.25rem'
+          }}>
+            <button 
+              onClick={() => setActiveTab('info')}
+              style={{
+                padding: '0.5rem 1rem', border: 'none', borderRadius: '6px',
+                background: activeTab === 'info' ? '#ffffff' : 'transparent',
+                color: activeTab === 'info' ? '#0f172a' : '#64748b',
+                boxShadow: activeTab === 'info' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
+                fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem',
+                fontSize: '0.875rem', transition: 'all 0.2s'
+              }}
+            >
+              📄 Informações
+            </button>
+            <button 
+              onClick={() => setActiveTab('history')}
+              style={{
+                padding: '0.5rem 1rem', border: 'none', borderRadius: '6px',
+                background: activeTab === 'history' ? '#ffffff' : 'transparent',
+                color: activeTab === 'history' ? '#0f172a' : '#64748b',
+                boxShadow: activeTab === 'history' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
+                fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem',
+                fontSize: '0.875rem', transition: 'all 0.2s'
+              }}
+            >
+              🕒 Histórico
+              {work.evaluations && work.evaluations.length > 0 && (
+                <span style={{ 
+                  background: activeTab === 'history' ? '#e2e8f0' : '#cbd5e1', 
+                  color: '#334155', padding: '0.1rem 0.4rem', borderRadius: '12px', 
+                  fontSize: '0.7rem', marginLeft: '0.25rem' 
+                }}>
+                  {work.evaluations.length}
+                </span>
+              )}
+            </button>
+          </div>
           
           {/* TAB 1: INFORMAÇÕES */}
           {activeTab === 'info' && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-              <div style={{ background: 'white', padding: '1.5rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap', marginBottom: '1rem' }}>
-                  <span style={{ padding: '0.25rem 0.5rem', background: 'var(--color-primary-light)', color: 'var(--color-primary-dark)', fontSize: '0.875rem', fontWeight: 600, borderRadius: 'var(--radius-sm)' }}>
-                    {work.displayCode}
-                  </span>
-                  <h3 style={{ fontSize: '1.25rem', color: 'var(--color-primary-dark)', margin: 0 }}>{work.title}</h3>
-                </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+              
+              <div>
+                <h3 style={{ fontSize: '1rem', color: '#64748b', margin: '0 0 1rem 0', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 600 }}>
+                  <span style={{ fontSize: '1.2rem' }}>👤</span> Informações Principais
+                </h3>
                 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', background: 'var(--color-surface-alt)', padding: '1rem', borderRadius: 'var(--radius-sm)' }}>
-                  <div style={{ fontSize: '0.875rem' }}><span style={{ color: 'var(--color-text-secondary)', display: 'block', marginBottom: '0.25rem' }}>Área Temática</span> <strong>{work.categoryArea}</strong></div>
-                  <div style={{ fontSize: '0.875rem' }}><span style={{ color: 'var(--color-text-secondary)', display: 'block', marginBottom: '0.25rem' }}>Modalidade</span> <strong>{work.modality}</strong></div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+                  {/* Título e Código */}
+                  <div style={{ display: 'grid', gridTemplateColumns: '120px 1fr', gap: '1rem' }}>
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: '#64748b', marginBottom: '0.25rem' }}>Código</label>
+                      <div style={{ padding: '0.625rem 0.75rem', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '6px', fontSize: '0.875rem', color: '#0f172a', fontWeight: 600 }}>
+                        {work.displayCode}
+                      </div>
+                    </div>
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: '#64748b', marginBottom: '0.25rem' }}>Título do Trabalho</label>
+                      <div style={{ padding: '0.625rem 0.75rem', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '6px', fontSize: '0.875rem', color: '#0f172a' }}>
+                        {work.title}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Área e Modalidade */}
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: '#64748b', marginBottom: '0.25rem' }}>Área Temática</label>
+                      <div style={{ padding: '0.625rem 0.75rem', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '6px', fontSize: '0.875rem', color: '#0f172a' }}>
+                        {work.categoryArea}
+                      </div>
+                    </div>
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: '#64748b', marginBottom: '0.25rem' }}>Modalidade</label>
+                      <div style={{ padding: '0.625rem 0.75rem', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '6px', fontSize: '0.875rem', color: '#0f172a' }}>
+                        {work.modality}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Resumo */}
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: '#64748b', marginBottom: '0.25rem' }}>Resumo</label>
+                    <div style={{ padding: '0.75rem', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '6px', fontSize: '0.875rem', color: '#334155', lineHeight: 1.6, whiteSpace: 'pre-wrap' }}>
+                      {work.abstract}
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              <div style={{ background: 'white', padding: '1.5rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}>
-                <h4 style={{ fontSize: '1rem', color: 'var(--color-primary-dark)', margin: '0 0 1rem 0', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  Resumo
-                </h4>
-                <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.875rem', lineHeight: 1.6, whiteSpace: 'pre-wrap', margin: 0 }}>{work.abstract}</p>
-              </div>
-
-              <div style={{ background: 'white', padding: '1.5rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}>
-                <h4 style={{ fontSize: '1rem', color: 'var(--color-primary-dark)', margin: '0 0 1rem 0', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  Arquivos Anexados
-                </h4>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1rem' }}>
+              {/* Anexos */}
+              <div style={{ paddingTop: '1.5rem', borderTop: '1px solid #f1f5f9' }}>
+                <h3 style={{ fontSize: '1rem', color: '#64748b', margin: '0 0 1rem 0', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 600 }}>
+                  <span style={{ fontSize: '1.2rem' }}>📎</span> Arquivos Anexados
+                </h3>
+                
+                <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
                   {work.unidentifiedFileUrl && (
-                    <a href={work.unidentifiedFileUrl} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0.75rem 1rem', background: 'var(--color-primary-light)', color: 'var(--color-primary-dark)', border: '1px solid var(--color-primary)', textDecoration: 'none', borderRadius: 'var(--radius-md)', fontWeight: 600, transition: 'all 0.2s' }}>
-                      📄 Trabalho Não Identificado
+                    <a href={work.unidentifiedFileUrl} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 1rem', background: '#f8fafc', color: '#475569', border: '1px solid #e2e8f0', textDecoration: 'none', borderRadius: '6px', fontWeight: 500, fontSize: '0.875rem', transition: 'all 0.2s' }}>
+                      <span style={{ color: '#ef4444' }}>📄</span> Trabalho Não Identificado
                     </a>
                   )}
                   {work.enrollmentProofUrl && (
-                    <a href={work.enrollmentProofUrl} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0.75rem 1rem', background: 'var(--color-surface-alt)', color: 'var(--color-text-primary)', border: '1px solid var(--color-border)', textDecoration: 'none', borderRadius: 'var(--radius-md)', fontWeight: 600, transition: 'all 0.2s' }}>
-                      📎 Comprovante de Matrícula
+                    <a href={work.enrollmentProofUrl} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 1rem', background: '#f8fafc', color: '#475569', border: '1px solid #e2e8f0', textDecoration: 'none', borderRadius: '6px', fontWeight: 500, fontSize: '0.875rem', transition: 'all 0.2s' }}>
+                      <span style={{ color: '#3b82f6' }}>📎</span> Comprovante de Matrícula
                     </a>
                   )}
                 </div>
               </div>
+
             </div>
           )}
 
           {/* TAB 2: HISTÓRICO */}
           {activeTab === 'history' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+              <h3 style={{ fontSize: '1rem', color: '#64748b', margin: '0 0 0.5rem 0', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 600 }}>
+                <span style={{ fontSize: '1.2rem' }}>🕒</span> Linha do Tempo
+              </h3>
+              
               {work.evaluations && work.evaluations.length > 0 ? (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                   {work.evaluations.map((evalRecord: any, idx: number) => {
                     const evalName = evalRecord.evaluator.participant?.fullName || evalRecord.evaluator.email;
                     return (
-                      <div key={evalRecord.id} style={{ background: 'white', border: '1px solid var(--color-border)', padding: '1.5rem', borderRadius: 'var(--radius-md)', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', borderBottom: '1px solid var(--color-border)', paddingBottom: '0.75rem' }}>
+                      <div key={evalRecord.id} style={{ background: '#f8fafc', border: '1px solid #e2e8f0', padding: '1.25rem', borderRadius: '8px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                            <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'var(--color-primary-light)', color: 'var(--color-primary-dark)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>
+                            <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: '#e2e8f0', color: '#475569', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '0.75rem' }}>
                               {evalName.charAt(0).toUpperCase()}
                             </div>
-                            <strong style={{ color: 'var(--color-primary-dark)' }}>{evalName}</strong>
+                            <strong style={{ color: '#0f172a', fontSize: '0.875rem' }}>{evalName}</strong>
                           </div>
-                          <span style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)', background: 'var(--color-surface-alt)', padding: '0.25rem 0.5rem', borderRadius: 'var(--radius-sm)' }}>
+                          <span style={{ fontSize: '0.75rem', color: '#64748b' }}>
                             {new Date(evalRecord.createdAt).toLocaleString('pt-BR')}
                           </span>
                         </div>
-                        <div style={{ marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                          <span style={{ fontSize: '0.875rem', color: 'var(--color-text-secondary)' }}>Decisão:</span> 
+                        <div style={{ marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                          <span style={{ fontSize: '0.875rem', color: '#64748b' }}>Decisão:</span> 
                           {getStatusBadge(evalRecord.status)}
                         </div>
                         {evalRecord.comments && (
-                          <div style={{ background: 'var(--color-surface-alt)', padding: '1rem', borderRadius: 'var(--radius-md)', borderLeft: '3px solid var(--color-primary)' }}>
-                            <p style={{ fontSize: '0.875rem', color: 'var(--color-text-primary)', margin: 0, whiteSpace: 'pre-wrap', lineHeight: 1.5 }}>
+                          <div style={{ background: '#ffffff', padding: '0.75rem 1rem', borderRadius: '6px', border: '1px solid #e2e8f0' }}>
+                            <p style={{ fontSize: '0.875rem', color: '#334155', margin: 0, whiteSpace: 'pre-wrap', lineHeight: 1.5 }}>
                               {evalRecord.comments}
                             </p>
                           </div>
@@ -190,9 +228,9 @@ function WorkEvaluationModal({ work, onClose }: { work: any, onClose: () => void
                   })}
                 </div>
               ) : (
-                <div style={{ background: 'white', padding: '3rem 1.5rem', borderRadius: 'var(--radius-md)', border: '1px dashed var(--color-border)', textAlign: 'center', color: 'var(--color-text-secondary)' }}>
-                  <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>📭</div>
-                  <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--color-primary-dark)' }}>Nenhuma avaliação registrada</h4>
+                <div style={{ padding: '3rem 1.5rem', borderRadius: '8px', border: '1px dashed #cbd5e1', textAlign: 'center', color: '#64748b' }}>
+                  <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>📭</div>
+                  <h4 style={{ margin: '0 0 0.25rem 0', color: '#334155' }}>Nenhuma avaliação registrada</h4>
                   <p style={{ margin: 0, fontSize: '0.875rem' }}>Este trabalho ainda não recebeu pareceres da comissão.</p>
                 </div>
               )}
@@ -200,9 +238,9 @@ function WorkEvaluationModal({ work, onClose }: { work: any, onClose: () => void
           )}
           
           {/* Evaluation Form (Always visible below content) */}
-          <div style={{ background: 'white', padding: '1.5rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}>
-            <h3 style={{ fontSize: '1.25rem', color: 'var(--color-primary-dark)', margin: '0 0 1.5rem 0', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              ✍️ Parecer da Comissão
+          <div style={{ background: '#f8fafc', padding: '1.5rem', borderRadius: '8px', border: '1px solid #e2e8f0', marginTop: '1rem' }}>
+            <h3 style={{ fontSize: '1rem', color: '#64748b', margin: '0 0 1rem 0', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 600 }}>
+              <span style={{ fontSize: '1.2rem' }}>✍️</span> Parecer da Comissão
             </h3>
             <EvaluationForm 
               workId={work.id} 
