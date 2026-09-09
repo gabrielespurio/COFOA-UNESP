@@ -34,6 +34,18 @@ export default async function AvaliacaoTrabalhoPage({ params }: { params: Promis
     include: {
       participant: {
         select: { fullName: true }
+      },
+      evaluations: {
+        include: {
+          evaluator: {
+            include: {
+              participant: {
+                select: { fullName: true }
+              }
+            }
+          }
+        },
+        orderBy: { createdAt: 'desc' }
       }
     }
   });
@@ -54,7 +66,7 @@ export default async function AvaliacaoTrabalhoPage({ params }: { params: Promis
       <div className={styles.header}>
         <SectionHeading 
           title="Análise de Trabalho" 
-          subtitle="Revise o resumo, autores e o PDF anexado antes de dar seu parecer."
+          subtitle="Revise o resumo e os PDFs anexados antes de dar seu parecer."
           alignment="left"
         />
         <div>{getStatusBadge(work.status)}</div>
@@ -72,12 +84,6 @@ export default async function AvaliacaoTrabalhoPage({ params }: { params: Promis
             <div className={styles.metaRow}>
               <strong>Modalidade:</strong> {work.modality}
             </div>
-            <div className={styles.metaRow}>
-              <strong>Orientador:</strong> {work.advisor}
-            </div>
-            <div className={styles.metaRow}>
-              <strong>Apresentador:</strong> {work.presenter}
-            </div>
           </div>
           
           <div className={styles.abstractSection}>
@@ -85,18 +91,7 @@ export default async function AvaliacaoTrabalhoPage({ params }: { params: Promis
             <p>{work.abstract}</p>
           </div>
           
-          <div className={styles.authorsSection}>
-            <h3>Autores</h3>
-            <ul>
-              {authors.map((author: any, index: number) => (
-                <li key={index}>
-                  <strong>{author.name}</strong> ({author.institution}) 
-                  {author.isCorresponding ? ' - Autor Correspondente' : ''}
-                </li>
-              ))}
-            </ul>
-          </div>
-          
+
           <div className={styles.fileSection}>
             <h3>Arquivos Anexados</h3>
             {work.identifiedFileUrl && (
@@ -123,6 +118,36 @@ export default async function AvaliacaoTrabalhoPage({ params }: { params: Promis
               <p style={{ color: 'var(--color-text-muted)' }}>Nenhum arquivo anexado.</p>
             )}
           </div>
+
+          {/* Histórico de Avaliações */}
+          {work.evaluations && work.evaluations.length > 0 && (
+            <div className={styles.fileSection} style={{ marginTop: '2rem' }}>
+              <h3>Histórico de Avaliações</h3>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                {work.evaluations.map((evalRecord: any) => {
+                  const evalName = evalRecord.evaluator.participant?.fullName || evalRecord.evaluator.email;
+                  return (
+                    <div key={evalRecord.id} style={{ background: 'white', border: '1px solid var(--color-border)', padding: '1rem', borderRadius: 'var(--radius-md)' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                        <strong style={{ color: 'var(--color-primary-dark)' }}>{evalName}</strong>
+                        <span style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)' }}>
+                          {new Date(evalRecord.createdAt).toLocaleString('pt-BR')}
+                        </span>
+                      </div>
+                      <div style={{ marginBottom: '0.5rem' }}>
+                        {getStatusBadge(evalRecord.status)}
+                      </div>
+                      {evalRecord.comments && (
+                        <p style={{ fontSize: '0.875rem', color: 'var(--color-text-secondary)', margin: 0, whiteSpace: 'pre-wrap', background: 'var(--color-surface-alt)', padding: '0.75rem', borderRadius: 'var(--radius-sm)' }}>
+                          {evalRecord.comments}
+                        </p>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
         </div>
         
         {/* Right Column: Evaluation Form */}

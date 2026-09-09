@@ -25,6 +25,7 @@ model User {
   updatedAt     DateTime @updatedAt
 
   participant   Participant?
+  evaluations   WorkEvaluation[]
   
   @@map("users")
 }
@@ -258,6 +259,7 @@ model ScientificWork {
   updatedAt       DateTime  @updatedAt
   
   participant     Participant @relation(fields: [participantId], references: [id], onDelete: Cascade)
+  evaluations     WorkEvaluation[]
   
   @@map("scientific_works")
 }
@@ -311,4 +313,22 @@ model ConsentRecord {
 enum ConsentType {
   PRIVACY_POLICY
   TERMS_OF_USE
+}
+
+// ─── Work Evaluation ───────────────────────────────────────
+
+model WorkEvaluation {
+  id              String      @id @default(cuid())
+  workId          String
+  evaluatorId     String
+  status          WorkStatus
+  comments        String?     @db.Text
+  createdAt       DateTime    @default(now())
+
+  work            ScientificWork @relation(fields: [workId], references: [id], onDelete: Cascade)
+  evaluator       User           @relation(fields: [evaluatorId], references: [id], onDelete: Cascade)
+
+  @@index([workId])
+  @@index([evaluatorId])
+  @@map("work_evaluations")
 }

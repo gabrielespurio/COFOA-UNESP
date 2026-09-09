@@ -15,6 +15,18 @@ export default async function TrabalhosComissaoPage() {
     include: {
       participant: {
         select: { fullName: true }
+      },
+      evaluations: {
+        include: {
+          evaluator: {
+            include: {
+              participant: {
+                select: { fullName: true }
+              }
+            }
+          }
+        },
+        orderBy: { createdAt: 'desc' }
       }
     }
   });

@@ -86,8 +86,6 @@ function WorkEvaluationModal({ work, onClose }: { work: any, onClose: () => void
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
               <div style={{ fontSize: '0.875rem' }}><span style={{ color: 'var(--color-text-secondary)' }}>Área Temática:</span> <strong>{work.categoryArea}</strong></div>
               <div style={{ fontSize: '0.875rem' }}><span style={{ color: 'var(--color-text-secondary)' }}>Modalidade:</span> <strong>{work.modality}</strong></div>
-              {work.advisor && <div style={{ fontSize: '0.875rem' }}><span style={{ color: 'var(--color-text-secondary)' }}>Orientador:</span> <strong>{work.advisor}</strong></div>}
-              {work.presenter && <div style={{ fontSize: '0.875rem' }}><span style={{ color: 'var(--color-text-secondary)' }}>Apresentador:</span> <strong>{work.presenter}</strong></div>}
             </div>
             
             <div>
@@ -95,19 +93,7 @@ function WorkEvaluationModal({ work, onClose }: { work: any, onClose: () => void
               <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.875rem', lineHeight: 1.6, whiteSpace: 'pre-wrap', margin: 0 }}>{work.abstract}</p>
             </div>
             
-            {authors.length > 0 && (
-              <div>
-                <h4 style={{ fontSize: '1rem', color: 'var(--color-primary)', borderBottom: '1px solid var(--color-border)', paddingBottom: '0.5rem', margin: '0 0 1rem 0' }}>Autores</h4>
-                <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                  {authors.map((a: any, idx: number) => (
-                    <li key={idx} style={{ fontSize: '0.875rem', color: 'var(--color-text-secondary)' }}>
-                      <strong>{a.name}</strong> {a.email && `(${a.email})`} {a.isMain && '- Autor Correspondente'}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-            
+
             <div>
               <h4 style={{ fontSize: '1rem', color: 'var(--color-primary)', borderBottom: '1px solid var(--color-border)', paddingBottom: '0.5rem', margin: '0 0 1rem 0' }}>Arquivos Anexados</h4>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
@@ -133,6 +119,36 @@ function WorkEvaluationModal({ work, onClose }: { work: any, onClose: () => void
                 )}
               </div>
             </div>
+
+            {/* Histórico de Avaliações */}
+            {work.evaluations && work.evaluations.length > 0 && (
+              <div>
+                <h4 style={{ fontSize: '1rem', color: 'var(--color-primary)', borderBottom: '1px solid var(--color-border)', paddingBottom: '0.5rem', margin: '0 0 1rem 0' }}>Histórico de Avaliações</h4>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                  {work.evaluations.map((evalRecord: any, idx: number) => {
+                    const evalName = evalRecord.evaluator.participant?.fullName || evalRecord.evaluator.email;
+                    return (
+                      <div key={evalRecord.id} style={{ background: 'white', border: '1px solid var(--color-border)', padding: '1rem', borderRadius: 'var(--radius-md)' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                          <strong style={{ color: 'var(--color-primary-dark)' }}>{evalName}</strong>
+                          <span style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)' }}>
+                            {new Date(evalRecord.createdAt).toLocaleString('pt-BR')}
+                          </span>
+                        </div>
+                        <div style={{ marginBottom: '0.5rem' }}>
+                          {getStatusBadge(evalRecord.status)}
+                        </div>
+                        {evalRecord.comments && (
+                          <p style={{ fontSize: '0.875rem', color: 'var(--color-text-secondary)', margin: 0, whiteSpace: 'pre-wrap', background: 'var(--color-surface-alt)', padding: '0.75rem', borderRadius: 'var(--radius-sm)' }}>
+                            {evalRecord.comments}
+                          </p>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
           </div>
           
           {/* Evaluation Form */}
@@ -164,9 +180,8 @@ export function WorksTable({ works }: { works: any[] }) {
   const filteredWorks = works.filter(work => {
     const searchLower = searchTerm.toLowerCase();
     const titleMatch = work.title?.toLowerCase().includes(searchLower);
-    const authorMatch = work.participant?.fullName?.toLowerCase().includes(searchLower);
     const codeMatch = work.displayCode?.toLowerCase().includes(searchLower);
-    return titleMatch || authorMatch || codeMatch;
+    return titleMatch || codeMatch;
   });
 
   // Pagination
@@ -209,7 +224,7 @@ export function WorksTable({ works }: { works: any[] }) {
               <th>Código</th>
               <th>Título</th>
               <th>Área Temática</th>
-              <th>Autor Principal</th>
+              <th>Último Avaliador</th>
               <th>Status</th>
               <th>Ações</th>
             </tr>
@@ -222,7 +237,11 @@ export function WorksTable({ works }: { works: any[] }) {
                 </td>
               </tr>
             )}
-            {paginatedWorks.map(work => (
+            {paginatedWorks.map(work => {
+              const lastEval = work.evaluations?.[0];
+              const evaluatorName = lastEval ? (lastEval.evaluator.participant?.fullName || lastEval.evaluator.email) : 'Nenhum';
+              
+              return (
               <tr key={work.id}>
                 <td><strong style={{ color: 'var(--color-primary)' }}>{work.displayCode}</strong></td>
                 <td style={{ fontWeight: 500, maxWidth: '250px' }}>
@@ -231,7 +250,7 @@ export function WorksTable({ works }: { works: any[] }) {
                   </div>
                 </td>
                 <td>{work.categoryArea}</td>
-                <td>{work.participant.fullName}</td>
+                <td>{evaluatorName}</td>
                 <td>{getStatusBadge(work.status)}</td>
                 <td>
                   <button 
@@ -243,7 +262,7 @@ export function WorksTable({ works }: { works: any[] }) {
                   </button>
                 </td>
               </tr>
-            ))}
+            )})}
           </tbody>
         </table>
       </div>

@@ -33,13 +33,23 @@ export async function evaluateWork(formData: FormData) {
   }
 
   try {
-    await prisma.scientificWork.update({
-      where: { id: workId },
-      data: {
-        status: finalStatus,
-        reviewerComments: comments || null,
-      }
-    });
+    await prisma.$transaction([
+      prisma.scientificWork.update({
+        where: { id: workId },
+        data: {
+          status: finalStatus,
+          reviewerComments: comments || null,
+        }
+      }),
+      prisma.workEvaluation.create({
+        data: {
+          workId,
+          evaluatorId: session.userId,
+          status: finalStatus,
+          comments: comments || null,
+        }
+      })
+    ]);
 
     revalidatePath('/comissao');
     revalidatePath('/comissao/trabalhos');
