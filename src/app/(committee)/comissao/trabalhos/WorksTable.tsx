@@ -108,7 +108,7 @@ function WorkEvaluationModal({ work, onClose }: { work: any, onClose: () => void
         </div>
         
         {/* Content Container */}
-        <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '2rem', background: 'var(--color-surface-alt)' }}>
+        <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '2rem', background: 'var(--color-surface)' }}>
           
           {/* TAB 1: INFORMAÇÕES */}
           {activeTab === 'info' && (
@@ -139,11 +139,6 @@ function WorkEvaluationModal({ work, onClose }: { work: any, onClose: () => void
                   Arquivos Anexados
                 </h4>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1rem' }}>
-                  {work.identifiedFileUrl && (
-                    <a href={work.identifiedFileUrl} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0.75rem 1rem', background: 'var(--color-primary-light)', color: 'var(--color-primary-dark)', border: '1px solid var(--color-primary)', textDecoration: 'none', borderRadius: 'var(--radius-md)', fontWeight: 600, transition: 'all 0.2s' }}>
-                      📄 Trabalho Identificado
-                    </a>
-                  )}
                   {work.unidentifiedFileUrl && (
                     <a href={work.unidentifiedFileUrl} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0.75rem 1rem', background: 'var(--color-primary-light)', color: 'var(--color-primary-dark)', border: '1px solid var(--color-primary)', textDecoration: 'none', borderRadius: 'var(--radius-md)', fontWeight: 600, transition: 'all 0.2s' }}>
                       📄 Trabalho Não Identificado
@@ -152,11 +147,6 @@ function WorkEvaluationModal({ work, onClose }: { work: any, onClose: () => void
                   {work.enrollmentProofUrl && (
                     <a href={work.enrollmentProofUrl} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0.75rem 1rem', background: 'var(--color-surface-alt)', color: 'var(--color-text-primary)', border: '1px solid var(--color-border)', textDecoration: 'none', borderRadius: 'var(--radius-md)', fontWeight: 600, transition: 'all 0.2s' }}>
                       📎 Comprovante de Matrícula
-                    </a>
-                  )}
-                  {work.requiresEthics && work.ethicsCommitteeFileUrl && (
-                    <a href={work.ethicsCommitteeFileUrl} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0.75rem 1rem', background: 'var(--color-surface-alt)', color: 'var(--color-text-primary)', border: '1px solid var(--color-border)', textDecoration: 'none', borderRadius: 'var(--radius-md)', fontWeight: 600, transition: 'all 0.2s' }}>
-                      📎 Comitê de Ética
                     </a>
                   )}
                 </div>
@@ -210,7 +200,7 @@ function WorkEvaluationModal({ work, onClose }: { work: any, onClose: () => void
           )}
           
           {/* Evaluation Form (Always visible below content) */}
-          <div style={{ background: 'white', padding: '1.5rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', boxShadow: '0 4px 6px rgba(0,0,0,0.05)' }}>
+          <div style={{ background: 'white', padding: '1.5rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}>
             <h3 style={{ fontSize: '1.25rem', color: 'var(--color-primary-dark)', margin: '0 0 1.5rem 0', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               ✍️ Parecer da Comissão
             </h3>
