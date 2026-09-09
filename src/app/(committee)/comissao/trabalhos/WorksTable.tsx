@@ -242,7 +242,13 @@ export function WorksTable({ works }: { works: any[] }) {
               const evaluatorName = lastEval ? (lastEval.evaluator.participant?.fullName || lastEval.evaluator.email) : 'Nenhum';
               
               return (
-              <tr key={work.id}>
+              <tr 
+                key={work.id} 
+                onClick={() => setSelectedWork(work)}
+                style={{ cursor: 'pointer' }}
+                title="Clique na linha para avaliar"
+                className={styles.tableRowHover}
+              >
                 <td><strong style={{ color: 'var(--color-primary)' }}>{work.displayCode}</strong></td>
                 <td style={{ fontWeight: 500, maxWidth: '250px' }}>
                   <div style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
