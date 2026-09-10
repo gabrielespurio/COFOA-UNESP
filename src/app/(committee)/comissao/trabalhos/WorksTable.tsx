@@ -140,7 +140,7 @@ function WorkEvaluationModal({ work, onClose }: { work: any, onClose: () => void
                   </div>
 
                   {/* Área e Modalidade */}
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem' }}>
                     <div>
                       <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: '#64748b', marginBottom: '0.25rem' }}>Área Temática</label>
                       <div style={{ padding: '0.625rem 0.75rem', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '6px', fontSize: '0.875rem', color: '#0f172a' }}>
@@ -151,6 +151,12 @@ function WorkEvaluationModal({ work, onClose }: { work: any, onClose: () => void
                       <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: '#64748b', marginBottom: '0.25rem' }}>Modalidade</label>
                       <div style={{ padding: '0.625rem 0.75rem', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '6px', fontSize: '0.875rem', color: '#0f172a' }}>
                         {work.modality}
+                      </div>
+                    </div>
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: '#64748b', marginBottom: '0.25rem' }}>Aplica Trabalho de Ética?</label>
+                      <div style={{ padding: '0.625rem 0.75rem', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '6px', fontSize: '0.875rem', color: '#0f172a' }}>
+                        {work.requiresEthics ? 'Sim' : 'Não'}
                       </div>
                     </div>
                   </div>
