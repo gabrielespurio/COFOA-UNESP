@@ -44,6 +44,12 @@ export function EvaluationForm({ workId, currentStatus, currentComments, onSucce
         <label style={{ fontSize: 'var(--font-size-sm)', fontWeight: 600, color: 'var(--color-text-secondary)' }}>
           Decisão
         </label>
+
+        {currentStatus === 'ACCEPTED' && (
+          <div style={{ padding: '0.5rem 0.75rem', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '6px', fontSize: '0.75rem', color: '#64748b', marginBottom: '0.5rem' }}>
+            🔒 Este trabalho já foi <strong>aprovado</strong>. Não é possível alterar a decisão para reprovação ou ressalva.
+          </div>
+        )}
         
         <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
           <input 
@@ -55,20 +61,22 @@ export function EvaluationForm({ workId, currentStatus, currentComments, onSucce
           <span style={{ color: 'var(--color-success)', fontWeight: 500 }}>Aprovar</span>
         </label>
         
-        <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+        <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: currentStatus === 'ACCEPTED' ? 'not-allowed' : 'pointer', opacity: currentStatus === 'ACCEPTED' ? 0.5 : 1 }}>
           <input 
             type="radio" 
             name="decisionRadio" 
+            disabled={currentStatus === 'ACCEPTED'}
             checked={decision === 'REVISION'} 
             onChange={() => setDecision('REVISION')}
           />
           <span style={{ color: 'var(--color-warning)', fontWeight: 500 }}>Aprovar com Ressalva</span>
         </label>
         
-        <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+        <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: currentStatus === 'ACCEPTED' ? 'not-allowed' : 'pointer', opacity: currentStatus === 'ACCEPTED' ? 0.5 : 1 }}>
           <input 
             type="radio" 
             name="decisionRadio" 
+            disabled={currentStatus === 'ACCEPTED'}
             checked={decision === 'REJECT'} 
             onChange={() => setDecision('REJECT')}
           />

@@ -19,6 +19,15 @@ export async function evaluateWork(formData: FormData) {
     return { error: 'Dados incompletos.' };
   }
 
+  const work = await prisma.scientificWork.findUnique({ where: { id: workId } });
+  if (!work) {
+    return { error: 'Trabalho não encontrado.' };
+  }
+
+  if (work.status === 'ACCEPTED' && (decision === 'REJECT' || decision === 'REVISION')) {
+    return { error: 'Um trabalho já aprovado não pode ser reprovado ou alterado para ressalva.' };
+  }
+
   let finalStatus: WorkStatus = 'UNDER_REVIEW';
 
   if (decision === 'APPROVE') {
