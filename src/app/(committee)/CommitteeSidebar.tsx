@@ -16,6 +16,7 @@ const MENU_ITEMS = [
 export function CommitteeSidebar({ children }: { children?: React.ReactNode }) {
   const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [desktopCollapsed, setDesktopCollapsed] = useState(false);
 
   return (
     <>
@@ -28,7 +29,7 @@ export function CommitteeSidebar({ children }: { children?: React.ReactNode }) {
       )}
 
       {/* Sidebar */}
-      <aside className={cn(styles.sidebar, !sidebarOpen && styles.sidebarClosed)}>
+      <aside className={cn(styles.sidebar, !sidebarOpen && styles.sidebarClosed, desktopCollapsed && styles.sidebarDesktopClosed)}>
         <div className={styles.sidebarHeader}>
           <Logo variant="full" height={40} />
           <div style={{ marginTop: '0.5rem', fontSize: '0.75rem', color: 'var(--color-primary-light)', fontWeight: 600, letterSpacing: '0.05em' }}>
@@ -66,7 +67,16 @@ export function CommitteeSidebar({ children }: { children?: React.ReactNode }) {
 
       <main className={styles.main}>
         <header className={styles.topbar}>
-          <button className={styles.menuButton} onClick={() => setSidebarOpen(!sidebarOpen)}>
+          <button 
+            className={styles.menuButton} 
+            onClick={() => {
+              if (typeof window !== 'undefined' && window.innerWidth <= 768) {
+                setSidebarOpen(!sidebarOpen);
+              } else {
+                setDesktopCollapsed(!desktopCollapsed);
+              }
+            }}
+          >
             ☰
           </button>
         </header>

@@ -7,7 +7,7 @@
   text-transform: uppercase;
   letter-spacing: 0.05em;
   border-radius: var(--radius-full);
-  white-space: nowrap;
+  line-height: 1.2;
 }
 
 .sm {

@@ -35,7 +35,6 @@ export default async function TrabalhosComissaoPage() {
     <div className={styles.container}>
       <SectionHeading 
         title="Trabalhos Submetidos" 
-        subtitle="Lista completa de trabalhos submetidos para avaliação."
         alignment="left"
       />
       

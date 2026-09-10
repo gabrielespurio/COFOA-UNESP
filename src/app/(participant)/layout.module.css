@@ -5,13 +5,17 @@
 }
 
 .sidebar {
-  width: 280px;
+  width: 240px;
   background: var(--color-primary-dark);
   color: var(--color-surface);
   display: flex;
   flex-direction: column;
-  transition: transform 0.3s ease;
+  transition: margin-left 0.3s ease, transform 0.3s ease;
   z-index: 40;
+}
+
+.sidebarDesktopClosed {
+  margin-left: -240px;
 }
 
 .backdrop {
@@ -75,12 +79,13 @@
 }
 
 .menuButton {
-  display: none;
+  display: block;
   background: none;
   border: none;
   font-size: 1.5rem;
   cursor: pointer;
   color: var(--color-text-primary);
+  margin-right: 1rem;
 }
 
 .userMenu {
