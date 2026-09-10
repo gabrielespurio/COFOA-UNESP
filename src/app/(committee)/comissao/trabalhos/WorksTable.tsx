@@ -310,11 +310,11 @@ export function WorksTable({ works }: { works: any[] }) {
         <table className={styles.table}>
           <thead>
             <tr>
-              <th>Código</th>
-              <th>Título</th>
-              <th>Área Temática</th>
-              <th>Último Avaliador</th>
-              <th>Status</th>
+              <th style={{ width: '12%' }}>Código</th>
+              <th style={{ width: '30%' }}>Título</th>
+              <th style={{ width: '25%' }}>Área Temática</th>
+              <th style={{ width: '15%' }}>Último Avaliador</th>
+              <th style={{ width: '18%' }}>Status</th>
             </tr>
           </thead>
           <tbody>
