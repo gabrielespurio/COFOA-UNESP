@@ -315,13 +315,12 @@ export function WorksTable({ works }: { works: any[] }) {
               <th>Área Temática</th>
               <th>Último Avaliador</th>
               <th>Status</th>
-              <th>Ações</th>
             </tr>
           </thead>
           <tbody>
             {paginatedWorks.length === 0 && (
               <tr>
-                <td colSpan={6} style={{ textAlign: 'center', color: 'var(--color-text-secondary)', padding: '2rem' }}>
+                <td colSpan={5} style={{ textAlign: 'center', color: 'var(--color-text-secondary)', padding: '2rem' }}>
                   Nenhum trabalho encontrado.
                 </td>
               </tr>
@@ -347,15 +346,6 @@ export function WorksTable({ works }: { works: any[] }) {
                 <td>{work.categoryArea}</td>
                 <td>{evaluatorName}</td>
                 <td>{getStatusBadge(work.status)}</td>
-                <td>
-                  <button 
-                    onClick={() => setSelectedWork(work)} 
-                    className={styles.actionBtn}
-                    style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--color-primary)', fontWeight: 600, padding: 0 }}
-                  >
-                    Avaliar
-                  </button>
-                </td>
               </tr>
             )})}
           </tbody>
