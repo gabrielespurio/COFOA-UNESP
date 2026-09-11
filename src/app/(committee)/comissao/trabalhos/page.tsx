@@ -2,6 +2,7 @@ import { Metadata } from 'next';
 import { SectionHeading } from '@/components/ui/SectionHeading/SectionHeading';
 import { WorksTable } from './WorksTable';
 import { prisma } from '@/lib/prisma';
+import { getSession } from '@/lib/auth';
 import styles from '../page.module.css';
 
 export const metadata: Metadata = {
@@ -9,6 +10,8 @@ export const metadata: Metadata = {
 };
 
 export default async function TrabalhosComissaoPage() {
+  const session = await getSession();
+  
   const works = await prisma.scientificWork.findMany({
     where: { status: { not: 'DRAFT' } },
     orderBy: { submittedAt: 'asc' },
@@ -38,7 +41,7 @@ export default async function TrabalhosComissaoPage() {
         alignment="left"
       />
       
-      <WorksTable works={works} />
+      <WorksTable works={works} currentUserId={session?.userId || ''} />
     </div>
   );
 }

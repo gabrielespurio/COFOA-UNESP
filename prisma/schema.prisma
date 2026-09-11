@@ -255,6 +255,8 @@ model ScientificWork {
   status          WorkStatus @default(DRAFT)
   reviewerComments String?   @db.Text
   submittedAt     DateTime?
+  lockedById      String?
+  lockedAt        DateTime?
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
   

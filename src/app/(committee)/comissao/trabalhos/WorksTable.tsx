@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { Badge } from '@/components/ui/Badge/Badge';
 import { EvaluationForm } from './EvaluationForm';
 import { useRouter } from 'next/navigation';
+import { lockWork, unlockWork } from '@/actions/committee';
 import styles from '../page.module.css';
 
 function getStatusBadge(status: string) {
@@ -284,8 +285,9 @@ function WorkEvaluationModal({ work, onClose }: { work: any, onClose: () => void
   );
 }
 
-export function WorksTable({ works }: { works: any[] }) {
+export function WorksTable({ works, currentUserId }: { works: any[], currentUserId: string }) {
   const [selectedWork, setSelectedWork] = useState<any | null>(null);
+  const [isLocking, setIsLocking] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
@@ -307,6 +309,38 @@ export function WorksTable({ works }: { works: any[] }) {
   useEffect(() => {
     setCurrentPage(1);
   }, [searchTerm]);
+
+  const handleRowClick = async (work: any) => {
+    if (isLocking) return;
+    
+    const isLockedByOther = work.lockedById && work.lockedById !== currentUserId && work.lockedAt && new Date(work.lockedAt).getTime() > Date.now() - 60 * 60 * 1000;
+    if (isLockedByOther) {
+      alert('Este trabalho já está sendo avaliado por outro membro da comissão neste exato momento.');
+      return;
+    }
+    
+    setIsLocking(true);
+    try {
+      const res = await lockWork(work.id);
+      if (res.error) {
+        alert(res.error);
+      } else {
+        setSelectedWork(work);
+      }
+    } catch (err) {
+      alert('Ocorreu um erro ao tentar acessar o trabalho.');
+    } finally {
+      setIsLocking(false);
+    }
+  };
+
+  const handleCloseModal = async () => {
+    if (selectedWork) {
+      // Fire and forget unlock
+      unlockWork(selectedWork.id).catch(console.error);
+    }
+    setSelectedWork(null);
+  };
 
   return (
     <>
@@ -353,14 +387,19 @@ export function WorksTable({ works }: { works: any[] }) {
             {paginatedWorks.map(work => {
               const lastEval = work.evaluations?.[0];
               const evaluatorName = lastEval ? (lastEval.evaluator.participant?.fullName || lastEval.evaluator.email) : 'Nenhum';
+              const isLockedByOther = work.lockedById && work.lockedById !== currentUserId && work.lockedAt && new Date(work.lockedAt).getTime() > Date.now() - 60 * 60 * 1000;
               
               return (
               <tr 
                 key={work.id} 
-                onClick={() => setSelectedWork(work)}
-                style={{ cursor: 'pointer' }}
-                title="Clique na linha para avaliar"
-                className={styles.tableRowHover}
+                onClick={() => handleRowClick(work)}
+                style={{ 
+                  cursor: isLockedByOther ? 'not-allowed' : (isLocking ? 'wait' : 'pointer'), 
+                  opacity: isLockedByOther ? 0.6 : 1, 
+                  background: isLockedByOther ? '#f8fafc' : 'inherit' 
+                }}
+                title={isLockedByOther ? "Sendo avaliado por outro membro" : "Clique na linha para avaliar"}
+                className={isLockedByOther ? '' : styles.tableRowHover}
               >
                 <td><strong style={{ color: 'var(--color-primary)' }}>{work.displayCode}</strong></td>
                 <td style={{ fontWeight: 500, maxWidth: '250px' }}>
@@ -370,7 +409,16 @@ export function WorksTable({ works }: { works: any[] }) {
                 </td>
                 <td>{work.categoryArea}</td>
                 <td>{evaluatorName}</td>
-                <td>{getStatusBadge(work.status)}</td>
+                <td>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', alignItems: 'flex-start' }}>
+                    {getStatusBadge(work.status)}
+                    {isLockedByOther && (
+                      <span style={{ fontSize: '0.7rem', color: '#64748b', display: 'flex', alignItems: 'center', gap: '0.25rem', fontWeight: 500 }}>
+                        🔒 Em avaliação
+                      </span>
+                    )}
+                  </div>
+                </td>
               </tr>
             )})}
           </tbody>
@@ -420,7 +468,7 @@ export function WorksTable({ works }: { works: any[] }) {
       {selectedWork && (
         <WorkEvaluationModal 
           work={selectedWork} 
-          onClose={() => setSelectedWork(null)} 
+          onClose={handleCloseModal} 
         />
       )}
     </>
