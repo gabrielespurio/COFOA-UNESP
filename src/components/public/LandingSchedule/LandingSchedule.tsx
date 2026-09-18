@@ -11,10 +11,10 @@ const SCHEDULE_DATA = [
     label: 'Quarta-feira',
     events: [
       {
-        time: 'Em breve',
+        time: '8:00h-9:50h',
         title: 'Bases do Fluxo Digital Aplicado à Periodontia e Implantodontia',
-        speaker: 'Em breve',
-        description: 'Conteúdo em breve...',
+        speaker: 'Vitor de Toledo Stuani',
+        description: '* Professor de Implantodontia no Departamento de Cirurgia e Traumatologia Buco-Maxilo-Facial e Periodontia da FORP-USP\n* Especialista em Periodontia\n* Especialista em Odontologia Hospitalar\n* Mestrado em Reabilitação Oral e Doutorado em Periodontia- FOB-USP\n* Pós-doutorado- FOB-USP\n* Osteology Scholar - Harvard School of Dental Medicine\n* Membro do Comitê Diretivo do National Osteology Group Brazil\n* Cursos de atualização em planejamento CAD/CAM, cirurgia guiada, impressão 3D e bioimpressão',
         type: 'PALESTRA',
         image: '/images/Palestras%20COFOA/Bases%20do%20Fluxo%20Digital%20Aplicado%20%C3%A0%20Periodontia%20e%20Implantodontia.jpg'
       },
@@ -27,10 +27,10 @@ const SCHEDULE_DATA = [
         image: '/images/Palestras%20COFOA/Cirurgia%20Ortogn%C3%A1tica%20na%20era%20digital%20-%20Do%20Planejamento%20virtual%20%C3%A0%20sala%20cir%C3%BArgica.jpg'
       },
       {
-        time: 'Em breve',
+        time: '8:00h-9:50h',
         title: 'Ecossistema de Inovação da Unesp - Transformando o Futuro',
-        speaker: 'Em breve',
-        description: 'Conteúdo em breve...',
+        speaker: 'Marcelo Ornaghi Orlandi',
+        description: 'Professor titular no Instituto de Química de Araraquara(UNESP).\nGraduação em Física pela Universidade Federal de São Carlos (UFSCar)\nMestre e Doutor em Ciência e Engenharia dos Materiais pela UFSCar\nPesquisador visitante na University of Tuebingen, na École Polytechnique Montréal (PolyMtl)\nPesquisador visitante no Massachusetts Institute of Technology (MIT)\nCoordenador dos laboratórios de Microscopia Eletrônica do Instituto de Química de Araraquara.\n\nRealiza pesquisas em Ciência e Engenharia de Materiais, com ênfase em materiais cerâmicos semicondutores. As aplicações dos materiais em estudo são: sensores de gás, varistores e fotocatálise. Possui+100 artigos científicos publicados em revistas internacionais, 7 capítulos de livros e é editor da mais completa obra sobre o óxido de estanho. Os artigos e livros tiveram mais de 5500 citações na plataforma Google Scholar. Atua na inovação tecnológica, onde foi empreendedor de 2018 a 2025, e como assessor de startups, e possui experiência na produção de patentes. É vice-diretor da Agência UNESP de Inovação, atuando também no empreendedorismo inovador na universidade.',
         type: 'PALESTRA',
         image: '/images/Palestras%20COFOA/Ecossistema%20de%20Inova%C3%A7%C3%A3o%20da%20Unesp%20-%20Transformando%20o%20Futuro.jpg'
       },
@@ -59,18 +59,18 @@ const SCHEDULE_DATA = [
         image: '/images/Palestras%20COFOA/Fluxo%20Digital%20aplicado%20a%20est%C3%A9tica%20Dental.jpg'
       },
       {
-        time: 'Em breve',
+        time: '14:00h-15:50h',
         title: 'Harmonização Orofacial - Estetica e Função Transformando Vidas na Odontologia',
-        speaker: 'Em breve',
-        description: 'Conteúdo em breve...',
+        speaker: 'Karina Ferrão',
+        description: '- Graduada em Odontologia pela Faculdade de Odontologia de Lins (FOL)\n- 1994- Especialista em Periodontia- ABO MS - Especialista em Harmonização Orofacial - CFO\n- Mestre em Educação e Saúde- UNAERP\n- Presidente do Conselho Regional de Odontologia de São Paulo biênio 2026/2027\n- Professora responsável da Especialização em Harmonização Orofacial - FUNORTE Uberaba\n- Diretora da Sociedade Brasileira de Toxina Botulínica e Implantes Faciais na Odontologia (SBTI) - 2017 a 2022\n- Speaker Allergan Aesthetics\n- Membro do Programa Botox Masters Allergan Aesthetics',
         type: 'PALESTRA',
         image: '/images/Palestras%20COFOA/Harmoniza%C3%A7%C3%A3o%20Orofacial%20-%20Estetica%20e%20Fun%C3%A7%C3%A3o%20Transformando%20Vidas%20na%20Odontologia.jpg'
       },
       {
-        time: 'Em breve',
+        time: '10:10h-12:00h',
         title: 'Legislação da Odontologia da HOF - Simpósio',
-        speaker: 'Em breve',
-        description: 'Conteúdo em breve...',
+        speaker: 'Karina Ferrão',
+        description: '- Graduada em Odontologia pela Faculdade de Odontologia de Lins (FOL)\n- 1994- Especialista em Periodontia- ABO MS - Especialista em Harmonização Orofacial - CFO\n- Mestre em Educação e Saúde- UNAERP\n- Presidente do Conselho Regional de Odontologia de São Paulo biênio 2026/2027\n- Professora responsável da Especialização em Harmonização Orofacial - FUNORTE Uberaba\n- Diretora da Sociedade Brasileira de Toxina Botulínica e Implantes Faciais na Odontologia (SBTI) - 2017 a 2022\n- Speaker Allergan Aesthetics\n- Membro do Programa Botox Masters Allergan Aesthetics',
         type: 'PALESTRA',
         image: '/images/Palestras%20COFOA/Legisla%C3%A7%C3%A3o%20da%20Odontologia%20da%20HOF%20-%20Simp%C3%B3sio.jpg'
       },
@@ -99,10 +99,10 @@ const SCHEDULE_DATA = [
         image: '/images/Palestras%20COFOA/Odontologia%20Digital%20no%20dia-a-dia%20cl%C3%ADnico.jpg'
       },
       {
-        time: 'Em breve',
+        time: '10:10h-12:00h',
         title: 'Odontologia alem do consultorio a atuação do cirurgiao dentista no atendimento domiciliar',
-        speaker: 'Em breve',
-        description: 'Conteúdo em breve...',
+        speaker: 'Marcelo Abla',
+        description: '• Graduado em Odontologia pela Organização Santamarense de Educação e Cultura (1993).\n• Especialista em Implantodontia pela Universidade de Santo Amaro (UNISA) (2001) e em Biologia Celular e Morfologia pela Escola Paulista de Medicina (2003).\n• Mestre em Odontologia – Implantodontia pela Universidade Estadual Paulista (UNESP) (2004).\n• Doutor em Odontologia pela Universidade Estadual Paulista (UNESP) (2012).\n• Coordenador de Conteúdo da ABLA+.\n• Coordenador dos cursos da Prime Reabilitação e Estética.\n• Diretor Clínico da Clínica Abla.\n• Atua na área de Odontologia, com ênfase em Implantodontia, reabilitação oral, cirurgia e estética facial.\n• Fundador da Gent Odonto Care em 2020.',
         type: 'PALESTRA',
         image: '/images/Palestras%20COFOA/Odontologia%20alem%20do%20consultorio%20a%20atua%C3%A7%C3%A3o%20do%20cirurgiao%20dentista%20no%20atendimento%20domiciliar.jpg'
       },
@@ -149,9 +149,11 @@ const SCHEDULE_DATA = [
     ]
   }
 ];
+
 export function LandingSchedule() {
   const [activeTab, setActiveTab] = useState(SCHEDULE_DATA[0].id);
   const [activeCardIndex, setActiveCardIndex] = useState(0);
+  const [selectedEvent, setSelectedEvent] = useState<any>(null);
 
   const activeDay = SCHEDULE_DATA.find(d => d.id === activeTab);
   const events = activeDay?.events || [];
@@ -215,7 +217,12 @@ export function LandingSchedule() {
               else if (isNext) cardStateClass = styles.cardNext;
 
               return (
-                <div key={index} className={`${styles.eventCard} ${cardStateClass}`}>
+                <div 
+                  key={index} 
+                  className={`${styles.eventCard} ${cardStateClass}`} 
+                  onClick={() => setSelectedEvent(event)}
+                  style={{ cursor: 'pointer' }}
+                >
                   <div className={styles.cardImageWrapper}>
                     <img src={event.image} alt={event.title} className={styles.cardImage} />
                     <div className={styles.cardTypeBadge}>{event.type}</div>
@@ -225,8 +232,9 @@ export function LandingSchedule() {
                       <span className={styles.cardTime}>{event.time}</span>
                     </div>
                     <h4 className={styles.cardTitle}>{event.title}</h4>
-                    <p className={styles.cardSpeaker}>{event.speaker}</p>
-                    <p className={styles.cardDescription}>{event.description}</p>
+                    <p className={styles.cardSpeaker} style={{ fontSize: '0.85rem', color: '#aaa', marginTop: 'auto' }}>
+                      Clique para ver mais detalhes
+                    </p>
                   </div>
                 </div>
               );
@@ -262,6 +270,27 @@ export function LandingSchedule() {
           ))}
         </div>
       </div>
+
+      {selectedEvent && (
+        <div className={styles.modalOverlay} onClick={() => setSelectedEvent(null)}>
+          <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
+            <button className={styles.modalClose} onClick={() => setSelectedEvent(null)}>✕</button>
+            <img src={selectedEvent.image} alt={selectedEvent.title} className={styles.modalImage} />
+            <div className={styles.modalBody}>
+              <div className={styles.modalTime}>{selectedEvent.time}</div>
+              <h3 className={styles.modalTitle}>{selectedEvent.title}</h3>
+              {selectedEvent.speaker && selectedEvent.speaker !== 'Em breve' && (
+                <h4 className={styles.modalSpeaker}>{selectedEvent.speaker}</h4>
+              )}
+              <div className={styles.modalDescription}>
+                {selectedEvent.description.split('\n').map((line: string, i: number) => (
+                  <p key={i}>{line}</p>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
