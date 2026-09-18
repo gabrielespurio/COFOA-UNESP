@@ -10,30 +10,38 @@ const SCHEDULE_DATA = [
     month: 'NOV',
     label: 'Quarta-feira',
     events: [
-      { 
-        time: 'Em breve', 
-        title: 'Programação a Definir', 
-        speaker: 'Palestrante em breve',
-        description: 'A grade científica deste dia está sendo cuidadosamente preparada pela nossa comissão organizadora.',
-        type: 'AGUARDE',
-        image: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&q=80&w=600'
+      {
+        time: 'Em breve',
+        title: 'Bases do Fluxo Digital Aplicado à Periodontia e Implantodontia',
+        speaker: 'Em breve',
+        description: 'Conteúdo em breve...',
+        type: 'PALESTRA',
+        image: '/images/Palestras%20COFOA/Bases%20do%20Fluxo%20Digital%20Aplicado%20%C3%A0%20Periodontia%20e%20Implantodontia.jpg'
       },
-      { 
-        time: 'Em breve', 
-        title: 'Atividades Práticas', 
-        speaker: 'Convidados Especiais',
-        description: 'Em breve divulgaremos as atividades hands-on e workshops disponíveis para este dia de congresso.',
-        type: 'EM BREVE',
-        image: 'https://images.unsplash.com/photo-1606811841689-23dfddce3e95?auto=format&fit=crop&q=80&w=600'
+      {
+        time: 'Em breve',
+        title: 'Cirurgia Ortognática na era digital - Do Planejamento virtual à sala cirúrgica',
+        speaker: 'Em breve',
+        description: 'Conteúdo em breve...',
+        type: 'PALESTRA',
+        image: '/images/Palestras%20COFOA/Cirurgia%20Ortogn%C3%A1tica%20na%20era%20digital%20-%20Do%20Planejamento%20virtual%20%C3%A0%20sala%20cir%C3%BArgica.jpg'
       },
-      { 
-        time: 'Em breve', 
-        title: 'Sessão Científica', 
-        speaker: 'Comitê Científico',
-        description: 'Espaço reservado para a apresentação de pesquisas e painéis de grande impacto na odontologia.',
-        type: 'AGUARDE',
-        image: 'https://images.unsplash.com/photo-1543269865-cbf427effbad?auto=format&fit=crop&q=80&w=600'
+      {
+        time: 'Em breve',
+        title: 'Ecossistema de Inovação da Unesp - Transformando o Futuro',
+        speaker: 'Em breve',
+        description: 'Conteúdo em breve...',
+        type: 'PALESTRA',
+        image: '/images/Palestras%20COFOA/Ecossistema%20de%20Inova%C3%A7%C3%A3o%20da%20Unesp%20-%20Transformando%20o%20Futuro.jpg'
       },
+      {
+        time: 'Em breve',
+        title: 'Estratégias de tratamento conservador das lesões dos maxilares',
+        speaker: 'Em breve',
+        description: 'Conteúdo em breve...',
+        type: 'PALESTRA',
+        image: '/images/Palestras%20COFOA/Estrat%C3%A9gias%20de%20tratamento%20conservador%20das%20les%C3%B5es%20dos%20maxilares.jpg'
+      }
     ]
   },
   {
@@ -42,30 +50,38 @@ const SCHEDULE_DATA = [
     month: 'NOV',
     label: 'Quinta-feira',
     events: [
-      { 
-        time: 'Em breve', 
-        title: 'Fóruns e Palestras', 
-        speaker: 'Palestrantes Confirmados',
-        description: 'A programação completa com horários e temas será disponibilizada em nossos canais oficiais muito em breve.',
-        type: 'AGUARDE',
-        image: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?auto=format&fit=crop&q=80&w=600'
+      {
+        time: 'Em breve',
+        title: 'Fluxo Digital aplicado a estética Dental',
+        speaker: 'Em breve',
+        description: 'Conteúdo em breve...',
+        type: 'PALESTRA',
+        image: '/images/Palestras%20COFOA/Fluxo%20Digital%20aplicado%20a%20est%C3%A9tica%20Dental.jpg'
       },
-      { 
-        time: 'Em breve', 
-        title: 'Simpósios Temáticos', 
-        speaker: 'Convidados Especiais',
-        description: 'Grandes nomes da odontologia reunidos para discutir as últimas tendências e inovações do mercado.',
-        type: 'EM BREVE',
-        image: 'https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?auto=format&fit=crop&q=80&w=600'
+      {
+        time: 'Em breve',
+        title: 'Harmonização Orofacial - Estetica e Função Transformando Vidas na Odontologia',
+        speaker: 'Em breve',
+        description: 'Conteúdo em breve...',
+        type: 'PALESTRA',
+        image: '/images/Palestras%20COFOA/Harmoniza%C3%A7%C3%A3o%20Orofacial%20-%20Estetica%20e%20Fun%C3%A7%C3%A3o%20Transformando%20Vidas%20na%20Odontologia.jpg'
       },
-      { 
-        time: 'Em breve', 
-        title: 'Programação Noturna', 
-        speaker: 'A Definir',
-        description: 'Atividades exclusivas sendo preparadas para fechar o segundo dia de congresso com chave de ouro.',
-        type: 'AGUARDE',
-        image: 'https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&q=80&w=600'
+      {
+        time: 'Em breve',
+        title: 'Legislação da Odontologia da HOF - Simpósio',
+        speaker: 'Em breve',
+        description: 'Conteúdo em breve...',
+        type: 'PALESTRA',
+        image: '/images/Palestras%20COFOA/Legisla%C3%A7%C3%A3o%20da%20Odontologia%20da%20HOF%20-%20Simp%C3%B3sio.jpg'
       },
+      {
+        time: 'Em breve',
+        title: 'Odonto Além do Consultório - Como se Preparar para Concursos Públicos',
+        speaker: 'Em breve',
+        description: 'Conteúdo em breve...',
+        type: 'PALESTRA',
+        image: '/images/Palestras%20COFOA/Odonto%20Al%C3%A9m%20do%20Consult%C3%B3rio%20-%20Como%20se%20Preparar%20para%20Concursos%20P%C3%BAblicos.jpg'
+      }
     ]
   },
   {
@@ -74,22 +90,30 @@ const SCHEDULE_DATA = [
     month: 'NOV',
     label: 'Sexta-feira',
     events: [
-      { 
-        time: 'Em breve', 
-        title: 'Apresentações Orais', 
-        speaker: 'Comissão Avaliadora',
-        description: 'Fique atento ao cronograma de submissão e horários das apresentações de trabalhos científicos.',
-        type: 'EM BREVE',
-        image: 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&q=80&w=600'
+      {
+        time: 'Em breve',
+        title: 'Odontologia Digital no dia-a-dia clínico',
+        speaker: 'Em breve',
+        description: 'Conteúdo em breve...',
+        type: 'PALESTRA',
+        image: '/images/Palestras%20COFOA/Odontologia%20Digital%20no%20dia-a-dia%20cl%C3%ADnico.jpg'
       },
-      { 
-        time: 'Em breve', 
-        title: 'Módulos de Especialidades', 
-        speaker: 'Especialistas Nacionais',
-        description: 'Uma grade focada no aprofundamento técnico das principais áreas da odontologia moderna.',
-        type: 'AGUARDE',
-        image: 'https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&q=80&w=600'
+      {
+        time: 'Em breve',
+        title: 'Odontologia alem do consultorio a atuação do cirurgiao dentista no atendimento domiciliar',
+        speaker: 'Em breve',
+        description: 'Conteúdo em breve...',
+        type: 'PALESTRA',
+        image: '/images/Palestras%20COFOA/Odontologia%20alem%20do%20consultorio%20a%20atua%C3%A7%C3%A3o%20do%20cirurgiao%20dentista%20no%20atendimento%20domiciliar.jpg'
       },
+      {
+        time: 'Em breve',
+        title: 'Odontologia do Sono - uma nova área de atuação do cirurgião dentista',
+        speaker: 'Em breve',
+        description: 'Conteúdo em breve...',
+        type: 'PALESTRA',
+        image: '/images/Palestras%20COFOA/Odontologia%20do%20Sono%20-%20uma%20nova%20%C3%A1rea%20de%20atua%C3%A7%C3%A3o%20do%20cirurgi%C3%A3o%20dentista.jpg'
+      }
     ]
   },
   {
@@ -98,21 +122,29 @@ const SCHEDULE_DATA = [
     month: 'NOV',
     label: 'Sábado',
     events: [
-      { 
-        time: 'Em breve', 
-        title: 'Encerramento Científico', 
-        speaker: 'A Definir',
-        description: 'As últimas atividades da nossa extensa grade de conteúdos elaborada para o COFOA XV.',
-        type: 'EM BREVE',
-        image: 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&q=80&w=600'
+      {
+        time: 'Em breve',
+        title: 'Odontologia na Carreira Militar - Experiências Desafios e Oportunidades',
+        speaker: 'Em breve',
+        description: 'Conteúdo em breve...',
+        type: 'PALESTRA',
+        image: '/images/Palestras%20COFOA/Odontologia%20na%20Carreira%20Militar%20-%20Experi%C3%AAncias%20Desafios%20e%20Oportunidades.jpg'
       },
-      { 
-        time: 'Em breve', 
-        title: 'Solenidade e Premiações', 
-        speaker: 'Diretoria FOA',
-        description: 'Em breve confirmaremos o horário oficial do nosso evento de encerramento e premiação de trabalhos.',
-        type: 'AGUARDE',
-        image: 'https://images.unsplash.com/photo-1561489396-888724a1543d?auto=format&fit=crop&q=80&w=600'
+      {
+        time: 'Em breve',
+        title: 'Ozônio como Estratégia Terapêutica na Odontologia Contemporânea',
+        speaker: 'Em breve',
+        description: 'Conteúdo em breve...',
+        type: 'PALESTRA',
+        image: '/images/Palestras%20COFOA/Oz%C3%B4nio%20como%20Estrat%C3%A9gia%20Terap%C3%AAutica%20na%20Odontologia%20Contempor%C3%A2nea.jpg'
+      },
+      {
+        time: 'Em breve',
+        title: 'Sedacao Técnicas - Indicações e Aplicações Clínicas',
+        speaker: 'Em breve',
+        description: 'Conteúdo em breve...',
+        type: 'PALESTRA',
+        image: '/images/Palestras%20COFOA/Sedacao%20T%C3%A9cnicas%20-%20Indica%C3%A7%C3%B5es%20e%20Aplica%C3%A7%C3%B5es%20Cl%C3%ADnicas.jpg'
       }
     ]
   }
