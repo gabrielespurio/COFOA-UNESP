@@ -19,10 +19,10 @@ const SCHEDULE_DATA = [
         image: '/images/Palestras%20COFOA/Bases%20do%20Fluxo%20Digital%20Aplicado%20%C3%A0%20Periodontia%20e%20Implantodontia.jpg'
       },
       {
-        time: 'Em breve',
+        time: '8:00h-9:50h',
         title: 'Cirurgia Ortognática na era digital - Do Planejamento virtual à sala cirúrgica',
-        speaker: 'Em breve',
-        description: 'Conteúdo em breve...',
+        speaker: 'Flávio Ferraz',
+        description: '• - Cirurgião Bucomaxilofacial do Hospital das Clínicas da Faculdade de Medicina da Universidade de São Paulo – USP\n• - Cirurgião Bucomaxilofacial do Hospital Universitário da USP - Residência em Cirurgia e Traumatologia Bucomaxilofacial pelo Hospital das Clínicas da Faculdade de Medicina da Universidade de São Paulo – USP\n• - Fellowship em Planejamento Cirúrgico Virtual no Houston Methodist Hospital - Texas – USA\n• - Mestrado em Ortodontia pela Universidade São Leopoldo Mandic – Campinas\n• - Membro Titular do Colégio Brasileiro de Cirurgia e Traumatologia Bucomaxilofacial\n• - Graduação em Odontologia pela Faculdade de Odontologia de Araçatuba - FOA - UNESP',
         type: 'PALESTRA',
         image: '/images/Palestras%20COFOA/Cirurgia%20Ortogn%C3%A1tica%20na%20era%20digital%20-%20Do%20Planejamento%20virtual%20%C3%A0%20sala%20cir%C3%BArgica.jpg'
       },
@@ -35,10 +35,10 @@ const SCHEDULE_DATA = [
         image: '/images/Palestras%20COFOA/Ecossistema%20de%20Inova%C3%A7%C3%A3o%20da%20Unesp%20-%20Transformando%20o%20Futuro.jpg'
       },
       {
-        time: 'Em breve',
+        time: '10:10h-12:00h',
         title: 'Estratégias de tratamento conservador das lesões dos maxilares',
-        speaker: 'Em breve',
-        description: 'Conteúdo em breve...',
+        speaker: 'André Caroli Rocha',
+        description: 'Especialista em Cirurgia e Traumatologia Bucomaxilofacial\nMestre em Patologia BucalDoutor em Diagnóstico Bucal\nAssistente do serviço de CTBMF do Hospital das Clinicas – FMUSP\nAssistente do departamento de Estomatologia do hospital AC Camargo',
         type: 'PALESTRA',
         image: '/images/Palestras%20COFOA/Estrat%C3%A9gias%20de%20tratamento%20conservador%20das%20les%C3%B5es%20dos%20maxilares.jpg'
       }
@@ -107,10 +107,10 @@ const SCHEDULE_DATA = [
         image: '/images/Palestras%20COFOA/Odontologia%20alem%20do%20consultorio%20a%20atua%C3%A7%C3%A3o%20do%20cirurgiao%20dentista%20no%20atendimento%20domiciliar.jpg'
       },
       {
-        time: 'Em breve',
+        time: '14:00h-15:50h',
         title: 'Odontologia do Sono - uma nova área de atuação do cirurgião dentista',
-        speaker: 'Em breve',
-        description: 'Conteúdo em breve...',
+        speaker: 'Walter da Silva Jr.',
+        description: '• Formado pela Faculdade de Odontologia de Araçatuba (UNESP) – 1986\n• Doutor em Ciências da Reabilitação (área de concentração: distúrbios do sono) pelo HRAC/USP – Bauru – 2013\n• Diplomado em Odontologia do Sono pela American Board of Dental Sleep Medicine (ABDSM) – 2019\n• Membro do corpo editorial do Journal of Dental Sleep Medicine (JDSM) – 2020\n• Membro da força-tarefa da American Academy of Dental Sleep Medicine (AADSM) para a Educação em Odontologia do Sono – 2020\n• Certificado pelo Sistema NOA – Aparelho Intraoral (Orthoapnea) – Madri/ES – 2022\n• Clínica privada desde 1986 • Ministra cursos de capacitação em Odontologia do Sono',
         type: 'PALESTRA',
         image: '/images/Palestras%20COFOA/Odontologia%20do%20Sono%20-%20uma%20nova%20%C3%A1rea%20de%20atua%C3%A7%C3%A3o%20do%20cirurgi%C3%A3o%20dentista.jpg'
       }
@@ -131,18 +131,18 @@ const SCHEDULE_DATA = [
         image: '/images/Palestras%20COFOA/Odontologia%20na%20Carreira%20Militar%20-%20Experi%C3%AAncias%20Desafios%20e%20Oportunidades.jpg'
       },
       {
-        time: 'Em breve',
+        time: '16:10h-18:00h',
         title: 'Ozônio como Estratégia Terapêutica na Odontologia Contemporânea',
-        speaker: 'Em breve',
-        description: 'Conteúdo em breve...',
+        speaker: 'Sérgio Bruzadelli e Maria Teresa Maiolini Bruzadelli',
+        description: 'Sérgio Bruzadelli Macedo\nEspecialista em CTBMF\nMestre e Doutor em CTBMF pela FOA- UNESP\nIntrodutor da Ozonioterapia em Odontologia no Brasil em 1996\nProfessor de CTBMF da Odontologia da UnB\n\nMaria Teresa Maiolini\nGraduada em Odontologia pela Universidade Federal de Alfenas MG\nEspecialista em Periodontia pelo Associação Brasileira de Odontologia do Espírito Santo – ABO\nEspecialista em Prótese pela Associação Brasileira de Odontologia do Espírito Santo.\nPós graduação em Implantodontia pela Faculdade Funorte ES 2005.\n\nHabilitação em Ozonioterapia na Odontologia pela UNYLEYA EDITORA E CURSOS S/A (2020) - Coordenado por Dr Sérgio Bruzadelli Macedo.\n\nAtuou como Professora Assistente da Especialização em Implantodontia, curso-Funorte ES 1998 – 2005.\n\nPalestrante na área de Periodontia e Implantodontia em Congressos de Odontologia, Universidades e Cursos em ABO.\n\nProfessora no curso de Habilitação em Ozonioterapia na Odontologia na área de Periodontia e Implantodontia – Dr. Sérgio Bruzadelli Macedo;\n\nParticipa do Projeto de Extensão de Ozonioterapia na Clínica de Necroses dos Maxilares, coordenado pelo Prof Dr Sérgio Bruzadelli, no Hospital Universitário de Brasília (HUB), desde setembro de 2019 até o presente momento',
         type: 'PALESTRA',
         image: '/images/Palestras%20COFOA/Oz%C3%B4nio%20como%20Estrat%C3%A9gia%20Terap%C3%AAutica%20na%20Odontologia%20Contempor%C3%A2nea.jpg'
       },
       {
-        time: 'Em breve',
+        time: '16:10h-18:00h',
         title: 'Sedacao Técnicas - Indicações e Aplicações Clínicas',
-        speaker: 'Em breve',
-        description: 'Conteúdo em breve...',
+        speaker: 'Serviço de Anestesiologia de Araçatuba (SAA)',
+        description: '• Serviço de Anestesiologia de Araçatuba (SAA)\n• Equipe de médicos anestesiologistas com atuação integrada em anestesiologia e assistência perioperatória.\n• Grupo com experiência na condução anestésica de procedimentos de diferentes níveis de complexidade, incluindo atuação em ambiente hospitalar e cirúrgico.\n• Atuação pautada em segurança do paciente, avaliação pré-anestésica, planejamento anestésico, controle da dor e manejo das condições clínicas perioperatórias.\n• A equipe participa ativamente da assistência e do aprimoramento das práticas relacionadas à anestesiologia, promovendo a integração entre anestesiologia, cirurgia e demais áreas da saúde.\n• Nesta oportunidade, a SAA será representada por sua equipe de especialistas, compartilhando conhecimentos e experiências práticas da anestesiologia aplicadas à rotina clínica e cirúrgica.',
         type: 'PALESTRA',
         image: '/images/Palestras%20COFOA/Sedacao%20T%C3%A9cnicas%20-%20Indica%C3%A7%C3%B5es%20e%20Aplica%C3%A7%C3%B5es%20Cl%C3%ADnicas.jpg'
       }
