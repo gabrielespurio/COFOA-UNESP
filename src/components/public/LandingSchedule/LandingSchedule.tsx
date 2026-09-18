@@ -51,10 +51,10 @@ const SCHEDULE_DATA = [
     label: 'Quinta-feira',
     events: [
       {
-        time: 'Em breve',
+        time: '10:10h-12:00h',
         title: 'Fluxo Digital aplicado a estética Dental',
-        speaker: 'Em breve',
-        description: 'Conteúdo em breve...',
+        speaker: 'Paulo Eduardo Ferraz Bottura Filho',
+        description: '- Cirurgião Dentista - Faculdade de Odontologia de Lins- UNIMEP- 2000\n- Especialista em Periodontia- F O A - UNESP Araçatuba- 2003\n- Mestre - Faculdade de Medicina de São José do Rio Preto - FAMERP – 2012\n- Especialista em Implantes - COE São José do Rio Preto – 2013\n- DSD Team Member- Miami - 2014.\n- Ex professor de Cirurgia, Periodontia e Anestesiologia da Unirp- São José do Rio Preto.\n- Co-autor dos livros “Cad Cam no laboratório e na Clínica” e “Arquitetura Facial"',
         type: 'PALESTRA',
         image: '/images/Palestras%20COFOA/Fluxo%20Digital%20aplicado%20a%20est%C3%A9tica%20Dental.jpg'
       },
@@ -75,10 +75,10 @@ const SCHEDULE_DATA = [
         image: '/images/Palestras%20COFOA/Legisla%C3%A7%C3%A3o%20da%20Odontologia%20da%20HOF%20-%20Simp%C3%B3sio.jpg'
       },
       {
-        time: 'Em breve',
+        time: '16:10h-17:10h',
         title: 'Odonto Além do Consultório - Como se Preparar para Concursos Públicos',
-        speaker: 'Em breve',
-        description: 'Conteúdo em breve...',
+        speaker: 'Karina Camillo Carrascoza',
+        description: '- Graduação em Odontologia: FOP / Unicamp (2001)\n- Especialização em Endodontia (APCD)\n- Especialização em Gestão Pública em Saúde (Unicamp)\n- Mestrado em Farmacologia, Anestesiologia e Terapêutica (Unicamp)\n- Doutorado em Saúde da Criança e do Adolescente (Unicamp)\n- Pesquisadora Universidade de Tübingen – Alemanha\n- Cofundadora da Plataforma OdontoQuiz\n- Convocada em 6 Concursos Públicos: Prefeitura Municipal Americana (2x), Prefeitura Municipal Campinas, Prefeitura Municipal Santa Bárbara S’Oeste, Prefeitura Municipal Cabreúva, Prefeitura Municipal Itupeva. - Vínculos de Trabalho: Prefeitura Municipal de Americana, Prefeitura Municipal de Sumaré, Prefeitura Municipal de Campinas, Prefeitura Municipal de Itupeva – Coordenadora de Saúde Bucal.',
         type: 'PALESTRA',
         image: '/images/Palestras%20COFOA/Odonto%20Al%C3%A9m%20do%20Consult%C3%B3rio%20-%20Como%20se%20Preparar%20para%20Concursos%20P%C3%BAblicos.jpg'
       }
@@ -91,10 +91,10 @@ const SCHEDULE_DATA = [
     label: 'Sexta-feira',
     events: [
       {
-        time: 'Em breve',
+        time: '8:00h-9:50h',
         title: 'Odontologia Digital no dia-a-dia clínico',
-        speaker: 'Em breve',
-        description: 'Conteúdo em breve...',
+        speaker: 'Fernando Lopes',
+        description: '• TÉCNICO EM PRÓTESE DENTÁRIA\n• Formado pelo Instituto Francano de Prótese Odontológica (IFPO) no ano de 1999\n• CIRURGIÃO DENTISTA\n• Formado pela Universidade de Franca – UNIFRAN no ano de 2007\n• IMPLANTODONTISTA\n• Especializado pela Universidade de Ribeirão Preto – UNAERP no ano de 2015, atuando na área desde o ano de 2009\n• Mestrando no curso de Mestrado em Implantodontia na Faculdade ILAPEO\n• DIGITAL CENTER\n• CEO do laboratório de Prótese especializado em CAD/CAM – Digital Center. Responsável Técnico pelas 9 unidades nos estados de São Paulo e Minas Gerais\n• ITI MEMBER\n• Membro ativo do International Team of Implantology desde o ano de 2015\n• STRAUMANN/NEODENT\n• Speaker Digital, representando a empresa desde o ano de 2017',
         type: 'PALESTRA',
         image: '/images/Palestras%20COFOA/Odontologia%20Digital%20no%20dia-a-dia%20cl%C3%ADnico.jpg'
       },
@@ -123,10 +123,10 @@ const SCHEDULE_DATA = [
     label: 'Sábado',
     events: [
       {
-        time: 'Em breve',
+        time: '14:00h-15:00h',
         title: 'Odontologia na Carreira Militar - Experiências Desafios e Oportunidades',
-        speaker: 'Em breve',
-        description: 'Conteúdo em breve...',
+        speaker: 'Tenente Lívia Trevelin Arêde',
+        description: '• Graduação em Odontologia FOA-Unesp\n• Mestre e especialista em Estomatologia FOA-Unesp\n• Habilitação em laser pelo IE Albert Einstein\n• Doutoranda em Periodontia FOA-Unesp, com Doutorado Sanduíche pela Universidade de Toronto, Canadá\n• Atuação em consultório particular como estomatologista desde 2010\n• Atuação na Estratégia de Saúde da Família SMS Araçatuba - 2012 a 2018',
         type: 'PALESTRA',
         image: '/images/Palestras%20COFOA/Odontologia%20na%20Carreira%20Militar%20-%20Experi%C3%AAncias%20Desafios%20e%20Oportunidades.jpg'
       },
