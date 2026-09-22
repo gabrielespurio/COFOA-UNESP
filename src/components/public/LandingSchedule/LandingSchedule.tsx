@@ -237,12 +237,6 @@ const SCHEDULE_DATA = [
       }
     ]
   }
-];anestesiologia, cirurgia e demais áreas da saúde.\n• Nesta oportunidade, a SAA será representada por sua equipe de especialistas, compartilhando conhecimentos e experiências práticas da anestesiologia aplicadas à rotina clínica e cirúrgica.',
-        type: 'PALESTRA',
-        image: '/images/Palestras%20COFOA/Sedacao%20T%C3%A9cnicas%20-%20Indica%C3%A7%C3%B5es%20e%20Aplica%C3%A7%C3%B5es%20Cl%C3%ADnicas.jpg'
-      }
-    ]
-  }
 ];
 
 export function LandingSchedule() {
