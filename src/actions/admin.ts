@@ -28,3 +28,57 @@ export async function updateRegistrationStatus(registrationId: string, status: R
     return { error: 'Falha ao atualizar o status' };
   }
 }
+
+export async function evaluateWorkStage1(formData: FormData) {
+  await checkAdmin();
+
+  const workId = formData.get('workId') as string;
+  const decision = formData.get('decision') as string;
+  const comments = formData.get('comments') as string;
+
+  if (!workId || !decision) {
+    return { error: 'Dados incompletos.' };
+  }
+
+  const work = await prisma.scientificWork.findUnique({ where: { id: workId } });
+  if (!work) {
+    return { error: 'Trabalho não encontrado.' };
+  }
+
+  if (decision === 'APPROVE') {
+    try {
+      await prisma.scientificWork.update({
+        where: { id: workId },
+        data: { stage1Approved: true }
+      });
+      revalidatePath('/admin/triagem');
+      revalidatePath('/comissao/trabalhos');
+      return { success: true };
+    } catch (err) {
+      console.error(err);
+      return { error: 'Erro ao aprovar a triagem.' };
+    }
+  } else if (decision === 'REJECT') {
+    if (!comments || comments.trim().length === 0) {
+      return { error: 'Ao reprovar na triagem, é obrigatório preencher o motivo (ressalva).' };
+    }
+
+    try {
+      await prisma.scientificWork.update({
+        where: { id: workId },
+        data: {
+          status: 'REVISION_REQUESTED',
+          reviewerComments: comments,
+          stage1Approved: false
+        }
+      });
+      revalidatePath('/admin/triagem');
+      return { success: true };
+    } catch (err) {
+      console.error(err);
+      return { error: 'Erro ao reprovar a triagem.' };
+    }
+  }
+
+  return { error: 'Decisão inválida.' };
+}

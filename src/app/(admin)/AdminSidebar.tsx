@@ -17,6 +17,7 @@ const MENU_ITEMS = [
   { label: 'Pagamentos', href: '/admin/pagamentos' },
   { label: 'Cupons', href: '/admin/cupons' },
   { label: 'Trabalhos', href: '/admin/trabalhos' },
+  { label: 'Triagem (1ª Etapa)', href: '/admin/triagem' },
   { label: 'Certificados', href: '/admin/certificados' },
   { label: 'Configurações', href: '/admin/configuracoes' },
 ];

@@ -1,35 +1,23 @@
 import { Metadata } from 'next';
 import { SectionHeading } from '@/components/ui/SectionHeading/SectionHeading';
-import { WorksTable } from './WorksTable';
+import { ScreeningTable } from './ScreeningTable';
 import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
 import styles from '../page.module.css';
 
 export const metadata: Metadata = {
-  title: 'Trabalhos Submetidos - Comissão',
+  title: 'Triagem de Trabalhos - 1ª Etapa',
 };
 
-export default async function TrabalhosComissaoPage() {
+export default async function TrabalhosTriagemPage() {
   const session = await getSession();
   
   const works = await prisma.scientificWork.findMany({
-    where: { status: { not: 'DRAFT' }, stage1Approved: true },
+    where: { status: 'SUBMITTED', stage1Approved: false },
     orderBy: { submittedAt: 'asc' },
     include: {
       participant: {
         select: { fullName: true }
-      },
-      evaluations: {
-        include: {
-          evaluator: {
-            include: {
-              participant: {
-                select: { fullName: true }
-              }
-            }
-          }
-        },
-        orderBy: { createdAt: 'desc' }
       }
     }
   });
@@ -37,11 +25,15 @@ export default async function TrabalhosComissaoPage() {
   return (
     <div className={styles.container}>
       <SectionHeading 
-        title="Trabalhos Submetidos" 
+        title="Triagem de Trabalhos (1ª Etapa)" 
         alignment="left"
       />
       
-      <WorksTable works={works} currentUserId={session?.userId || ''} />
+      <p style={{ color: 'var(--color-text-secondary)', marginBottom: '2rem' }}>
+        Avalie os trabalhos recém-enviados verificando a documentação e os anexos. Trabalhos aprovados seguirão para a 2ª etapa (Comissão Avaliadora).
+      </p>
+
+      <ScreeningTable works={works} currentUserId={session?.userId || ''} />
     </div>
   );
 }

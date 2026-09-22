@@ -252,6 +252,7 @@ model ScientificWork {
   enrollmentProofUrl  String?
   requiresEthics      Boolean   @default(false)
   ethicsCommitteeFileUrl String?
+  stage1Approved  Boolean   @default(false)
   status          WorkStatus @default(DRAFT)
   reviewerComments String?   @db.Text
   submittedAt     DateTime?
