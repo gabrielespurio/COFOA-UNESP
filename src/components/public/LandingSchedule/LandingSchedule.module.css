@@ -311,6 +311,25 @@
   animation: slideUp 0.3s ease-out;
 }
 
+/* Custom scrollbar for modal */
+.modalContent::-webkit-scrollbar {
+  width: 8px;
+}
+
+.modalContent::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 0 12px 12px 0;
+}
+
+.modalContent::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+.modalContent::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
 .modalClose {
   position: absolute;
   top: 1rem;
@@ -337,8 +356,10 @@
 
 .modalImage {
   width: 100%;
-  height: 250px;
-  object-fit: cover;
+  height: auto;
+  max-height: 400px;
+  object-fit: contain;
+  background: linear-gradient(to bottom, #1e293b, #0f172a);
   border-top-left-radius: 12px;
   border-top-right-radius: 12px;
 }
