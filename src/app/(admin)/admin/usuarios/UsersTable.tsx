@@ -66,6 +66,8 @@ export function UsersTable({ initialUsers }: { initialUsers: UserWithParticipant
         return <span className={styles.badgeAdmin}>Admin</span>;
       case 'COMMITTEE':
         return <span className={styles.badgeSuccess}>Comissão</span>;
+      case 'SCREENER':
+        return <span className={styles.badgeWarning} style={{ background: '#fef08a', color: '#854d0e', padding: '0.25rem 0.5rem', borderRadius: '9999px', fontSize: '0.75rem', fontWeight: 600 }}>Triagem</span>;
       default:
         return <span className={styles.badgeUser}>Participante</span>;
     }
@@ -142,27 +144,25 @@ export function UsersTable({ initialUsers }: { initialUsers: UserWithParticipant
                     {user.role === 'ADMIN' ? (
                       <span style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-muted)', fontStyle: 'italic' }}>Administrador</span>
                     ) : (
-                      <label style={{ 
-                        display: 'inline-flex', 
-                        alignItems: 'center', 
-                        cursor: updatingId === user.id ? 'not-allowed' : 'pointer',
-                        opacity: updatingId === user.id ? 0.5 : 1
-                      }}>
-                        <input
-                          type="checkbox"
-                          disabled={updatingId === user.id}
-                          checked={user.role === 'COMMITTEE'}
-                          onChange={(e) => handleRoleChange(user.id, e.target.checked ? 'COMMITTEE' : 'PARTICIPANT')}
-                          style={{
-                            marginRight: '0.5rem',
-                            cursor: 'pointer',
-                            accentColor: 'var(--color-primary)'
-                          }}
-                        />
-                        <span style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-primary)' }}>
-                          Habilitar Avaliador
-                        </span>
-                      </label>
+                      <select
+                        disabled={updatingId === user.id}
+                        value={user.role}
+                        onChange={(e) => handleRoleChange(user.id, e.target.value as Role)}
+                        style={{
+                          padding: '0.375rem 0.75rem',
+                          borderRadius: '6px',
+                          border: '1px solid var(--color-border)',
+                          background: updatingId === user.id ? '#f1f5f9' : '#ffffff',
+                          cursor: updatingId === user.id ? 'not-allowed' : 'pointer',
+                          fontFamily: 'inherit',
+                          fontSize: 'var(--font-size-sm)',
+                          color: 'var(--color-text-primary)'
+                        }}
+                      >
+                        <option value="PARTICIPANT">Participante</option>
+                        <option value="COMMITTEE">Comissão (2ª Etapa)</option>
+                        <option value="SCREENER">Triagem (1ª Etapa)</option>
+                      </select>
                     )}
                   </td>
                 </tr>

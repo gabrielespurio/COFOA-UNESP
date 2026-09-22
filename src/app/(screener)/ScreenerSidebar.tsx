@@ -8,24 +8,12 @@ import { logout } from '@/actions/auth';
 import styles from './layout.module.css';
 
 const MENU_ITEMS = [
-  { label: 'Dashboard', href: '/admin' },
-  { label: 'Usuários', href: '/admin/usuarios' },
-  { label: 'Participantes', href: '/admin/participantes' },
-  { label: 'Inscrições', href: '/admin/inscricoes' },
-  { label: 'Categorias', href: '/admin/categorias' },
-  { label: 'Lotes de Inscrição', href: '/admin/lotes' },
-  { label: 'Pagamentos', href: '/admin/pagamentos' },
-  { label: 'Cupons', href: '/admin/cupons' },
-  { label: 'Trabalhos', href: '/admin/trabalhos' },
-  { label: 'Certificados', href: '/admin/certificados' },
-  { label: 'Configurações', href: '/admin/configuracoes' },
+  { label: 'Triagem de Trabalhos', href: '/triagem' },
 ];
 
-export function AdminSidebar({ children }: { children?: React.ReactNode }) {
+export function ScreenerSidebar({ children }: { children?: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const pathname = usePathname();
-
-  const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
 
   return (
     <>
@@ -33,11 +21,11 @@ export function AdminSidebar({ children }: { children?: React.ReactNode }) {
         <div className={styles.sidebarHeader}>
           <Logo type="icon" variant="full" height={32} />
           <span>COFOA XV</span>
-          <span className={styles.adminBadge}>Admin</span>
+          <span className={styles.adminBadge} style={{ background: '#fef08a', color: '#854d0e' }}>Triagem</span>
         </div>
         <nav className={styles.nav}>
           {MENU_ITEMS.map((item) => {
-            const isActive = item.href === '/admin' ? pathname === '/admin' : pathname.startsWith(item.href);
+            const isActive = pathname.startsWith(item.href);
             return (
               <Link 
                 key={item.href} 
@@ -64,7 +52,6 @@ export function AdminSidebar({ children }: { children?: React.ReactNode }) {
       </aside>
       
       <main className={styles.main}>
-
         <div className={styles.content}>
           {children}
         </div>

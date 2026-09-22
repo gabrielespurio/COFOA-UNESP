@@ -30,7 +30,10 @@ export async function updateRegistrationStatus(registrationId: string, status: R
 }
 
 export async function evaluateWorkStage1(formData: FormData) {
-  await checkAdmin();
+  const session = await getSession();
+  if (!session) throw new Error('Unauthorized');
+  const user = await prisma.user.findUnique({ where: { id: session.userId }});
+  if (user?.role !== 'ADMIN' && user?.role !== 'SCREENER') throw new Error('Forbidden');
 
   const workId = formData.get('workId') as string;
   const decision = formData.get('decision') as string;
@@ -51,7 +54,7 @@ export async function evaluateWorkStage1(formData: FormData) {
         where: { id: workId },
         data: { stage1Approved: true }
       });
-      revalidatePath('/admin/triagem');
+      revalidatePath('/triagem');
       revalidatePath('/comissao/trabalhos');
       return { success: true };
     } catch (err) {
@@ -72,7 +75,7 @@ export async function evaluateWorkStage1(formData: FormData) {
           stage1Approved: false
         }
       });
-      revalidatePath('/admin/triagem');
+      revalidatePath('/triagem');
       return { success: true };
     } catch (err) {
       console.error(err);

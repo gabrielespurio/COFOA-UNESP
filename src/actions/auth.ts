@@ -92,6 +92,7 @@ export async function login(prevState: any, formData: FormData) {
     let defaultRedirect = '/area-participante';
     if (user.role === 'ADMIN') defaultRedirect = '/admin';
     if (user.role === 'COMMITTEE') defaultRedirect = '/selecionar-perfil';
+    if (user.role === 'SCREENER') defaultRedirect = '/triagem';
     
     const finalRedirectTo = formData.get('redirectTo') as string || defaultRedirect;
     
@@ -312,6 +313,7 @@ export async function googleLogin(token: string) {
     let redirectUrl = '/area-participante';
     if (user.role === 'ADMIN') redirectUrl = '/admin';
     if (user.role === 'COMMITTEE') redirectUrl = '/selecionar-perfil';
+    if (user.role === 'SCREENER') redirectUrl = '/triagem';
     
     return { success: true, redirectUrl };
   } catch (error) {
