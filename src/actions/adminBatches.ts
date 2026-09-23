@@ -9,7 +9,7 @@ async function checkAdmin() {
   const session = await getSession();
   if (!session) throw new Error('Unauthorized');
   const user = await prisma.user.findUnique({ where: { id: session.userId }});
-  if (user?.role !== 'ADMIN') throw new Error('Forbidden');
+  if (!user?.roles.includes('ADMIN')) throw new Error('Forbidden');
 }
 
 export async function getBatches() {

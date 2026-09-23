@@ -40,7 +40,8 @@ export async function proxy(request: NextRequest) {
       return NextResponse.redirect(loginUrl);
     }
 
-    if (decodedToken.role !== 'ADMIN') {
+    const roles = Array.isArray(decodedToken.roles) ? decodedToken.roles : [];
+    if (!roles.includes('ADMIN')) {
       return NextResponse.redirect(new URL('/', request.url));
     }
   }

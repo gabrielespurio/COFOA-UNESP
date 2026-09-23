@@ -11,7 +11,7 @@ export default async function AdminParticipantesPage() {
   const participants = await prisma.participant.findMany({
     orderBy: { createdAt: 'desc' },
     include: {
-      user: { select: { email: true, role: true } },
+      user: { select: { email: true, roles: true } },
       registration: { select: { status: true, paymentReceiptUrl: true } }
     }
   });

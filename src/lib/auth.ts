@@ -8,7 +8,8 @@ const SESSION_MAX_AGE = 60 * 60 * 24 * 7; // 7 days in seconds
 export interface SessionPayload {
   userId: string;
   email: string;
-  role: string;
+  roles: string[];
+  role?: string; // The currently active role
 }
 
 export async function signToken(payload: SessionPayload): Promise<string> {
@@ -42,13 +43,15 @@ export async function createSession(payload: SessionPayload) {
     maxAge: SESSION_MAX_AGE,
   });
 
-  cookieStore.set('user_role', payload.role, {
-    httpOnly: false, // Accessible by client if needed for UI, but token is the source of truth
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
-    path: '/',
-    maxAge: SESSION_MAX_AGE,
-  });
+  if (payload.role) {
+    cookieStore.set('user_role', payload.role, {
+      httpOnly: false,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      maxAge: SESSION_MAX_AGE,
+    });
+  }
 }
 
 export async function getSession(): Promise<SessionPayload | null> {

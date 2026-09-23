@@ -7,7 +7,7 @@ import { WorkStatus } from '@prisma/client';
 
 export async function evaluateWork(formData: FormData) {
   const session = await getSession();
-  if (!session || session.role !== 'COMMITTEE') {
+  if (!session || (!session.roles.includes('COMMITTEE') && !session.roles.includes('ADMIN'))) {
     return { error: 'Usuário sem permissão.' };
   }
 
@@ -75,7 +75,7 @@ export async function evaluateWork(formData: FormData) {
 
 export async function lockWork(workId: string) {
   const session = await getSession();
-  if (!session || session.role !== 'COMMITTEE') {
+  if (!session || (!session.roles.includes('COMMITTEE') && !session.roles.includes('ADMIN'))) {
     return { error: 'Usuário sem permissão.' };
   }
 

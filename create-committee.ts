@@ -19,7 +19,7 @@ async function createCommittee() {
     data: {
       email: 'comissao@cofoa.com.br',
       passwordHash,
-      role: 'COMMITTEE'
+      roles: ['COMMITTEE']
     }
   });
   console.log('Created comissao@cofoa.com.br');

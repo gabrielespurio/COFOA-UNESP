@@ -7,7 +7,7 @@ import styles from '../(participant)/layout.module.css'; // Reusing participant 
 export default async function CommitteeLayout({ children }: { children: ReactNode }) {
   const session = await getSession();
   
-  if (!session || session.role !== 'COMMITTEE') {
+  if (!session || (!session.roles.includes('COMMITTEE') && !session.roles.includes('ADMIN'))) {
     redirect('/login');
   }
 

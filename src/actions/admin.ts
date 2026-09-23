@@ -9,7 +9,7 @@ async function checkAdmin() {
   const session = await getSession();
   if (!session) throw new Error('Unauthorized');
   const user = await prisma.user.findUnique({ where: { id: session.userId }});
-  if (user?.role !== 'ADMIN') throw new Error('Forbidden');
+  if (!user?.roles.includes('ADMIN')) throw new Error('Forbidden');
 }
 
 export async function updateRegistrationStatus(registrationId: string, status: RegistrationStatus) {
@@ -33,7 +33,7 @@ export async function evaluateWorkStage1(formData: FormData) {
   const session = await getSession();
   if (!session) throw new Error('Unauthorized');
   const user = await prisma.user.findUnique({ where: { id: session.userId }});
-  if (user?.role !== 'ADMIN' && user?.role !== 'SCREENER') throw new Error('Forbidden');
+  if (!user?.roles.includes('ADMIN') && !user?.roles.includes('SCREENER')) throw new Error('Forbidden');
 
   const workId = formData.get('workId') as string;
   const decision = formData.get('decision') as string;

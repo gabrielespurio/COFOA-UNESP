@@ -11,7 +11,7 @@ export default async function UsuariosPage() {
     select: {
       id: true,
       email: true,
-      role: true,
+      roles: true,
       createdAt: true,
       participant: {
         select: {

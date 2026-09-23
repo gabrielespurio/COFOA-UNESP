@@ -91,8 +91,8 @@ export function ParticipantesTable({ participants }: { participants: any[] }) {
                 <td>{p.cpf}</td>
                 <td>{p.phone || '-'}</td>
                 <td>
-                  <span className={p.user.role === 'ADMIN' ? styles.badgeAdmin : styles.badgeUser}>
-                    {p.user.role}
+                  <span className={p.user.roles.includes('ADMIN') ? styles.badgeAdmin : styles.badgeUser}>
+                    {p.user.roles.includes('ADMIN') ? 'ADMIN' : p.user.roles[0]}
                   </span>
                 </td>
                 <td>

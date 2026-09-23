@@ -15,9 +15,7 @@ export default async function ParticipantLayout({
     redirect('/login');
   }
 
-  if (session.role === 'ADMIN') {
-    redirect('/admin');
-  }
+  // Removed ADMIN redirect because ADMINs can also act as participants
 
   // Check if participant profile exists
   const participant = await prisma.participant.findUnique({

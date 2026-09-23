@@ -1,14 +1,14 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { updateUserRole } from '@/actions/users';
+import { updateUserRoles } from '@/actions/users';
 import { Role } from '@prisma/client';
 import styles from '../participantes/page.module.css';
 
 type UserWithParticipant = {
   id: string;
   email: string;
-  role: Role;
+  roles: Role[];
   createdAt: Date;
   participant: {
     fullName: string;
@@ -41,36 +41,47 @@ export function UsersTable({ initialUsers }: { initialUsers: UserWithParticipant
     setCurrentPage(1);
   }, [searchTerm]);
 
-  const handleRoleChange = async (userId: string, newRole: Role) => {
-    if (!window.confirm(`Tem certeza que deseja alterar o perfil deste usuário para ${newRole}?`)) {
+  const handleRoleToggle = async (userId: string, currentRoles: Role[], roleToToggle: Role) => {
+    let newRoles = [...currentRoles];
+    if (newRoles.includes(roleToToggle)) {
+      newRoles = newRoles.filter(r => r !== roleToToggle);
+    } else {
+      newRoles.push(roleToToggle);
+    }
+
+    if (!newRoles.includes('PARTICIPANT')) {
+      newRoles.push('PARTICIPANT');
+    }
+
+    if (!window.confirm(`Tem certeza que deseja atualizar os perfis deste usuário?`)) {
       return;
     }
 
     setUpdatingId(userId);
     setMessage(null);
 
-    const result = await updateUserRole(userId, newRole);
+    const result = await updateUserRoles(userId, newRoles);
 
     if (result.error) {
       setMessage({ text: result.error, type: 'error' });
     } else {
-      setMessage({ text: 'Perfil atualizado com sucesso.', type: 'success' });
+      setMessage({ text: 'Perfis atualizados com sucesso.', type: 'success' });
     }
 
     setUpdatingId(null);
   };
 
-  const getRoleBadge = (role: Role) => {
-    switch (role) {
-      case 'ADMIN':
-        return <span className={styles.badgeAdmin}>Admin</span>;
-      case 'COMMITTEE':
-        return <span className={styles.badgeSuccess}>Comissão</span>;
-      case 'SCREENER':
-        return <span className={styles.badgeWarning} style={{ background: '#fef08a', color: '#854d0e', padding: '0.25rem 0.5rem', borderRadius: '9999px', fontSize: '0.75rem', fontWeight: 600 }}>Triagem</span>;
-      default:
-        return <span className={styles.badgeUser}>Participante</span>;
-    }
+  const getRoleBadges = (roles: Role[]) => {
+    return (
+      <div style={{ display: 'flex', gap: '0.25rem', flexWrap: 'wrap' }}>
+        {roles.includes('ADMIN') && <span className={styles.badgeAdmin}>Admin</span>}
+        {roles.includes('COMMITTEE') && <span className={styles.badgeSuccess}>Comissão</span>}
+        {roles.includes('SCREENER') && <span className={styles.badgeWarning} style={{ background: '#fef08a', color: '#854d0e', padding: '0.25rem 0.5rem', borderRadius: '9999px', fontSize: '0.75rem', fontWeight: 600 }}>Triagem</span>}
+        {roles.includes('PARTICIPANT') && !roles.includes('ADMIN') && !roles.includes('COMMITTEE') && !roles.includes('SCREENER') && (
+          <span className={styles.badgeUser}>Participante</span>
+        )}
+      </div>
+    );
   };
 
   return (
@@ -116,8 +127,8 @@ export function UsersTable({ initialUsers }: { initialUsers: UserWithParticipant
             <tr>
               <th>Nome / E-mail</th>
               <th>CPF</th>
-              <th>Perfil Atual</th>
-              <th style={{ textAlign: 'right' }}>Ação</th>
+              <th>Perfis Atuais</th>
+              <th style={{ textAlign: 'right' }}>Ações</th>
             </tr>
           </thead>
           <tbody>
@@ -138,31 +149,32 @@ export function UsersTable({ initialUsers }: { initialUsers: UserWithParticipant
                     {user.participant?.cpf || '-'}
                   </td>
                   <td>
-                    {getRoleBadge(user.role)}
+                    {getRoleBadges(user.roles)}
                   </td>
                   <td style={{ textAlign: 'right' }}>
-                    {user.role === 'ADMIN' ? (
+                    {user.roles.includes('ADMIN') ? (
                       <span style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-muted)', fontStyle: 'italic' }}>Administrador</span>
                     ) : (
-                      <select
-                        disabled={updatingId === user.id}
-                        value={user.role}
-                        onChange={(e) => handleRoleChange(user.id, e.target.value as Role)}
-                        style={{
-                          padding: '0.375rem 0.75rem',
-                          borderRadius: '6px',
-                          border: '1px solid var(--color-border)',
-                          background: updatingId === user.id ? '#f1f5f9' : '#ffffff',
-                          cursor: updatingId === user.id ? 'not-allowed' : 'pointer',
-                          fontFamily: 'inherit',
-                          fontSize: 'var(--font-size-sm)',
-                          color: 'var(--color-text-primary)'
-                        }}
-                      >
-                        <option value="PARTICIPANT">Participante</option>
-                        <option value="COMMITTEE">Comissão (2ª Etapa)</option>
-                        <option value="SCREENER">Triagem (1ª Etapa)</option>
-                      </select>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', alignItems: 'flex-end', fontSize: 'var(--font-size-sm)' }}>
+                        <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: updatingId === user.id ? 'not-allowed' : 'pointer' }}>
+                          <input 
+                            type="checkbox" 
+                            checked={user.roles.includes('COMMITTEE')}
+                            disabled={updatingId === user.id}
+                            onChange={() => handleRoleToggle(user.id, user.roles, 'COMMITTEE')}
+                          />
+                          Comissão (2ª Etapa)
+                        </label>
+                        <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: updatingId === user.id ? 'not-allowed' : 'pointer' }}>
+                          <input 
+                            type="checkbox" 
+                            checked={user.roles.includes('SCREENER')}
+                            disabled={updatingId === user.id}
+                            onChange={() => handleRoleToggle(user.id, user.roles, 'SCREENER')}
+                          />
+                          Triagem (1ª Etapa)
+                        </label>
+                      </div>
                     )}
                   </td>
                 </tr>

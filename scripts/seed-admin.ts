@@ -27,7 +27,7 @@ async function main() {
     data: {
       email,
       passwordHash,
-      role: Role.ADMIN,
+      roles: [Role.ADMIN],
       participant: {
         create: {
           fullName: 'Administrador Supremo',

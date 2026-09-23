@@ -1,7 +1,7 @@
 'use server';
 
 import { prisma } from '@/lib/prisma';
-import { createSession, destroySession } from '@/lib/auth';
+import { createSession, destroySession, getSession } from '@/lib/auth';
 import bcrypt from 'bcryptjs';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
@@ -82,17 +82,24 @@ export async function login(prevState: any, formData: FormData) {
       });
     }
 
+    const roles = user.roles;
+    const activeRole = roles.length === 1 ? roles[0] : undefined;
+
     await createSession({
       userId: user.id,
       email: user.email,
-      role: user.role,
+      roles: roles,
+      role: activeRole,
     });
     
-    // Determine redirect based on role
-    let defaultRedirect = '/area-participante';
-    if (user.role === 'ADMIN') defaultRedirect = '/admin';
-    if (user.role === 'COMMITTEE') defaultRedirect = '/selecionar-perfil';
-    if (user.role === 'SCREENER') defaultRedirect = '/triagem';
+    // Determine redirect based on roles
+    let defaultRedirect = '/selecionar-perfil';
+    if (roles.length === 1) {
+      if (roles[0] === 'ADMIN') defaultRedirect = '/admin';
+      else if (roles[0] === 'COMMITTEE') defaultRedirect = '/comissao';
+      else if (roles[0] === 'SCREENER') defaultRedirect = '/triagem';
+      else defaultRedirect = '/area-participante';
+    }
     
     const finalRedirectTo = formData.get('redirectTo') as string || defaultRedirect;
     
@@ -137,10 +144,14 @@ export async function register(prevState: any, formData: FormData) {
       },
     });
 
+    const roles = user.roles;
+    const activeRole = roles.length === 1 ? roles[0] : undefined;
+
     await createSession({
       userId: user.id,
       email: user.email,
-      role: user.role,
+      roles: roles,
+      role: activeRole,
     });
 
   } catch (error) {
@@ -303,21 +314,53 @@ export async function googleLogin(token: string) {
       });
     }
     
+    const roles = user.roles;
+    const activeRole = roles.length === 1 ? roles[0] : undefined;
+
     // Create session cookie just like regular login
     await createSession({
       userId: user.id,
       email: user.email,
-      role: user.role,
+      roles: roles,
+      role: activeRole,
     });
     
-    let redirectUrl = '/area-participante';
-    if (user.role === 'ADMIN') redirectUrl = '/admin';
-    if (user.role === 'COMMITTEE') redirectUrl = '/selecionar-perfil';
-    if (user.role === 'SCREENER') redirectUrl = '/triagem';
+    let redirectUrl = '/selecionar-perfil';
+    if (roles.length === 1) {
+      if (roles[0] === 'ADMIN') redirectUrl = '/admin';
+      else if (roles[0] === 'COMMITTEE') redirectUrl = '/comissao';
+      else if (roles[0] === 'SCREENER') redirectUrl = '/triagem';
+      else redirectUrl = '/area-participante';
+    }
     
     return { success: true, redirectUrl };
   } catch (error) {
     console.error('Google login error:', error);
     return { error: 'Ocorreu um erro ao processar o login com o Google.' };
   }
+}
+
+export async function setActiveRole(role: string) {
+  const session = await getSession();
+  if (!session) {
+    return { error: 'Não autenticado' };
+  }
+  
+  if (!session.roles.includes(role)) {
+    return { error: 'Perfil não permitido para este usuário' };
+  }
+
+  await createSession({
+    userId: session.userId,
+    email: session.email,
+    roles: session.roles,
+    role: role
+  });
+  
+  let redirectUrl = '/area-participante';
+  if (role === 'ADMIN') redirectUrl = '/admin';
+  else if (role === 'COMMITTEE') redirectUrl = '/comissao';
+  else if (role === 'SCREENER') redirectUrl = '/triagem';
+
+  return { success: true, redirectUrl };
 }

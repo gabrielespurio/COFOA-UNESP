@@ -17,10 +17,10 @@ export default async function ScreenerLayout({
 
   const user = await prisma.user.findUnique({
     where: { id: session.userId },
-    select: { role: true }
+    select: { roles: true }
   });
 
-  if (user?.role !== 'SCREENER') {
+  if (!user?.roles.includes('SCREENER') && !user?.roles.includes('ADMIN')) {
     redirect('/area-participante');
   }
 

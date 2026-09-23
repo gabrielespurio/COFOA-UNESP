@@ -17,10 +17,10 @@ export default async function AdminLayout({
 
   const user = await prisma.user.findUnique({
     where: { id: session.userId },
-    select: { role: true }
+    select: { roles: true }
   });
 
-  if (user?.role !== 'ADMIN') {
+  if (!user?.roles.includes('ADMIN')) {
     redirect('/area-participante');
   }
 
