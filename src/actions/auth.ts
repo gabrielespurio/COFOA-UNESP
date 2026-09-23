@@ -82,7 +82,8 @@ export async function login(prevState: any, formData: FormData) {
       });
     }
 
-    const roles = user.roles;
+    const rawRoles = user.roles || (user as any).role;
+    const roles = Array.isArray(rawRoles) ? rawRoles : (rawRoles ? [rawRoles] : ['PARTICIPANT']);
     const activeRole = roles.length === 1 ? roles[0] : undefined;
 
     await createSession({
@@ -144,7 +145,8 @@ export async function register(prevState: any, formData: FormData) {
       },
     });
 
-    const roles = user.roles;
+    const rawRoles = user.roles || (user as any).role;
+    const roles = Array.isArray(rawRoles) ? rawRoles : (rawRoles ? [rawRoles] : ['PARTICIPANT']);
     const activeRole = roles.length === 1 ? roles[0] : undefined;
 
     await createSession({
@@ -314,7 +316,8 @@ export async function googleLogin(token: string) {
       });
     }
     
-    const roles = user.roles;
+    const rawRoles = user.roles || (user as any).role;
+    const roles = Array.isArray(rawRoles) ? rawRoles : (rawRoles ? [rawRoles] : ['PARTICIPANT']);
     const activeRole = roles.length === 1 ? roles[0] : undefined;
 
     // Create session cookie just like regular login
