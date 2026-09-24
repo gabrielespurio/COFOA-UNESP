@@ -9,18 +9,19 @@ export const metadata: Metadata = {
 
 export default async function ComissaoDashboardPage() {
   const totalSubmissions = await prisma.scientificWork.count({
-    where: { status: { not: 'DRAFT' } }
+    where: { status: { not: 'DRAFT' }, stage1Approved: true }
   });
 
   const pendingAnalysis = await prisma.scientificWork.count({
-    where: { status: 'SUBMITTED' }
+    where: { status: 'SUBMITTED', stage1Approved: true }
   });
 
   const analyzed = await prisma.scientificWork.count({
     where: {
       status: {
         in: ['ACCEPTED', 'REJECTED', 'REVISION_REQUESTED', 'UNDER_REVIEW']
-      }
+      },
+      stage1Approved: true
     }
   });
 
