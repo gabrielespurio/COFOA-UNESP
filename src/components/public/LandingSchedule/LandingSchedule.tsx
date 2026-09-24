@@ -28,14 +28,6 @@ const SCHEDULE_DATA = [
     label: 'Quinta-feira',
     events: [
       {
-        time: '8:00h-12:00h',
-        title: 'Apresentação Online',
-        speaker: '-',
-        description: 'Apresentações de trabalhos científicos no formato online.',
-        type: 'ONLINE',
-        image: ''
-      },
-      {
         time: '8:00h-9:50h',
         title: 'Ecossistema de Inovação da Unesp - Transformando o Futuro',
         speaker: 'Marcelo Ornaghi Orlandi',
@@ -81,14 +73,6 @@ const SCHEDULE_DATA = [
         speaker: 'Intervalo',
         description: 'Pausa para almoço.',
         type: 'INTERVALO',
-        image: ''
-      },
-      {
-        time: '14:00h-18:00h',
-        title: 'Apresentação Online',
-        speaker: '-',
-        description: 'Apresentações de trabalhos científicos no formato online.',
-        type: 'ONLINE',
         image: ''
       },
       {
