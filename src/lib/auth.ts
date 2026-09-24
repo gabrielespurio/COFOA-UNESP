@@ -62,7 +62,14 @@ export async function getSession(): Promise<SessionPayload | null> {
     return null;
   }
 
-  return await verifyToken(token);
+  const session = await verifyToken(token);
+  if (!session) return null;
+
+  if (!session.roles) {
+    session.roles = (session as any).role ? [(session as any).role] : ['PARTICIPANT'];
+  }
+
+  return session;
 }
 
 export async function destroySession() {
