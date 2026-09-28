@@ -194,7 +194,7 @@ export async function createRegistration(formData: FormData) {
       include: { allowedCategories: true }
     });
 
-    if (coupon && coupon.usedCount < coupon.maxUses) {
+    if (coupon && (coupon.maxUses === null || coupon.usedCount < coupon.maxUses)) {
       let isValidForCategory = true;
       if (coupon.allowedCategories.length > 0) {
         isValidForCategory = coupon.allowedCategories.some(ac => ac.categoryId === category.id);
