@@ -14,22 +14,7 @@ export default async function AdminCouponsPage() {
     redirect('/login');
   }
 
-  // Fetch all coupons with user details
-  const coupons = await prisma.coupon.findMany({
-    orderBy: { createdAt: 'desc' },
-    include: {
-      user: {
-        select: {
-          email: true,
-          participant: {
-            select: { fullName: true }
-          }
-        }
-      }
-    }
-  });
-
-  // Fetch users for the dropdown
+  // Fetch all participant users with their coupons
   const users = await prisma.user.findMany({
     where: { roles: { has: 'PARTICIPANT' } },
     select: {
@@ -37,6 +22,10 @@ export default async function AdminCouponsPage() {
       email: true,
       participant: {
         select: { fullName: true }
+      },
+      coupons: {
+        orderBy: { createdAt: 'desc' },
+        take: 1
       }
     },
     orderBy: { email: 'asc' }
@@ -47,11 +36,11 @@ export default async function AdminCouponsPage() {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
         <div>
           <h1 style={{ fontSize: '2rem', color: 'var(--color-primary)' }}>Gerenciar Cupons</h1>
-          <p style={{ color: 'var(--color-text-secondary)' }}>Visualize e crie cupons de desconto para os participantes.</p>
+          <p style={{ color: 'var(--color-text-secondary)' }}>Encontre os participantes e veja os status dos seus cupons.</p>
         </div>
       </div>
 
-      <AdminCouponsList initialCoupons={coupons as any} users={users} />
+      <AdminCouponsList users={users as any} />
     </div>
   );
 }
