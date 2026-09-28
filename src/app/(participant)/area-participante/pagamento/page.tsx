@@ -29,9 +29,10 @@ export default async function PaymentPage() {
     redirect('/area-participante/inscricao');
   }
 
+  const isFreeRegistration = participant.registration.amount === 0 && participant.registration.status === 'CONFIRMED';
   const payment = participant.registration.payment;
   
-  if (!payment) {
+  if (!payment && !isFreeRegistration) {
     return (
       <div style={{ maxWidth: '800px', margin: '0 auto', paddingTop: '2rem' }}>
         <div style={{ background: '#fff', border: '1px solid var(--color-border)', borderRadius: '8px', padding: '1.5rem', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
@@ -43,8 +44,8 @@ export default async function PaymentPage() {
     );
   }
 
-  const asaasData = payment.gatewayResponse as unknown as AsaasPayment;
-  const isPaid = payment.status === 'PAID' || participant.registration.status === 'CONFIRMED';
+  const asaasData = payment?.gatewayResponse as unknown as AsaasPayment;
+  const isPaid = isFreeRegistration || (payment?.status === 'PAID') || participant.registration.status === 'CONFIRMED';
 
   const cardStyle = { background: '#fff', border: '1px solid var(--color-border)', borderRadius: '8px', padding: '1.5rem', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' };
 
@@ -78,7 +79,7 @@ export default async function PaymentPage() {
 
           <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '1.25rem', fontWeight: 700, marginTop: '1rem', paddingTop: '1rem', borderTop: '1px dashed var(--color-border)' }}>
             <span>Total</span>
-            <span style={{ color: 'var(--color-primary)' }}>{formatCurrency(payment.amount)}</span>
+            <span style={{ color: 'var(--color-primary)' }}>{formatCurrency(participant.registration.amount)}</span>
           </div>
         </div>
       </div>

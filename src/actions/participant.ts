@@ -114,6 +114,7 @@ export async function createRegistration(formData: FormData) {
   if (existing) return { error: 'Você já possui uma inscrição registrada.' };
 
   const categoryId = formData.get('categoryId') as string;
+  const couponCode = formData.get('couponCode') as string | null;
   const file = formData.get('file') as File | null;
   let proofUrl = null;
 
@@ -182,47 +183,118 @@ export async function createRegistration(formData: FormData) {
       case 'ONLINE_TIER2': finalAmount = batch.priceOnlineTier2; break;
     }
 
+    let couponId: string | null = null;
+    let appliedDiscount = 0;
 
-    // 1. Create/Get Asaas Customer
-    const asaasCustomer = await createOrGetCustomer(
-      participant.fullName,
-      participant.cpf,
-      participant.user.email,
-      participant.phone
-    );
+    if (couponCode) {
+      const coupon = await prisma.coupon.findUnique({
+        where: { code: couponCode },
+        include: { allowedCategories: true }
+      });
 
-    // 2. Set Due Date (3 days from now)
-    const dueDate = new Date();
-    dueDate.setDate(dueDate.getDate() + 3);
-    const dueDateStr = dueDate.toISOString().split('T')[0];
-
-    // 3. Create Payment in Asaas
-    const asaasPayment = await createPayment(
-      asaasCustomer.id,
-      finalAmount,
-      `Inscrição COFOA XV - ${category.name}`,
-      dueDateStr
-    );
-
-    // 4. Save Registration and Payment to DB
-    const registration = await prisma.registration.create({
-      data: {
-        participantId: participant.id,
-        categoryId,
-        batchId: batch.id,
-        status: 'PENDING',
-        amount: finalAmount,
+      if (!coupon) {
+        return { error: 'Cupom inválido ou não encontrado.' };
       }
-    });
 
-    await prisma.payment.create({
-      data: {
-        registrationId: registration.id,
-        amount: finalAmount,
-        gatewayId: asaasPayment.id,
-        gatewayResponse: asaasPayment as any,
+      if (!coupon.active) {
+        return { error: 'Este cupom não está mais ativo.' };
       }
-    });
+
+      if (coupon.startDate && new Date() < coupon.startDate) {
+        return { error: 'Este cupom ainda não é válido.' };
+      }
+
+      if (coupon.endDate && new Date() > coupon.endDate) {
+        return { error: 'Este cupom está expirado.' };
+      }
+
+      if (coupon.userId && coupon.userId !== session.userId) {
+        return { error: 'Este cupom não pertence a você.' };
+      }
+
+      if (coupon.maxUses && coupon.usedCount >= coupon.maxUses) {
+        return { error: 'Este cupom já atingiu o limite de uso.' };
+      }
+
+      if (coupon.allowedCategories.length > 0 && !coupon.allowedCategories.some(ac => ac.categoryId === category.id)) {
+        return { error: 'Este cupom não é válido para a categoria selecionada.' };
+      }
+
+      // Calculate discount
+      if (coupon.discountType === 'FIXED') {
+        appliedDiscount = coupon.discountValue;
+      } else if (coupon.discountType === 'PERCENTAGE') {
+        appliedDiscount = Math.round(finalAmount * (coupon.discountValue / 100));
+      }
+
+      finalAmount = Math.max(0, finalAmount - appliedDiscount);
+      couponId = coupon.id;
+    }
+
+
+    if (finalAmount > 0) {
+      // 1. Create/Get Asaas Customer
+      const asaasCustomer = await createOrGetCustomer(
+        participant.fullName,
+        participant.cpf,
+        participant.user.email,
+        participant.phone
+      );
+
+      // 2. Set Due Date (3 days from now)
+      const dueDate = new Date();
+      dueDate.setDate(dueDate.getDate() + 3);
+      const dueDateStr = dueDate.toISOString().split('T')[0];
+
+      // 3. Create Payment in Asaas
+      const asaasPayment = await createPayment(
+        asaasCustomer.id,
+        finalAmount,
+        `Inscrição COFOA XV - ${category.name}`,
+        dueDateStr
+      );
+
+      // 4. Save Registration and Payment to DB
+      const registration = await prisma.registration.create({
+        data: {
+          participantId: participant.id,
+          categoryId,
+          batchId: batch.id,
+          couponId,
+          status: 'PENDING',
+          amount: finalAmount,
+        }
+      });
+
+      await prisma.payment.create({
+        data: {
+          registrationId: registration.id,
+          amount: finalAmount,
+          gatewayId: asaasPayment.id,
+          gatewayResponse: asaasPayment as any,
+        }
+      });
+    } else {
+      // Free registration via 100% discount coupon or 0 value category
+      const registration = await prisma.registration.create({
+        data: {
+          participantId: participant.id,
+          categoryId,
+          batchId: batch.id,
+          couponId,
+          status: 'CONFIRMED',
+          amount: 0,
+        }
+      });
+      // Do not create Asaas payment
+    }
+
+    if (couponId) {
+      await prisma.coupon.update({
+        where: { id: couponId },
+        data: { usedCount: { increment: 1 } }
+      });
+    }
 
     revalidatePath('/area-participante');
   } catch (err: any) {
