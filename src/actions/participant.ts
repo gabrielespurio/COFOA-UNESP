@@ -114,7 +114,6 @@ export async function createRegistration(formData: FormData) {
   if (existing) return { error: 'Você já possui uma inscrição registrada.' };
 
   const categoryId = formData.get('categoryId') as string;
-  const couponCode = formData.get('couponCode') as string | null;
   const file = formData.get('file') as File | null;
   let proofUrl = null;
 
@@ -186,49 +185,35 @@ export async function createRegistration(formData: FormData) {
     let couponId: string | null = null;
     let appliedDiscount = 0;
 
-    if (couponCode) {
-      const coupon = await prisma.coupon.findUnique({
-        where: { code: couponCode },
-        include: { allowedCategories: true }
-      });
+    // Automatically find an available active coupon for this user
+    const coupon = await prisma.coupon.findFirst({
+      where: { 
+        userId: session.userId,
+        active: true,
+      },
+      include: { allowedCategories: true }
+    });
 
-      if (!coupon) {
-        return { error: 'Cupom inválido ou não encontrado.' };
+    if (coupon && coupon.usedCount < coupon.maxUses) {
+      let isValidForCategory = true;
+      if (coupon.allowedCategories.length > 0) {
+        isValidForCategory = coupon.allowedCategories.some(ac => ac.categoryId === category.id);
       }
 
-      if (!coupon.active) {
-        return { error: 'Este cupom não está mais ativo.' };
-      }
+      const isNotExpired = (!coupon.startDate || new Date() >= coupon.startDate) && 
+                           (!coupon.endDate || new Date() <= coupon.endDate);
 
-      if (coupon.startDate && new Date() < coupon.startDate) {
-        return { error: 'Este cupom ainda não é válido.' };
-      }
+      if (isValidForCategory && isNotExpired) {
+        // Calculate discount
+        if (coupon.discountType === 'FIXED') {
+          appliedDiscount = coupon.discountValue;
+        } else if (coupon.discountType === 'PERCENTAGE') {
+          appliedDiscount = Math.round(finalAmount * (coupon.discountValue / 100));
+        }
 
-      if (coupon.endDate && new Date() > coupon.endDate) {
-        return { error: 'Este cupom está expirado.' };
+        finalAmount = Math.max(0, finalAmount - appliedDiscount);
+        couponId = coupon.id;
       }
-
-      if (coupon.userId && coupon.userId !== session.userId) {
-        return { error: 'Este cupom não pertence a você.' };
-      }
-
-      if (coupon.maxUses && coupon.usedCount >= coupon.maxUses) {
-        return { error: 'Este cupom já atingiu o limite de uso.' };
-      }
-
-      if (coupon.allowedCategories.length > 0 && !coupon.allowedCategories.some(ac => ac.categoryId === category.id)) {
-        return { error: 'Este cupom não é válido para a categoria selecionada.' };
-      }
-
-      // Calculate discount
-      if (coupon.discountType === 'FIXED') {
-        appliedDiscount = coupon.discountValue;
-      } else if (coupon.discountType === 'PERCENTAGE') {
-        appliedDiscount = Math.round(finalAmount * (coupon.discountValue / 100));
-      }
-
-      finalAmount = Math.max(0, finalAmount - appliedDiscount);
-      couponId = coupon.id;
     }
 
 

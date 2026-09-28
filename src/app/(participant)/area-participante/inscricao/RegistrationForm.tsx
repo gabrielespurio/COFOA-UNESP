@@ -24,8 +24,6 @@ export function RegistrationForm({ categories, participantId }: RegistrationForm
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState('');
 
-  const [couponCode, setCouponCode] = useState('');
-
   const activeCategory = categories.find(c => c.id === selectedCategory);
   const needsUpload = activeCategory?.requiresStudentProof || activeCategory?.requiresCRO;
 
@@ -49,10 +47,6 @@ export function RegistrationForm({ categories, participantId }: RegistrationForm
       if (needsUpload && file) {
         formData.append('file', file);
       }
-      if (couponCode.trim()) {
-        formData.append('couponCode', couponCode.trim());
-      }
-
       // Call Server Action
       const result = await createRegistration(formData);
       if (result?.error) {
@@ -106,18 +100,6 @@ export function RegistrationForm({ categories, participantId }: RegistrationForm
           <p className={styles.hint}>O arquivo será salvo com segurança em nuvem.</p>
         </div>
       )}
-
-      <div className={styles.formGroup} style={{ marginTop: '1.5rem', maxWidth: '300px' }}>
-        <label className={styles.label}>Cupom de Desconto (opcional)</label>
-        <input 
-          type="text" 
-          name="couponCode" 
-          value={couponCode}
-          onChange={(e) => setCouponCode(e.target.value)}
-          className={styles.input} 
-          placeholder="Ex: PROMO100" 
-        />
-      </div>
 
       <div className={styles.actions}>
         <Button variant="primary" size="lg" type="submit" loading={isPending} disabled={!selectedCategory}>
