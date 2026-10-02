@@ -11,6 +11,7 @@ import styles from '../(participant)/layout.module.css';
 const MENU_ITEMS = [
   { href: '/comissao', label: 'Painel Gerencial' },
   { href: '/comissao/trabalhos', label: 'Trabalhos Submetidos' },
+  { href: '/comissao/presenca', label: 'Controle de Presença' },
 ];
 
 export function CommitteeSidebar({ children }: { children?: React.ReactNode }) {

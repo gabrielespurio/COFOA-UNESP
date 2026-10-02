@@ -73,6 +73,7 @@ model Participant {
   scientificWorks ScientificWork[]
   certificate     Certificate?
   consents        ConsentRecord[]
+  lectureEnrollments LectureEnrollment[]
   
   @@map("participants")
 }
@@ -339,4 +340,47 @@ model WorkEvaluation {
   @@index([workId])
   @@index([evaluatorId])
   @@map("work_evaluations")
+}
+
+// ─── Lecture (Palestra) ────────────────────────────────────
+
+model Lecture {
+  id          String    @id @default(cuid())
+  title       String
+  description String?   @db.Text
+  speaker     String
+  location    String?
+  startTime   DateTime
+  endTime     DateTime
+  active      Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  enrollments LectureEnrollment[]
+
+  @@map("lectures")
+}
+
+// ─── Lecture Enrollment (Inscrição em Palestra) ────────────
+
+model LectureEnrollment {
+  id            String                  @id @default(cuid())
+  participantId String
+  lectureId     String
+  qrCodeToken   String                  @unique @default(cuid())
+  status        LectureEnrollmentStatus @default(ENROLLED)
+  checkedInAt   DateTime?
+  createdAt     DateTime                @default(now())
+
+  participant   Participant @relation(fields: [participantId], references: [id], onDelete: Cascade)
+  lecture       Lecture     @relation(fields: [lectureId], references: [id], onDelete: Cascade)
+
+  @@unique([participantId, lectureId])
+  @@map("lecture_enrollments")
+}
+
+enum LectureEnrollmentStatus {
+  ENROLLED
+  ATTENDED
+  CANCELLED
 }
