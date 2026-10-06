@@ -35,11 +35,14 @@ export function getBatchStatus(startDateStr: string | null, endDateStr: string |
   }
 }
 
-// Formata uma data para visualização curta (DD/MM)
 export function formatShortDate(dateStr: string | null) {
   if (!dateStr) return '';
-  const date = new Date(dateStr);
-  const day = String(date.getUTCDate()).padStart(2, '0');
-  const month = String(date.getUTCMonth() + 1).padStart(2, '0');
-  return `${day}/${month}`;
+  try {
+    const [year, month, dayT] = dateStr.split('-');
+    if (!dayT) return '';
+    const day = dayT.substring(0, 2);
+    return `${day}/${month}`;
+  } catch (e) {
+    return '';
+  }
 }
