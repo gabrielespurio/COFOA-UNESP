@@ -80,7 +80,7 @@ export async function submitWork(formData: FormData) {
         enrollmentProofUrl,
         requiresEthics,
         ethicsCommitteeFileUrl,
-        status: 'UNDER_REVIEW',
+        status: 'SUBMITTED',
         submittedAt: new Date()
       }
     });
@@ -179,7 +179,7 @@ export async function resubmitWork(formData: FormData) {
         enrollmentProofUrl,
         requiresEthics,
         ethicsCommitteeFileUrl,
-        status: 'UNDER_REVIEW', // Voltar para avaliação
+        status: 'SUBMITTED', // Voltar para triagem
         submittedAt: new Date()
       }
     });

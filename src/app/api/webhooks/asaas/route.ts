@@ -37,13 +37,24 @@ export async function POST(request: Request) {
       });
 
       // Update registration status and save receipt url
-      await prisma.registration.update({
+      const updatedReg = await prisma.registration.update({
         where: { id: payment.registrationId },
         data: { 
           status: 'CONFIRMED',
           paymentReceiptUrl: payload.payment.transactionReceiptUrl || payload.payment.invoiceUrl || null
-        }
+        },
+        include: { participant: true, category: true }
       });
+
+      if (updatedReg.category.id === 'banca-int' || updatedReg.category.id === 'banca-ext') {
+        const user = await prisma.user.findUnique({ where: { id: updatedReg.participant.userId }});
+        if (user && !user.roles.includes('COMMITTEE')) {
+          await prisma.user.update({
+            where: { id: user.id },
+            data: { roles: { push: 'COMMITTEE' } }
+          });
+        }
+      }
 
       console.log(`Webhook Success: Payment ${paymentId} confirmed!`);
     }

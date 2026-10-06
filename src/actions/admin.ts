@@ -16,10 +16,22 @@ export async function updateRegistrationStatus(registrationId: string, status: R
   await checkAdmin();
 
   try {
-    await prisma.registration.update({
+    const updatedReg = await prisma.registration.update({
       where: { id: registrationId },
-      data: { status }
+      data: { status },
+      include: { participant: true, category: true }
     });
+
+    if (status === 'CONFIRMED' && (updatedReg.category.id === 'banca-int' || updatedReg.category.id === 'banca-ext')) {
+      const user = await prisma.user.findUnique({ where: { id: updatedReg.participant.userId }});
+      if (user && !user.roles.includes('COMMITTEE')) {
+        await prisma.user.update({
+          where: { id: user.id },
+          data: { roles: { push: 'COMMITTEE' } }
+        });
+      }
+    }
+
     revalidatePath('/admin/inscricoes');
     revalidatePath('/admin');
     return { success: true };
@@ -52,7 +64,7 @@ export async function evaluateWorkStage1(formData: FormData) {
     try {
       await prisma.scientificWork.update({
         where: { id: workId },
-        data: { stage1Approved: true }
+        data: { stage1Approved: true, status: 'UNDER_REVIEW' }
       });
       revalidatePath('/triagem');
       revalidatePath('/comissao/trabalhos');

@@ -74,6 +74,37 @@ export default async function ParticipantDashboardPage() {
             <div className={styles.cardValue}>Indisponível</div>
             <div className={styles.cardDesc}>Será liberado após o evento</div>
           </div>
+          
+          {(session.roles.includes('COMMITTEE') || (participant.registration?.status === 'CONFIRMED' && participant.registration.categoryId === 'grad-pos-foa')) && (
+            <div className={styles.card}>
+              <div className={styles.cardTitle}>Banca Avaliadora</div>
+              {session.roles.includes('COMMITTEE') ? (
+                <>
+                  <div className={`${styles.cardValue} ${styles.statusActive}`}>Ativo</div>
+                  <div className={styles.cardDesc}>Você tem permissão para avaliar trabalhos</div>
+                  <Button href="/comissao" variant="primary" size="sm" style={{ marginTop: '1rem' }}>
+                    Acessar Painel
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <div className={styles.cardValue}>Inativo</div>
+                  <div className={styles.cardDesc}>
+                    Como aluno(a) de Pós-Graduação, você pode fazer parte da nossa comissão científica gratuitamente.
+                  </div>
+                  <form action={async () => {
+                    'use server';
+                    const { applyForBoard } = await import('@/actions/participant');
+                    await applyForBoard();
+                  }}>
+                    <Button type="submit" variant="outline" size="sm" style={{ marginTop: '1rem' }}>
+                      Quero ser Avaliador
+                    </Button>
+                  </form>
+                </>
+              )}
+            </div>
+          )}
         </div>
       )}
     </div>

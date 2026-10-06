@@ -180,6 +180,7 @@ export async function createRegistration(formData: FormData) {
       case 'PRESENCIAL_TIER3': finalAmount = batch.pricePresencialTier3; break;
       case 'ONLINE_TIER1': finalAmount = batch.priceOnlineTier1; break;
       case 'ONLINE_TIER2': finalAmount = batch.priceOnlineTier2; break;
+      case 'BANCA_EXTERNA': finalAmount = batch.priceBancaExterna; break;
     }
 
     let couponId: string | null = null;
@@ -383,4 +384,34 @@ export async function cancelRegistration() {
     console.error('Error cancelling registration:', error);
     return { error: 'Erro ao cancelar inscrição.' };
   }
+}
+
+export async function applyForBoard() {
+  const session = await getSession();
+  if (!session) return { error: 'Não autenticado.' };
+
+  const participant = await prisma.participant.findUnique({
+    where: { userId: session.userId },
+    include: { registration: { include: { category: true } } }
+  });
+
+  if (!participant?.registration || participant.registration.status !== 'CONFIRMED') {
+    return { error: 'Sua inscrição no congresso precisa estar confirmada primeiro.' };
+  }
+
+  const internalCategories = ['grad-pos-foa'];
+  if (!internalCategories.includes(participant.registration.category.id)) {
+    return { error: 'Apenas participantes de Pós-Graduação podem solicitar isenção para a banca. Se você for externo, faça a inscrição diretamente na categoria Banca Externa.' };
+  }
+
+  const user = await prisma.user.findUnique({ where: { id: session.userId }});
+  if (user && !user.roles.includes('COMMITTEE')) {
+    await prisma.user.update({
+      where: { id: session.userId },
+      data: { roles: { push: 'COMMITTEE' } }
+    });
+  }
+
+  revalidatePath('/area-participante');
+  return { success: true };
 }

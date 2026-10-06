@@ -110,6 +110,7 @@ enum PriceTier {
   PRESENCIAL_TIER3
   ONLINE_TIER1
   ONLINE_TIER2
+  BANCA_EXTERNA
 }
 
 // ─── Registration Batch (Lote) ─────────────────────────────
@@ -127,6 +128,7 @@ model RegistrationBatch {
   pricePresencialTier3  Int
   priceOnlineTier1      Int
   priceOnlineTier2      Int
+  priceBancaExterna     Int         @default(7000)
   
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
