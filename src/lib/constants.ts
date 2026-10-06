@@ -40,7 +40,7 @@ export const REGISTRATION_CATEGORIES = [
   { id: 'com-ext-2', name: 'Comunidade Externa - Apresentação de 2 trabalhos online', type: 'online' as const, priceTier: 'online_tier2' as const },
   
   // Banca Avaliadora
-  { id: 'banca-ext', name: 'Banca Avaliadora Externa', type: 'presencial' as const, priceTier: 'banca_externa' as const },
+  { id: 'banca-ext', name: 'Banca Avaliadora Externa', type: 'online' as const, priceTier: 'banca_externa' as const },
 ] as const;
 
 export const REGISTRATION_BATCHES = [
