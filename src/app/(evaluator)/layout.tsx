@@ -1,6 +1,6 @@
 import { getSession } from '@/lib/auth';
 import { redirect } from 'next/navigation';
-import { Header } from '@/components/layout/Header/Header';
+import { Header } from '@/components/common/Header/Header';
 import { prisma } from '@/lib/prisma';
 import styles from './layout.module.css';
 
@@ -23,7 +23,7 @@ export default async function EvaluatorLayout({
 
   return (
     <div className={styles.layout}>
-      <Header />
+      <Header isLoggedIn={true} />
       <main className={styles.main}>
         {children}
       </main>
