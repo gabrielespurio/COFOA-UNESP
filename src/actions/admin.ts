@@ -24,10 +24,10 @@ export async function updateRegistrationStatus(registrationId: string, status: R
 
     if (status === 'CONFIRMED' && (updatedReg.category.id === 'banca-int' || updatedReg.category.id === 'banca-ext')) {
       const user = await prisma.user.findUnique({ where: { id: updatedReg.participant.userId }});
-      if (user && !user.roles.includes('COMMITTEE')) {
+      if (user && !user.roles.includes('EVALUATOR')) {
         await prisma.user.update({
           where: { id: user.id },
-          data: { roles: { push: 'COMMITTEE' } }
+          data: { roles: { push: 'EVALUATOR' } }
         });
       }
     }

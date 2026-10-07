@@ -405,10 +405,10 @@ export async function applyForBoard() {
   }
 
   const user = await prisma.user.findUnique({ where: { id: session.userId }});
-  if (user && !user.roles.includes('COMMITTEE')) {
+  if (user && !user.roles.includes('EVALUATOR')) {
     await prisma.user.update({
       where: { id: session.userId },
-      data: { roles: { push: 'COMMITTEE' } }
+      data: { roles: { push: 'EVALUATOR' } }
     });
   }
 
