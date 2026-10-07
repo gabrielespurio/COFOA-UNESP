@@ -75,6 +75,17 @@ export default async function ParticipantDashboardPage() {
             <div className={styles.cardDesc}>Será liberado após o evento</div>
           </div>
           
+          {session.roles.includes('COMMITTEE') && (
+            <div className={styles.card}>
+              <div className={styles.cardTitle}>Comissão Organizadora</div>
+              <div className={`${styles.cardValue} ${styles.statusActive}`}>Ativo</div>
+              <div className={styles.cardDesc}>Você tem permissão para gerenciar o congresso</div>
+              <Button href="/comissao" variant="primary" size="sm" style={{ marginTop: '1rem' }}>
+                Acessar Painel
+              </Button>
+            </div>
+          )}
+          
           {(session.roles.includes('EVALUATOR') || (participant.registration?.status === 'CONFIRMED' && participant.registration.categoryId === 'grad-pos-foa')) && (
             <div className={styles.card}>
               <div className={styles.cardTitle}>Banca Avaliadora</div>
@@ -90,7 +101,7 @@ export default async function ParticipantDashboardPage() {
                 <>
                   <div className={styles.cardValue}>Inativo</div>
                   <div className={styles.cardDesc}>
-                    Como aluno(a) de Pós-Graduação, você pode fazer parte da nossa comissão científica gratuitamente.
+                    Como aluno(a) de Pós-Graduação, você pode fazer parte da nossa banca avaliadora gratuitamente.
                   </div>
                   <form action={async () => {
                     'use server';
