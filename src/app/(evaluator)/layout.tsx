@@ -1,8 +1,8 @@
 import { getSession } from '@/lib/auth';
 import { redirect } from 'next/navigation';
-import { Header } from '@/components/common/Header/Header';
+import { EvaluatorSidebar } from './EvaluatorSidebar';
 import { prisma } from '@/lib/prisma';
-import styles from './layout.module.css';
+import styles from '../(participant)/layout.module.css';
 
 export const metadata = {
   title: 'Banca Avaliadora | COFOA XV',
@@ -23,10 +23,9 @@ export default async function EvaluatorLayout({
 
   return (
     <div className={styles.layout}>
-      <Header isLoggedIn={true} />
-      <main className={styles.main}>
+      <EvaluatorSidebar>
         {children}
-      </main>
+      </EvaluatorSidebar>
     </div>
   );
 }
