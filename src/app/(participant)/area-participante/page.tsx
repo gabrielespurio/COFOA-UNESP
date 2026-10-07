@@ -86,7 +86,7 @@ export default async function ParticipantDashboardPage() {
             </div>
           )}
           
-          {(session.roles.includes('EVALUATOR') || (participant.registration?.status === 'CONFIRMED' && participant.registration.categoryId === 'grad-pos-foa')) && (
+          {(participant.registration?.status === 'CONFIRMED' && (session.roles.includes('EVALUATOR') || participant.registration.categoryId === 'grad-pos-foa')) && (
             <div className={styles.card}>
               <div className={styles.cardTitle}>Banca Avaliadora</div>
               {session.roles.includes('EVALUATOR') ? (
