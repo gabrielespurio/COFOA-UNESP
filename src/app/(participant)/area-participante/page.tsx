@@ -75,14 +75,14 @@ export default async function ParticipantDashboardPage() {
             <div className={styles.cardDesc}>Será liberado após o evento</div>
           </div>
           
-          {(session.roles.includes('COMMITTEE') || (participant.registration?.status === 'CONFIRMED' && participant.registration.categoryId === 'grad-pos-foa')) && (
+          {(session.roles.includes('EVALUATOR') || (participant.registration?.status === 'CONFIRMED' && participant.registration.categoryId === 'grad-pos-foa')) && (
             <div className={styles.card}>
               <div className={styles.cardTitle}>Banca Avaliadora</div>
-              {session.roles.includes('COMMITTEE') ? (
+              {session.roles.includes('EVALUATOR') ? (
                 <>
                   <div className={`${styles.cardValue} ${styles.statusActive}`}>Ativo</div>
                   <div className={styles.cardDesc}>Você tem permissão para avaliar trabalhos</div>
-                  <Button href="/comissao" variant="primary" size="sm" style={{ marginTop: '1rem' }}>
+                  <Button href="/avaliador" variant="primary" size="sm" style={{ marginTop: '1rem' }}>
                     Acessar Painel
                   </Button>
                 </>

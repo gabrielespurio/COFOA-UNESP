@@ -405,10 +405,18 @@ export async function applyForBoard() {
   }
 
   const user = await prisma.user.findUnique({ where: { id: session.userId }});
-  if (user && !user.roles.includes('EVALUATOR')) {
-    await prisma.user.update({
+    if (user && !user.roles.includes('EVALUATOR')) {
+    const updatedUser = await prisma.user.update({
       where: { id: session.userId },
       data: { roles: { push: 'EVALUATOR' } }
+    });
+    
+    const { createSession } = await import('@/lib/auth');
+    await createSession({
+      userId: updatedUser.id,
+      email: updatedUser.email,
+      roles: updatedUser.roles,
+      role: updatedUser.roles[0]
     });
   }
 
