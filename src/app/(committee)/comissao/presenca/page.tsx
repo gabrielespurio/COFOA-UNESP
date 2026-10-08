@@ -35,47 +35,84 @@ export default async function AttendancePage() {
             const attendanceRatio = lecture.totalEnrolled > 0 
               ? (lecture.totalAttended / lecture.totalEnrolled) * 100 
               : 0;
-              
+            
+            const now = new Date();
+            const start = new Date(lecture.startTime);
+            const end = new Date(lecture.endTime);
+            const isOngoing = now >= start && now <= end;
+            const isFinished = now > end;
+            
+            let statusText = 'Em Breve';
+            let statusClass = styles.statusUpcoming;
+            if (isOngoing) {
+              statusText = 'Acontecendo Agora';
+              statusClass = styles.statusOngoing;
+            } else if (isFinished) {
+              statusText = 'Finalizada';
+              statusClass = styles.statusFinished;
+            }
+
+            const speakerInitials = lecture.speaker !== '-' && lecture.speaker !== 'Intervalo'
+              ? lecture.speaker.split(' ').filter((n: string) => n.length > 2).map((n: string) => n[0]).slice(0, 2).join('').toUpperCase()
+              : 'CO';
+
             return (
               <div key={lecture.id} className={styles.lectureCard}>
-                <div className={styles.lectureHeader}>
-                  <h3 className={styles.lectureTitle}>{lecture.title}</h3>
-                  <p className={styles.lectureSpeaker}>{lecture.speaker}</p>
+                <div className={cn(styles.cardBadge, statusClass)}>
+                  {statusText}
                 </div>
                 
-                <div className={styles.lectureMeta}>
-                  <span>
-                    📅 {new Date(lecture.startTime).toLocaleDateString('pt-BR')} 
-                    {' • '}
-                    {new Date(lecture.startTime).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })} 
-                    {' - '}
-                    {new Date(lecture.endTime).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
-                  </span>
-                  <span>📍 {lecture.location}</span>
-                </div>
-                
-                <div className={styles.attendanceStats}>
-                  <div className={styles.statsRow}>
-                    <span className={styles.statLabel}>Presenças</span>
-                    <span className={styles.statValue}>
-                      {lecture.totalAttended} / {lecture.totalEnrolled}
+                <div className={styles.cardContentWrapper}>
+                  <div className={styles.lectureHeader}>
+                    <div className={styles.speakerAvatar}>
+                      {speakerInitials}
+                    </div>
+                    <div>
+                      <h3 className={styles.lectureTitle} title={lecture.title}>{lecture.title}</h3>
+                      <p className={styles.lectureSpeaker}>{lecture.speaker}</p>
+                    </div>
+                  </div>
+                  
+                  <div className={styles.lectureMeta}>
+                    <span className={styles.metaBadge}>
+                      📅 {start.toLocaleDateString('pt-BR')} 
+                    </span>
+                    <span className={styles.metaBadge}>
+                      🕒 {start.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })} 
+                      {' às '}
+                      {end.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                    </span>
+                    <span className={styles.metaBadge}>
+                      📍 {lecture.location || 'A confirmar'}
                     </span>
                   </div>
                   
-                  <div className={styles.attendanceBar}>
-                    <div 
-                      className={styles.attendanceFill} 
-                      style={{ width: `${attendanceRatio}%` }}
-                    />
+                  <div className={styles.attendanceStats}>
+                    <div className={styles.statsRow}>
+                      <span className={styles.statLabel}>Registros de Presença</span>
+                      <span className={styles.statValue}>
+                        {lecture.totalAttended} <span style={{ fontSize: '0.85em', color: 'var(--color-text-muted)' }}>(Entradas)</span>
+                      </span>
+                    </div>
+                    
+                    <div className={styles.attendanceBar}>
+                      <div 
+                        className={styles.attendanceFill} 
+                        style={{ 
+                          width: `${Math.min(100, attendanceRatio)}%`,
+                          backgroundColor: attendanceRatio > 0 ? 'var(--color-primary)' : 'transparent' 
+                        }}
+                      />
+                    </div>
                   </div>
-                </div>
-                
-                <div className={styles.cardAction}>
-                  <Link href={`/comissao/presenca/${lecture.id}`} passHref legacyBehavior>
-                    <Button variant="outline" fullWidth>
-                      Ver Detalhes
-                    </Button>
-                  </Link>
+                  
+                  <div className={styles.cardAction}>
+                    <Link href={`/comissao/presenca/${lecture.id}`} passHref legacyBehavior>
+                      <Button variant={isOngoing ? 'primary' : 'outline'} fullWidth>
+                        Gerenciar Presenças
+                      </Button>
+                    </Link>
+                  </div>
                 </div>
               </div>
             );
