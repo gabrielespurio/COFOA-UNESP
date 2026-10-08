@@ -157,57 +157,50 @@ export async function cancelLectureEnrollment(enrollmentId: string) {
 
 // ─── Committee Actions ─────────────────────────────────────
 
-export async function checkInByQrToken(qrCodeToken: string) {
+export async function registerAttendance(participantId: string, lectureId: string, type: 'ENTRY' | 'EXIT') {
   await checkCommitteeOrAdmin();
 
-  const enrollment = await prisma.lectureEnrollment.findUnique({
-    where: { qrCodeToken },
-    include: {
-      participant: { select: { fullName: true, cpf: true } },
-      lecture: { select: { id: true, title: true, startTime: true } },
-    },
+  const participant = await prisma.participant.findUnique({
+    where: { id: participantId },
+    include: { user: { select: { email: true } } },
   });
 
-  if (!enrollment) {
-    return { error: 'QR Code inválido. Nenhuma inscrição encontrada para este código.' };
+  if (!participant) {
+    return { error: 'QR Code inválido. Participante não encontrado.' };
   }
 
-  if (enrollment.status === 'CANCELLED') {
-    return { error: 'Esta inscrição foi cancelada pelo participante.' };
-  }
+  const lecture = await prisma.lecture.findUnique({
+    where: { id: lectureId },
+  });
 
-  if (enrollment.status === 'ATTENDED') {
-    return {
-      error: 'Presença já registrada anteriormente.',
-      data: {
-        participantName: enrollment.participant.fullName,
-        lectureTitle: enrollment.lecture.title,
-        checkedInAt: enrollment.checkedInAt?.toISOString() || null,
-        alreadyCheckedIn: true,
-      },
-    };
+  if (!lecture) {
+    return { error: 'Palestra não selecionada ou não encontrada.' };
   }
 
   try {
-    const now = new Date();
-    await prisma.lectureEnrollment.update({
-      where: { id: enrollment.id },
-      data: { status: 'ATTENDED', checkedInAt: now },
+    const attendance = await prisma.lectureAttendance.create({
+      data: {
+        participantId,
+        lectureId,
+        type,
+      },
     });
 
     revalidatePath('/comissao/presenca');
     return {
       success: true,
       data: {
-        participantName: enrollment.participant.fullName,
-        lectureTitle: enrollment.lecture.title,
-        lectureId: enrollment.lecture.id,
-        checkedInAt: now.toISOString(),
+        participantName: participant.fullName,
+        participantEmail: participant.user.email,
+        lectureTitle: lecture.title,
+        lectureId: lecture.id,
+        type,
+        checkedInAt: attendance.scannedAt.toISOString(),
       },
     };
   } catch (err: any) {
-    console.error('Error checking in:', err);
-    return { error: 'Erro ao registrar presença.' };
+    console.error('Error registering attendance:', err);
+    return { error: 'Erro ao registrar leitura.' };
   }
 }
 
@@ -222,8 +215,7 @@ export async function getLecturesForAttendance() {
           enrollments: true,
         },
       },
-      enrollments: {
-        where: { status: 'ATTENDED' },
+      attendances: {
         select: { id: true },
       },
     },
@@ -238,7 +230,7 @@ export async function getLecturesForAttendance() {
     endTime: l.endTime,
     location: l.location,
     totalEnrolled: l._count.enrollments,
-    totalAttended: l.enrollments.length,
+    totalAttended: l.attendances.length,
   }));
 }
 
@@ -248,14 +240,13 @@ export async function getLectureAttendance(lectureId: string) {
   const lecture = await prisma.lecture.findUnique({
     where: { id: lectureId },
     include: {
-      enrollments: {
-        where: { status: { not: 'CANCELLED' } },
+      attendances: {
         include: {
           participant: {
             select: { fullName: true, cpf: true, user: { select: { email: true } } },
           },
         },
-        orderBy: { createdAt: 'asc' },
+        orderBy: { scannedAt: 'desc' },
       },
     },
   });
@@ -269,12 +260,12 @@ export async function getLectureAttendance(lectureId: string) {
     startTime: lecture.startTime,
     endTime: lecture.endTime,
     location: lecture.location,
-    enrollments: lecture.enrollments.map((e: any) => ({
-      id: e.id,
-      participantName: e.participant.fullName,
-      participantEmail: e.participant.user.email,
-      status: e.status,
-      checkedInAt: e.checkedInAt,
+    attendances: lecture.attendances.map((a: any) => ({
+      id: a.id,
+      participantName: a.participant.fullName,
+      participantEmail: a.participant.user.email,
+      type: a.type,
+      scannedAt: a.scannedAt,
     })),
   };
 }

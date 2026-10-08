@@ -22,7 +22,7 @@ export default async function AttendancePage() {
         subtitle="Escaneie o QR Code dos participantes para registrar presença" 
       />
       
-      <QrScanner />
+      <QrScanner lectures={lectures.map((l: any) => ({ id: l.id, title: l.title }))} />
       
       <div className={styles.lecturesSection}>
         <SectionHeading 

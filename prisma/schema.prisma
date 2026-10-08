@@ -76,6 +76,7 @@ model Participant {
   certificate     Certificate?
   consents        ConsentRecord[]
   lectureEnrollments LectureEnrollment[]
+  lectureAttendances LectureAttendance[]
   
   @@map("participants")
 }
@@ -378,6 +379,7 @@ model Lecture {
   updatedAt   DateTime  @updatedAt
 
   enrollments LectureEnrollment[]
+  attendances LectureAttendance[]
 
   @@map("lectures")
 }
@@ -404,4 +406,24 @@ enum LectureEnrollmentStatus {
   ENROLLED
   ATTENDED
   CANCELLED
+}
+
+// ─── Lecture Attendance (Registro de Entrada/Saída) ────────
+model LectureAttendance {
+  id            String         @id @default(cuid())
+  participantId String
+  lectureId     String
+  type          AttendanceType
+  scannedAt     DateTime       @default(now())
+
+  participant   Participant    @relation(fields: [participantId], references: [id], onDelete: Cascade)
+  lecture       Lecture        @relation(fields: [lectureId], references: [id], onDelete: Cascade)
+
+  @@index([participantId, lectureId])
+  @@map("lecture_attendances")
+}
+
+enum AttendanceType {
+  ENTRY
+  EXIT
 }

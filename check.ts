@@ -6,24 +6,29 @@ neonConfig.webSocketConstructor = ws;
 
 async function run() {
   const { prisma } = await import('./src/lib/prisma');
-  
-  const user = await prisma.user.findUnique({
-    where: { email: 'gabrielespurio@hotmail.com' },
-    include: { participant: true }
-  });
-
-  if (user?.participant?.id) {
-    const res = await prisma.registration.deleteMany({
-      where: { participantId: user.participant.id }
-    });
-    console.log('Deleted registrations:', res.count);
-
-    await prisma.coupon.updateMany({
-      where: { userId: user.id },
-      data: { usedCount: 0 }
-    });
-    console.log('Reset coupon count');
+  // Delete any existing registration first
+  const u = await prisma.user.findUnique({where: {email: 'gabrielespurio@hotmail.com'}, include: {participant: true}});
+  if(u?.participant) {
+    await prisma.registration.deleteMany({where: {participantId: u.participant.id}});
   }
+
+  // Set up mock session
+  const auth = await import('./src/lib/auth');
+  auth.getSession = async () => ({ userId: u!.id, role: 'PARTICIPANT' } as any);
+
+  const { createRegistration } = await import('./src/actions/participant');
+  
+  const fd = new FormData();
+  fd.append('categoryId', 'grad-pos-foa');
+  
+  console.log('Calling createRegistration...');
+  const res = await createRegistration(fd);
+  console.log('Result:', res);
+
+  const reg = await prisma.registration.findFirst({
+    where: { participantId: u!.participant!.id }
+  });
+  console.log('Created Registration:', reg);
 
   await prisma.$disconnect();
 }

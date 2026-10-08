@@ -27,7 +27,7 @@ export default async function ProgramacaoPage() {
       {enrolledIds.length > 0 && (
         <div className={styles.topActions}>
           <Button href="/area-participante/programacao/meus-qrcodes" variant="outline" size="sm">
-            🎫 Meus QR Codes ({enrolledIds.length})
+            🎫 Meu QR Code
           </Button>
         </div>
       )}
