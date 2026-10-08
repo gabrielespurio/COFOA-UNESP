@@ -1,7 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { Metadata } from 'next';
-import { getLectureAttendance, getLecturesForAttendance } from '@/actions/lectures';
+import { getLectureAttendance } from '@/actions/lectures';
 import styles from './page.module.css';
 
 interface PageProps {
@@ -11,16 +11,12 @@ interface PageProps {
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  // Try to find the title, but fallback if not available
   return {
     title: `Detalhes de Presença - Comissão`,
   };
 }
 
 export default async function LectureAttendancePage({ params }: PageProps) {
-  // Await the params object according to Next.js 15+ constraints if this is Next 15,
-  // but the prompt says Next.js 16 (React 19). We will access params.lectureId asynchronously if needed,
-  // however `params` is a promise in Next 15+.
   const { lectureId } = await Promise.resolve(params);
   
   const lecture = await getLectureAttendance(lectureId);
@@ -39,8 +35,8 @@ export default async function LectureAttendancePage({ params }: PageProps) {
     );
   }
 
-  const totalEnrolled = lecture.enrollments.length;
-  const totalAttended = lecture.enrollments.filter((e: any) => e.status === 'ATTENDED' || e.checkedInAt).length;
+  const entries = lecture.attendances.filter((a: any) => a.type === 'ENTRY');
+  const exits = lecture.attendances.filter((a: any) => a.type === 'EXIT');
 
   return (
     <div className={styles.container}>
@@ -68,52 +64,48 @@ export default async function LectureAttendancePage({ params }: PageProps) {
         
         <div className={styles.statsBar}>
           <div className={styles.statBox}>
-            <span className={styles.statLabel}>Total Inscritos</span>
-            <span className={styles.statValue}>{totalEnrolled}</span>
+            <span className={styles.statLabel}>Total Registros</span>
+            <span className={styles.statValue}>{lecture.attendances.length}</span>
           </div>
           <div className={styles.statBox}>
-            <span className={styles.statLabel}>Total Presentes</span>
-            <span className={styles.statValue}>{totalAttended}</span>
+            <span className={styles.statLabel}>Entradas</span>
+            <span className={styles.statValue}>{entries.length}</span>
           </div>
           <div className={styles.statBox}>
-            <span className={styles.statLabel}>Taxa de Presença</span>
-            <span className={styles.statValue}>
-              {totalEnrolled > 0 ? Math.round((totalAttended / totalEnrolled) * 100) : 0}%
-            </span>
+            <span className={styles.statLabel}>Saídas</span>
+            <span className={styles.statValue}>{exits.length}</span>
           </div>
         </div>
       </div>
 
       <div className={styles.tableContainer}>
-        {lecture.enrollments.length > 0 ? (
+        {lecture.attendances.length > 0 ? (
           <table className={styles.table}>
             <thead>
               <tr>
                 <th className={styles.th}>Nome do Participante</th>
                 <th className={styles.th}>E-mail</th>
-                <th className={styles.th}>Status</th>
-                <th className={styles.th}>Horário Check-in</th>
+                <th className={styles.th}>Ação</th>
+                <th className={styles.th}>Horário da Leitura</th>
               </tr>
             </thead>
             <tbody>
-              {lecture.enrollments.map((enrollment: any) => {
-                const isAttended = enrollment.status === 'ATTENDED' || !!enrollment.checkedInAt;
+              {lecture.attendances.map((attendance: any) => {
+                const isEntry = attendance.type === 'ENTRY';
                 
                 return (
-                  <tr key={enrollment.id} className={styles.tr}>
+                  <tr key={attendance.id} className={styles.tr}>
                     <td className={styles.td}>
-                      <strong>{enrollment.participantName}</strong>
+                      <strong>{attendance.participantName}</strong>
                     </td>
-                    <td className={styles.td}>{enrollment.participantEmail}</td>
+                    <td className={styles.td}>{attendance.participantEmail}</td>
                     <td className={styles.td}>
-                      <span className={`${styles.statusBadge} ${isAttended ? styles.statusAttended : styles.statusEnrolled}`}>
-                        {isAttended ? 'Presente' : 'Inscrito'}
+                      <span className={`${styles.statusBadge} ${isEntry ? styles.statusAttended : styles.statusEnrolled}`}>
+                        {isEntry ? 'ENTRADA' : 'SAÍDA'}
                       </span>
                     </td>
                     <td className={styles.td}>
-                      {enrollment.checkedInAt 
-                        ? new Date(enrollment.checkedInAt).toLocaleString('pt-BR') 
-                        : '-'}
+                      {new Date(attendance.scannedAt).toLocaleString('pt-BR')}
                     </td>
                   </tr>
                 );
@@ -122,7 +114,7 @@ export default async function LectureAttendancePage({ params }: PageProps) {
           </table>
         ) : (
           <div className={styles.emptyState}>
-            <p>Nenhum participante inscrito nesta atividade.</p>
+            <p>Nenhuma leitura registrada nesta atividade.</p>
           </div>
         )}
       </div>
