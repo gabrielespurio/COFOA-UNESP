@@ -192,6 +192,17 @@ export function WorkSubmissionForm({ participantId, initialData, workId }: { par
               Clique aqui para acessar o Edital
             </a>.
           </p>
+          <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid var(--color-border)' }}>
+            <p style={{ margin: '0 0 0.5rem 0', fontSize: 'var(--font-size-sm)', fontWeight: 'bold', color: 'var(--color-text)' }}>Modelos de Apresentação (Templates):</p>
+            <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+              <a href="/templates/Template_Apresentacoes_Orais_COFOA.pptx" download style={{ color: 'var(--color-primary)', fontWeight: 'bold', textDecoration: 'underline', fontSize: 'var(--font-size-sm)' }}>
+                📥 Template Apresentações Orais
+              </a>
+              <a href="/templates/Template_Paineis_Digitais_COFOA.pptx" download style={{ color: 'var(--color-primary)', fontWeight: 'bold', textDecoration: 'underline', fontSize: 'var(--font-size-sm)' }}>
+                📥 Template Painéis Digitais
+              </a>
+            </div>
+          </div>
         </div>
 
         <div className={styles.formGroup}>

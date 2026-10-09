@@ -1,94 +1,63 @@
 import 'dotenv/config';
 import { prisma } from './src/lib/prisma';
 
-const emails = [
-  'julia.hillary@unesp.br',
-  'elaine.cassimiro@unesp.br',
-  'lucas.l.santana@unesp.br',
-  'iasmin.c.oliveira@unesp.br',
-  'richard.mendes@unesp.br',
-  'maria-vitoria.perosso@unesp.br',
-  'raissa.ros@unesp.br',
-  'Helena.navarro@unesp.br',
-  'Isabele.castilho@unesp.br',
-  'thiany.neves@unesp.br',
-  'leticia.ms.pereira@unesp.br',
-  'giovanna.flavis@unesp.br',
-  'plinio.lucas@unesp.br',
-  'cd.batista@unesp.br',
-  'mirella.luz@unesp.br',
-  'vinicius-augusto.silva@unesp.br',
-  'maria.gil@unesp.br',
-  'lais.s.lopes@unesp.br',
-  'joao.cavalcante-oliveira@unesp.br',
-  'Dyovana.s.silva@unesp.br',
-  'miguel.pereira@unesp.br',
-  'Mj.filenga@unesp.br',
-  'ana.laura2004@unesp.br',
-  'louyse.andreo@unesp.br',
-  'nicoly.basilio@unesp.br',
-  'marissa.timpurim@unesp.br'
-].map(e => e.toLowerCase().trim());
-
 async function main() {
-  console.log(`Iniciando processamento para ${emails.length} emails...`);
+  const names = [
+    'Maria Vitória Domingos Perosso',
+    'Nilton Miguel do Espírito Santo Pereira',
+    'Giovanna Montilha de Flavis',
+    'Louyse Vitória Oliveira Andreo',
+    'Dyovana Souza Silva'
+  ];
 
-  // 1. Create a global coupon for these users or individual coupons.
-  // We will create individual coupons named COFOA-[FIRSTNAME] for safety
-  
-  for (const email of emails) {
-    const user = await prisma.user.findUnique({
-      where: { email },
-      include: { participant: { include: { registration: true } } }
-    });
+  console.log('Corrigindo os 5 usuários que geraram a inscrição antes do cupom...');
 
-    if (!user) {
-      console.log(`Usuário não encontrado: ${email}`);
-      continue;
-    }
+  const participants = await prisma.participant.findMany({ 
+    include: { user: true, registration: { include: { coupon: true } } } 
+  }); 
 
-    if (user.participant?.registration) {
-      console.log(`Deletando inscrição de ${email}...`);
+  const filtered = participants.filter(p => 
+    names.some(n => p.fullName.toLowerCase() === n.toLowerCase())
+  );
+
+  for (const p of filtered) {
+    if (!p.user) continue;
+
+    console.log(`\nCorrigindo: ${p.fullName}`);
+
+    // Delete pending registration so they can re-register and trigger the auto-coupon
+    if (p.registration) {
+      console.log(`Excluindo inscrição pendente (ID: ${p.registration.id})...`);
       await prisma.registration.delete({
-        where: { id: user.participant.registration.id }
+        where: { id: p.registration.id }
       });
     }
 
-    const firstName = user.participant?.fullName 
-      ? user.participant.fullName.split(' ')[0].toUpperCase()
-      : email.split('@')[0].toUpperCase().replace(/[^A-Z]/g, '');
+    // Ensure coupon exists for this user
+    const code = `DESC100-${p.fullName.split(' ')[0].toUpperCase()}`;
     
-    // We append a random suffix to avoid duplicates for people with same first name
-    const code = `DESC100-${firstName}`;
-
     await prisma.coupon.upsert({
       where: { code },
       update: {
         discountValue: 10000,
         active: true,
-        userId: user.id,
+        userId: p.user.id,
         usedCount: 0
       },
       create: {
         code,
         discountType: 'FIXED',
-        discountValue: 10000, // R$ 100,00
+        discountValue: 10000,
         maxUses: 1,
         active: true,
-        userId: user.id
+        userId: p.user.id
       }
     });
 
-    console.log(`[OK] ${email} -> Cupom gerado: ${code}`);
+    console.log(`[OK] Inscrição resetada e Cupom ${code} garantido na conta!`);
   }
-  
-  // also update Marissa's old coupon just in case she tries to use the old one
-  await prisma.coupon.updateMany({
-    where: { code: 'COFOA-MARISSA' },
-    data: { discountValue: 10000 }
-  });
 
-  console.log('Finalizado!');
+  console.log('\nFinalizado com sucesso!');
 }
 
 main().catch(console.error);
