@@ -109,7 +109,7 @@ export default async function ParticipantDashboardPage() {
                     await applyForBoard();
                   }}>
                     <Button type="submit" variant="outline" size="sm" style={{ marginTop: '1rem' }}>
-                      Quero ser Avaliador
+                      Quero fazer parte da banca avaliadora
                     </Button>
                   </form>
                 </>
