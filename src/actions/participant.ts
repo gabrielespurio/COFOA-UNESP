@@ -437,3 +437,165 @@ export async function applyForBoard() {
   revalidatePath('/area-participante');
   return { success: true };
 }
+
+export async function applyForExternalBoard() {
+  const session = await getSession();
+  if (!session) return { error: 'Não autenticado.' };
+
+  const participant = await prisma.participant.findUnique({
+    where: { userId: session.userId },
+    include: {
+      registration: { include: { category: true } },
+      externalBoardEnrollment: true
+    }
+  });
+
+  if (!participant?.registration || participant.registration.status !== 'CONFIRMED') {
+    return { error: 'Sua inscrição no congresso precisa estar confirmada primeiro para poder aderir à Banca Avaliadora Externa.' };
+  }
+
+  if (participant.externalBoardEnrollment) {
+    if (participant.externalBoardEnrollment.status === 'PAID') {
+      return { error: 'Você já possui inscrição confirmada na Banca Avaliadora Externa.' };
+    }
+    if (participant.externalBoardEnrollment.invoiceUrl) {
+      return { success: true, invoiceUrl: participant.externalBoardEnrollment.invoiceUrl };
+    }
+  }
+
+  try {
+    const asaasCustomer = await createOrGetCustomer(
+      participant.fullName,
+      participant.cpf,
+      session.email,
+      participant.phone
+    );
+
+    const dueDate = new Date();
+    dueDate.setDate(dueDate.getDate() + 4);
+    const dueDateStr = dueDate.toISOString().split('T')[0];
+
+    const asaasPayment = await createPayment(
+      asaasCustomer.id,
+      7000,
+      'Inscrição COFOA XV - Banca Avaliadora Externa',
+      dueDateStr
+    );
+
+    await prisma.externalBoardEnrollment.upsert({
+      where: { participantId: participant.id },
+      update: {
+        amount: 7000,
+        status: 'PENDING',
+        gatewayId: asaasPayment.id,
+        gatewayResponse: asaasPayment as any,
+        invoiceUrl: asaasPayment.invoiceUrl,
+      },
+      create: {
+        participantId: participant.id,
+        amount: 7000,
+        status: 'PENDING',
+        gatewayId: asaasPayment.id,
+        gatewayResponse: asaasPayment as any,
+        invoiceUrl: asaasPayment.invoiceUrl,
+      }
+    });
+
+    revalidatePath('/area-participante');
+    return { success: true, invoiceUrl: asaasPayment.invoiceUrl };
+  } catch (err: any) {
+    console.error('Error applying for external board:', err);
+    return { error: err.message || 'Erro ao gerar cobrança para Banca Avaliadora Externa.' };
+  }
+}
+
+export async function syncExternalBoardPayment() {
+  const session = await getSession();
+  if (!session) return { error: 'Não autenticado.' };
+
+  const participant = await prisma.participant.findUnique({
+    where: { userId: session.userId },
+    include: { externalBoardEnrollment: true, user: true }
+  });
+
+  const enrollment = participant?.externalBoardEnrollment;
+  if (!enrollment || !enrollment.gatewayId) {
+    return { error: 'Nenhuma inscrição na Banca Avaliadora Externa encontrada.' };
+  }
+
+  try {
+    const { checkPaymentStatus } = await import('@/lib/asaas');
+    const asaasData = await checkPaymentStatus(enrollment.gatewayId);
+
+    const isPaid = asaasData.status === 'RECEIVED' || asaasData.status === 'CONFIRMED' || asaasData.status === 'RECEIVED_IN_CASH';
+
+    if (isPaid) {
+      await prisma.externalBoardEnrollment.update({
+        where: { id: enrollment.id },
+        data: {
+          status: 'PAID',
+          paidAt: new Date(),
+          gatewayResponse: asaasData as any
+        }
+      });
+
+      if (!participant.user.roles.includes('EVALUATOR')) {
+        const updatedUser = await prisma.user.update({
+          where: { id: participant.userId },
+          data: { roles: { push: 'EVALUATOR' } }
+        });
+
+        const { createSession } = await import('@/lib/auth');
+        await createSession({
+          userId: updatedUser.id,
+          email: updatedUser.email,
+          roles: updatedUser.roles,
+          role: updatedUser.roles[0]
+        });
+      }
+
+      revalidatePath('/area-participante');
+      return { success: true, message: 'Pagamento da Banca Avaliadora confirmado com sucesso!' };
+    }
+
+    return { success: true, message: 'Status atualizado (ainda pendente).' };
+  } catch (err: any) {
+    console.error('Error syncing external board payment:', err);
+    return { error: err.message || 'Erro ao sincronizar pagamento da banca.' };
+  }
+}
+
+export async function cancelExternalBoardEnrollment() {
+  const session = await getSession();
+  if (!session) return { error: 'Não autenticado.' };
+
+  const participant = await prisma.participant.findUnique({
+    where: { userId: session.userId },
+    include: { externalBoardEnrollment: true }
+  });
+
+  const enrollment = participant?.externalBoardEnrollment;
+  if (!enrollment || enrollment.status === 'PAID') {
+    return { error: 'Nenhuma inscrição pendente encontrada para cancelar.' };
+  }
+
+  try {
+    if (enrollment.gatewayId) {
+      try {
+        await deletePayment(enrollment.gatewayId);
+      } catch (e) {
+        console.error('Error deleting asaas board payment:', e);
+      }
+    }
+
+    await prisma.externalBoardEnrollment.delete({
+      where: { id: enrollment.id }
+    });
+
+    revalidatePath('/area-participante');
+    return { success: true };
+  } catch (err: any) {
+    console.error('Error cancelling external board enrollment:', err);
+    return { error: 'Erro ao cancelar inscrição da banca.' };
+  }
+}

@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import { SectionHeading } from '@/components/ui/SectionHeading/SectionHeading';
+import { Button } from '@/components/ui/Button/Button';
 import { RegistrationForm } from './RegistrationForm';
 import { getSession } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
@@ -28,7 +29,18 @@ export default async function MinhaInscricaoPage() {
         <SectionHeading title="Minha Inscrição" />
         <div style={{ marginTop: '2rem', padding: '2rem', background: 'var(--color-surface-alt)', borderRadius: 'var(--radius-md)' }}>
           <h3>Você já possui uma inscrição ({participant.registration.status})</h3>
-          <p>Sua inscrição já está registrada no sistema. Em breve a área de pagamentos será liberada.</p>
+          <p style={{ marginTop: '0.5rem', color: 'var(--color-text-secondary)' }}>
+            Sua inscrição no congresso já está registrada no sistema.
+          </p>
+          <div style={{ marginTop: '1.5rem', padding: '1rem', background: '#fff', borderRadius: 'var(--radius-sm, 6px)', border: '1px solid var(--color-border)' }}>
+            <h4 style={{ fontWeight: 600, marginBottom: '0.5rem' }}>Deseja participar também da Banca Avaliadora Externa?</h4>
+            <p style={{ fontSize: '0.9rem', color: 'var(--color-text-secondary)', marginBottom: '1rem' }}>
+              Mesmo já inscrito para apresentação de trabalhos, você pode aderir à Banca Avaliadora Externa diretamente pela Área do Participante.
+            </p>
+            <Button href="/area-participante" variant="primary" size="sm">
+              Ir para a Área do Participante
+            </Button>
+          </div>
         </div>
       </div>
     );

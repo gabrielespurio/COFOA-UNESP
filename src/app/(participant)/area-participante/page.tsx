@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/Button/Button';
 import { getSession } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import styles from './page.module.css';
+import { ExternalBoardCard } from './ExternalBoardCard';
 
 export const metadata: Metadata = {
   title: 'Área do Participante',
@@ -21,6 +22,7 @@ export default async function ParticipantDashboardPage() {
     include: {
       registration: true,
       scientificWorks: true,
+      externalBoardEnrollment: true,
     }
   });
 
@@ -86,7 +88,7 @@ export default async function ParticipantDashboardPage() {
             </div>
           )}
           
-          {(participant.registration?.status === 'CONFIRMED' && (session.roles.includes('EVALUATOR') || ['grad-pos-foa', 'doc-prof'].includes(participant.registration.categoryId))) && (
+          {participant.registration?.status === 'CONFIRMED' && (
             <div className={styles.card}>
               <div className={styles.cardTitle}>Banca Avaliadora</div>
               {session.roles.includes('EVALUATOR') ? (
@@ -97,7 +99,7 @@ export default async function ParticipantDashboardPage() {
                     Acessar Painel
                   </Button>
                 </>
-              ) : (
+              ) : ['grad-pos-foa', 'doc-prof'].includes(participant.registration.categoryId) ? (
                 <>
                   <div className={styles.cardValue}>Inativo</div>
                   <div className={styles.cardDesc}>
@@ -112,6 +114,13 @@ export default async function ParticipantDashboardPage() {
                       Quero fazer parte da banca avaliadora
                     </Button>
                   </form>
+                </>
+              ) : (
+                <>
+                  <div className={`${styles.cardValue} ${participant.externalBoardEnrollment?.status === 'PENDING' ? styles.statusPending : ''}`}>
+                    {participant.externalBoardEnrollment?.status === 'PENDING' ? 'Aguardando Pagamento' : 'Disponível'}
+                  </div>
+                  <ExternalBoardCard enrollment={participant.externalBoardEnrollment} />
                 </>
               )}
             </div>

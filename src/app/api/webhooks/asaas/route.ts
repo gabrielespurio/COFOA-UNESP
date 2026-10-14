@@ -21,6 +21,32 @@ export async function POST(request: Request) {
       });
 
       if (!payment) {
+        const boardEnrollment = await prisma.externalBoardEnrollment.findFirst({
+          where: { gatewayId: paymentId },
+          include: { participant: { include: { user: true } } }
+        });
+
+        if (boardEnrollment) {
+          await prisma.externalBoardEnrollment.update({
+            where: { id: boardEnrollment.id },
+            data: {
+              status: 'PAID',
+              paidAt: new Date(),
+              gatewayResponse: payload.payment as any
+            }
+          });
+
+          if (!boardEnrollment.participant.user.roles.includes('EVALUATOR')) {
+            await prisma.user.update({
+              where: { id: boardEnrollment.participant.userId },
+              data: { roles: { push: 'EVALUATOR' } }
+            });
+          }
+
+          console.log(`Webhook Success: External Board Payment ${paymentId} confirmed for ${boardEnrollment.participant.fullName}!`);
+          return NextResponse.json({ received: true });
+        }
+
         console.error('Webhook Error: Payment not found in database for gatewayId:', paymentId);
         return NextResponse.json({ error: 'Payment not found' }, { status: 404 });
       }

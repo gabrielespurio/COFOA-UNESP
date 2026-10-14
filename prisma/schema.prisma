@@ -77,6 +77,7 @@ model Participant {
   consents        ConsentRecord[]
   lectureEnrollments LectureEnrollment[]
   lectureAttendances LectureAttendance[]
+  externalBoardEnrollment ExternalBoardEnrollment?
   
   @@map("participants")
 }
@@ -261,6 +262,26 @@ enum PaymentStatus {
   CANCELLED
   REFUNDED
 }
+
+// ─── External Board Enrollment (Banca Avaliadora Externa) ──
+
+model ExternalBoardEnrollment {
+  id                String        @id @default(cuid())
+  participantId     String        @unique
+  amount            Int           @default(7000) // 7000 cents = R$ 70,00
+  status            PaymentStatus @default(PENDING)
+  gatewayId         String?       // Asaas payment ID
+  gatewayResponse   Json?
+  invoiceUrl        String?
+  paidAt            DateTime?
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  participant       Participant   @relation(fields: [participantId], references: [id], onDelete: Cascade)
+
+  @@map("external_board_enrollments")
+}
+
 
 // ─── Scientific Work ───────────────────────────────────────
 

@@ -133,7 +133,7 @@ export async function register(prevState: any, formData: FormData) {
     });
 
     if (existingUser) {
-      return { error: 'Este e-mail já está em uso.' };
+      return { error: 'Este e-mail já está cadastrado. Se você já possui cadastro, faça login para acessar sua conta ou se inscrever na Banca Avaliadora.' };
     }
 
     const passwordHash = await bcrypt.hash(password, 10);
