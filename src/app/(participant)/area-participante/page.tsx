@@ -86,7 +86,7 @@ export default async function ParticipantDashboardPage() {
             </div>
           )}
           
-          {(participant.registration?.status === 'CONFIRMED' && (session.roles.includes('EVALUATOR') || participant.registration.categoryId === 'grad-pos-foa')) && (
+          {(participant.registration?.status === 'CONFIRMED' && (session.roles.includes('EVALUATOR') || ['grad-pos-foa', 'doc-prof'].includes(participant.registration.categoryId))) && (
             <div className={styles.card}>
               <div className={styles.cardTitle}>Banca Avaliadora</div>
               {session.roles.includes('EVALUATOR') ? (
@@ -101,7 +101,7 @@ export default async function ParticipantDashboardPage() {
                 <>
                   <div className={styles.cardValue}>Inativo</div>
                   <div className={styles.cardDesc}>
-                    Como aluno(a) de Pós-Graduação, você pode fazer parte da nossa banca avaliadora gratuitamente.
+                    Como aluno(a) de Pós-Graduação ou Docente/Profissional, você pode fazer parte da nossa banca avaliadora gratuitamente.
                   </div>
                   <form action={async () => {
                     'use server';

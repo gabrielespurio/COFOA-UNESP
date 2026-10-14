@@ -413,9 +413,9 @@ export async function applyForBoard() {
     return { error: 'Sua inscrição no congresso precisa estar confirmada primeiro.' };
   }
 
-  const internalCategories = ['grad-pos-foa'];
+  const internalCategories = ['grad-pos-foa', 'doc-prof'];
   if (!internalCategories.includes(participant.registration.category.id)) {
-    return { error: 'Apenas participantes de Pós-Graduação podem solicitar isenção para a banca. Se você for externo, faça a inscrição diretamente na categoria Banca Externa.' };
+    return { error: 'Apenas participantes de Pós-Graduação e Docentes/Profissionais podem solicitar isenção para a banca. Se você for externo, faça a inscrição diretamente na categoria Banca Externa.' };
   }
 
   const user = await prisma.user.findUnique({ where: { id: session.userId }});
