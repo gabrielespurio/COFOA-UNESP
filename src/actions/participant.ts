@@ -5,7 +5,7 @@ import { getSession } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import { getSupabaseAdmin } from '@/lib/supabase';
-import { createOrGetCustomer, createPayment } from '@/lib/asaas';
+import { createOrGetCustomer, createPayment, deletePayment } from '@/lib/asaas';
 import { getCurrentDate, getBatchStatus } from '@/lib/dateUtils';
 
 function isValidCPF(cpf: string) {
@@ -187,7 +187,7 @@ export async function createRegistration(formData: FormData) {
     let appliedDiscount = 0;
 
     // Automatically find an available active coupon for this user
-    const coupon = await prisma.coupon.findFirst({
+    const userCoupons = await prisma.coupon.findMany({
       where: { 
         userId: session.userId,
         active: true,
@@ -195,7 +195,8 @@ export async function createRegistration(formData: FormData) {
       include: { allowedCategories: true }
     });
 
-    if (coupon && (coupon.maxUses === null || coupon.usedCount < coupon.maxUses)) {
+    const coupon = userCoupons.find(c => c.maxUses === null || c.usedCount < c.maxUses);
+    if (coupon) {
       let isValidForCategory = true;
       if (coupon.allowedCategories.length > 0) {
         isValidForCategory = coupon.allowedCategories.some(ac => ac.categoryId === category.id);
@@ -367,7 +368,7 @@ export async function cancelRegistration() {
   if (!session) return { error: 'Usuário não autenticado.' };
 
   const registration = await prisma.registration.findFirst({
-    where: { participant: { userId: session.userId }, status: 'PENDING' }
+    where: { participant: { userId: session.userId }, status: 'PENDING' }, include: { payment: true }
   });
 
   if (!registration) {
@@ -375,6 +376,19 @@ export async function cancelRegistration() {
   }
 
   try {
+    if (registration.payment?.gatewayId) {
+      try {
+        await deletePayment(registration.payment.gatewayId);
+      } catch (e) {
+        console.error('Failed to cancel payment in Asaas:', e);
+      }
+    }
+    if (registration.couponId) {
+      await prisma.coupon.update({
+        where: { id: registration.couponId },
+        data: { usedCount: { decrement: 1 } }
+      }).catch(console.error);
+    }
     await prisma.registration.delete({
       where: { id: registration.id }
     });

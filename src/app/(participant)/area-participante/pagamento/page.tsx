@@ -106,6 +106,12 @@ export default async function PaymentPage() {
           <p style={{ marginTop: '1rem', fontSize: '0.85rem', color: 'var(--color-text-muted)', textAlign: 'center' }}>
             Se você já pagou e o status não atualizou automaticamente, clique em "Já paguei".
           </p>
+          <div style={{ marginTop: '1.5rem', paddingTop: '1rem', borderTop: '1px solid var(--color-border-light)', textAlign: 'center' }}>
+            <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', marginBottom: '0.5rem' }}>
+              Deseja alterar sua categoria ou aplicar outro cupom?
+            </p>
+            <CancelRegistrationButton />
+          </div>
         </div>
       )}
 

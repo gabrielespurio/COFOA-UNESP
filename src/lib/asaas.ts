@@ -140,3 +140,25 @@ export async function checkPaymentStatus(paymentId: string): Promise<AsaasPaymen
 
   return data;
 }
+
+export async function deletePayment(paymentId: string): Promise<{ deleted: boolean; id: string }> {
+  const deleteRes = await fetch(`${ASAAS_API_URL}/payments/${paymentId}`, {
+    method: 'DELETE',
+    headers: getHeaders()
+  });
+
+  const raw = await deleteRes.text();
+  let data;
+  try {
+    data = JSON.parse(raw);
+  } catch (e) {
+    throw new Error(`Asaas DELETE Payment Error: Invalid JSON. Status: ${deleteRes.status}. Body: ${raw}`);
+  }
+
+  if (!deleteRes.ok) {
+    console.error('Error deleting Asaas payment:', data);
+    throw new Error(`Asaas Delete Payment Error: ${JSON.stringify(data)}`);
+  }
+
+  return data;
+}
