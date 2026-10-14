@@ -34,8 +34,11 @@ export default async function MinhaInscricaoPage() {
           </p>
           <div style={{ marginTop: '1.5rem', padding: '1rem', background: '#fff', borderRadius: 'var(--radius-sm, 6px)', border: '1px solid var(--color-border)' }}>
             <h4 style={{ fontWeight: 600, marginBottom: '0.5rem' }}>Deseja participar também da Banca Avaliadora Externa?</h4>
-            <p style={{ fontSize: '0.9rem', color: 'var(--color-text-secondary)', marginBottom: '1rem' }}>
+            <p style={{ fontSize: '0.9rem', color: 'var(--color-text-secondary)', marginBottom: '0.5rem' }}>
               Mesmo já inscrito para apresentação de trabalhos, você pode aderir à Banca Avaliadora Externa diretamente pela Área do Participante.
+            </p>
+            <p style={{ fontSize: '0.825rem', color: 'var(--color-text-muted)', marginBottom: '1rem', lineHeight: '1.4' }}>
+              <strong>Observação:</strong> Destinada a alunos de outras instituições e alunos da FOA que estão fora do país (anexar o comprovante de matrícula ou de pós-graduação sanduíche).
             </p>
             <Button href="/area-participante" variant="primary" size="sm">
               Ir para a Área do Participante

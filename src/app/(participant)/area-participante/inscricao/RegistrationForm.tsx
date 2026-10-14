@@ -76,9 +76,17 @@ export function RegistrationForm({ categories, participantId }: RegistrationForm
             <div className={styles.cardContent}>
               <h4 className={styles.categoryName}>{cat.name}</h4>
               <p className={styles.categoryReqs}>
-                {cat.requiresStudentProof && 'Exige Comprovante de Matrícula'}
-                {cat.requiresCRO && 'Exige CRO Ativo'}
-                {!cat.requiresStudentProof && !cat.requiresCRO && 'Sem exigência de comprovantes'}
+                {cat.id === 'banca-ext' ? (
+                  <span style={{ color: 'var(--color-primary)', fontWeight: 500 }}>
+                    Para alunos de outras instituições e alunos da FOA que estão fora do país (anexar comprovante de matrícula ou de pós-graduação sanduíche)
+                  </span>
+                ) : (
+                  <>
+                    {cat.requiresStudentProof && 'Exige Comprovante de Matrícula'}
+                    {cat.requiresCRO && 'Exige CRO Ativo'}
+                    {!cat.requiresStudentProof && !cat.requiresCRO && 'Sem exigência de comprovantes'}
+                  </>
+                )}
               </p>
             </div>
           </label>
@@ -88,7 +96,9 @@ export function RegistrationForm({ categories, participantId }: RegistrationForm
       {needsUpload && (
         <div className={styles.uploadSection}>
           <label className={styles.label}>
-            Anexar Comprovante (PDF, JPG, PNG) *
+            {selectedCategory === 'banca-ext' 
+              ? 'Anexar Comprovante de Matrícula ou Pós-Graduação Sanduíche (PDF, JPG, PNG) *' 
+              : 'Anexar Comprovante (PDF, JPG, PNG) *'}
           </label>
           <input 
             type="file" 
@@ -97,7 +107,11 @@ export function RegistrationForm({ categories, participantId }: RegistrationForm
             className={styles.fileInput}
             required
           />
-          <p className={styles.hint}>O arquivo será salvo com segurança em nuvem.</p>
+          <p className={styles.hint}>
+            {selectedCategory === 'banca-ext' 
+              ? 'Exigido para alunos de outras instituições ou alunos da FOA no exterior (pós-graduação sanduíche).' 
+              : 'O arquivo será salvo com segurança em nuvem.'}
+          </p>
         </div>
       )}
 

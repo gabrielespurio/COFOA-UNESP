@@ -61,9 +61,12 @@ export function ExternalBoardCard({ enrollment }: ExternalBoardCardProps) {
   if (!enrollment || enrollment.status === 'CANCELLED') {
     return (
       <div style={{ marginTop: '1rem' }}>
-        <p style={{ fontSize: '0.875rem', color: 'var(--color-text-secondary)', marginBottom: '0.75rem', lineHeight: '1.4' }}>
+        <p style={{ fontSize: '0.875rem', color: 'var(--color-text-secondary)', marginBottom: '0.5rem', lineHeight: '1.4' }}>
           Mesmo já inscrito para apresentação de trabalhos, você pode se inscrever também para avaliar trabalhos na <strong>Banca Avaliadora Externa</strong> (taxa de R$ 70,00).
         </p>
+        <div style={{ marginBottom: '0.75rem', padding: '0.65rem 0.85rem', background: 'var(--color-surface, #f8fafc)', borderRadius: '6px', border: '1px solid var(--color-border, #e2e8f0)', fontSize: '0.825rem', color: 'var(--color-text-secondary)', lineHeight: '1.4' }}>
+          <strong>Observação:</strong> Destinada a alunos de outras instituições e alunos da FOA que estão fora do país (anexar o comprovante de matrícula ou de pós-graduação sanduíche).
+        </div>
         <Button 
           variant="primary" 
           size="sm" 
