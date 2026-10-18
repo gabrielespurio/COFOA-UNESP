@@ -12,6 +12,7 @@ const MENU_ITEMS = [
   { href: '/comissao', label: 'Painel Gerencial' },
   { href: '/comissao/trabalhos', label: 'Trabalhos Submetidos' },
   { href: '/comissao/presenca', label: 'Controle de Presença' },
+  { href: '/comissao/crachas', label: 'Crachás e Secretaria' },
 ];
 
 export function CommitteeSidebar({ children }: { children?: React.ReactNode }) {

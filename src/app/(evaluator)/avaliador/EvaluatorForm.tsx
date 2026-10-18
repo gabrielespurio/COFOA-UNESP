@@ -11,7 +11,6 @@ const THEMATIC_AREAS = [
   'Dentística / Harmonização Orofacial',
   'Endodontia',
   'Estomatologia / Patologia / Radiologia',
-  'Eugênio Zerlotti / Categoria em inglês / Presencial',
   'Odontopediatria / Ortodontia',
   'Pacientes com necessidades especiais / Odontologia hospitalar / Odontogeriatria',
   'Periodontia / Implantodontia',

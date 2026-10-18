@@ -307,6 +307,8 @@ model ScientificWork {
   submittedAt     DateTime?
   lockedById      String?
   lockedAt        DateTime?
+  spreadsheetChecked   Boolean   @default(false)
+  spreadsheetCheckedAt DateTime?
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
   

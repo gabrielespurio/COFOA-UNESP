@@ -128,3 +128,30 @@ export async function unlockWork(workId: string) {
   
   return { success: true };
 }
+
+export async function toggleWorkSpreadsheetCheck(workId: string) {
+  const session = await getSession();
+  if (!session) return { error: 'Usuário não autenticado.' };
+
+  const email = session.email?.toLowerCase() || '';
+  const isCommissionMaster = email === 'comissao@cofoa.com.br' || email === 'comissao@cofoa.com' || email.startsWith('comissao@') || session.roles.includes('ADMIN');
+  if (!isCommissionMaster) {
+    return { error: 'Acesso restrito ao responsável da comissão científica.' };
+  }
+
+  const work = await prisma.scientificWork.findUnique({ where: { id: workId } });
+  if (!work) return { error: 'Trabalho não encontrado.' };
+
+  const nextChecked = !work.spreadsheetChecked;
+  const updated = await prisma.scientificWork.update({
+    where: { id: workId },
+    data: {
+      spreadsheetChecked: nextChecked,
+      spreadsheetCheckedAt: nextChecked ? new Date() : null,
+    }
+  });
+
+  revalidatePath('/comissao/trabalhos');
+  return { success: true, spreadsheetChecked: updated.spreadsheetChecked };
+}
+

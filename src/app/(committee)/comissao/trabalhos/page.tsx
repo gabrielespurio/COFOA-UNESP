@@ -11,6 +11,8 @@ export const metadata: Metadata = {
 
 export default async function TrabalhosComissaoPage() {
   const session = await getSession();
+  const userEmail = session?.email?.toLowerCase() || '';
+  const isCommissionMaster = userEmail === 'comissao@cofoa.com.br' || userEmail === 'comissao@cofoa.com' || userEmail.startsWith('comissao@') || session?.roles.includes('ADMIN') || false;
   
   const works = await prisma.scientificWork.findMany({
     where: { status: { not: 'DRAFT' }, stage1Approved: true },
@@ -41,7 +43,11 @@ export default async function TrabalhosComissaoPage() {
         alignment="left"
       />
       
-      <WorksTable works={works} currentUserId={session?.userId || ''} />
+      <WorksTable 
+        works={works} 
+        currentUserId={session?.userId || ''} 
+        isCommissionMaster={isCommissionMaster} 
+      />
     </div>
   );
 }

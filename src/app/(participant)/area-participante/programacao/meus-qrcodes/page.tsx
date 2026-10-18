@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/Button/Button';
 import { getSession } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { redirect } from 'next/navigation';
-import { QrCodeDisplay } from './QrCodeDisplay';
+import { CrachaCard } from '@/components/common/CrachaCard/CrachaCard';
 import styles from './page.module.css';
 
 export const metadata = {
@@ -16,23 +16,31 @@ export default async function MeuQrCodePage() {
   if (!session) return redirect('/login');
 
   const participant = await prisma.participant.findUnique({
-    where: { userId: session.userId }
+    where: { userId: session.userId },
+    include: {
+      registration: {
+        include: {
+          category: true,
+        },
+      },
+    },
   });
 
   if (!participant) return redirect('/area-participante');
 
+  const categoryName = participant.registration?.category?.name || 'Participante';
+
   return (
     <div className={styles.container}>
       <SectionHeading
-        title="Meu QR Code"
+        title="Meu QR Code / Crachá"
         subtitle="Apresente este código na entrada e na saída das atividades para registrar sua presença."
       />
 
       <div className={styles.infoBox}>
         <span className={styles.infoIcon}>💡</span>
         <div>
-          No dia do evento, abra esta página no seu celular e mostre este QR Code único para a comissão. 
-          Ele serve para todas as atividades. Recomendamos tirar um print da tela para usar offline.
+          No dia do evento, você pode mostrar este QR Code diretamente na tela do seu celular ou imprimir seu crachá com antecedência. Ele é único e serve para todas as atividades.
         </div>
       </div>
 
@@ -43,12 +51,14 @@ export default async function MeuQrCodePage() {
       </div>
 
       <div style={{ display: 'flex', justifyContent: 'center', margin: '2rem 0' }}>
-        <div style={{ padding: '2rem', background: 'white', borderRadius: 'var(--radius-lg)', boxShadow: 'var(--shadow-md)' }}>
-           <QrCodeDisplay token={participant.id} size={250} />
-           <p style={{ textAlign: 'center', marginTop: '1rem', fontWeight: 600, color: 'var(--color-text)' }}>
-             {participant.fullName}
-           </p>
-        </div>
+        <CrachaCard 
+          fullName={participant.fullName}
+          categoryName={categoryName}
+          institution={participant.institution}
+          participantId={participant.id}
+          cpf={participant.cpf}
+          showPrintButton={true}
+        />
       </div>
     </div>
   );

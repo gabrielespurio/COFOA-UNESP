@@ -106,6 +106,8 @@ export interface ScientificWork {
   enrollmentProofUrl?: string;
   submittedAt: string;
   status: 'draft' | 'submitted' | 'under_review' | 'accepted' | 'rejected';
+  spreadsheetChecked?: boolean;
+  spreadsheetCheckedAt?: string;
 }
 
 export interface Certificate {

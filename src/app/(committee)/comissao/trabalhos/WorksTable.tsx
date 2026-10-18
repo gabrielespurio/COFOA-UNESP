@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { Badge } from '@/components/ui/Badge/Badge';
 import { EvaluationForm } from './EvaluationForm';
 import { useRouter } from 'next/navigation';
-import { lockWork, unlockWork } from '@/actions/committee';
+import { lockWork, unlockWork, toggleWorkSpreadsheetCheck } from '@/actions/committee';
 import styles from '../page.module.css';
 
 function getStatusBadge(status: string) {
@@ -24,9 +24,30 @@ function getStatusBadge(status: string) {
   }
 }
 
-function WorkEvaluationModal({ work, onClose }: { work: any, onClose: () => void }) {
+function WorkEvaluationModal({ 
+  work, 
+  onClose,
+  isCommissionMaster = false,
+  onToggleCheck
+}: { 
+  work: any; 
+  onClose: () => void;
+  isCommissionMaster?: boolean;
+  onToggleCheck?: (workId: string) => void;
+}) {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<'info' | 'history'>('info');
+
+  let parsedAuthors: any[] = [];
+  try {
+    if (typeof work.authors === 'string') {
+      parsedAuthors = JSON.parse(work.authors);
+    } else if (Array.isArray(work.authors)) {
+      parsedAuthors = work.authors;
+    }
+  } catch (e) {
+    parsedAuthors = [];
+  }
 
   useEffect(() => {
     document.body.style.overflow = 'hidden';
@@ -122,6 +143,56 @@ function WorkEvaluationModal({ work, onClose }: { work: any, onClose: () => void
                 <h3 style={{ fontSize: '1rem', color: '#64748b', margin: '0 0 1rem 0', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 600 }}>
                   <span style={{ fontSize: '1.2rem' }}>👤</span> Informações Principais
                 </h3>
+
+                {isCommissionMaster && (
+                  <div style={{ padding: '1rem', background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '8px', marginBottom: '1.25rem' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+                      <span style={{ color: '#166534', fontWeight: 700, fontSize: '0.875rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        👥 Identificação do Trabalho (Exclusivo Comissão)
+                      </span>
+                      {onToggleCheck && (
+                        <button
+                          type="button"
+                          onClick={() => onToggleCheck(work.id)}
+                          style={{
+                            padding: '0.4rem 0.85rem',
+                            borderRadius: '6px',
+                            border: work.spreadsheetChecked ? '1px solid #10b981' : '1px solid #fdba74',
+                            background: work.spreadsheetChecked ? '#10b981' : '#ffedd5',
+                            color: work.spreadsheetChecked ? '#ffffff' : '#9a3412',
+                            fontWeight: 600,
+                            fontSize: '0.75rem',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '0.35rem'
+                          }}
+                        >
+                          {work.spreadsheetChecked ? '✓ Registrado na Planilha' : '○ Marcar na Planilha'}
+                        </button>
+                      )}
+                    </div>
+                    
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '0.75rem', fontSize: '0.8125rem' }}>
+                      <div>
+                        <strong style={{ color: '#15803d' }}>Apresentador: </strong>
+                        <span style={{ color: '#1e293b' }}>{work.presenter || work.participant?.fullName || 'Não informado'}</span>
+                      </div>
+                      <div>
+                        <strong style={{ color: '#15803d' }}>Orientador: </strong>
+                        <span style={{ color: '#1e293b' }}>{work.advisor || 'Não informado'}</span>
+                      </div>
+                    </div>
+                    {parsedAuthors.length > 0 && (
+                      <div style={{ marginTop: '0.5rem', fontSize: '0.8125rem' }}>
+                        <strong style={{ color: '#15803d' }}>Demais Autores: </strong>
+                        <span style={{ color: '#334155' }}>
+                          {parsedAuthors.map((a: any) => `${a.name}${a.institution ? ` (${a.institution})` : ''}`).join(', ')}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                )}
                 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
                   {/* Título e Código */}
@@ -181,6 +252,17 @@ function WorkEvaluationModal({ work, onClose }: { work: any, onClose: () => void
                 </h3>
                 
                 <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+                  {isCommissionMaster && work.identifiedFileUrl && (
+                    <a href={work.identifiedFileUrl} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 1rem', background: '#ecfdf5', color: '#065f46', border: '1px solid #a7f3d0', textDecoration: 'none', borderRadius: '6px', fontWeight: 600, fontSize: '0.875rem', transition: 'all 0.2s' }}>
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#059669' }}>
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                        <polyline points="10 9 9 9 8 9"></polyline>
+                      </svg> Trabalho Identificado (PDF)
+                    </a>
+                  )}
                   {work.unidentifiedFileUrl && (
                     <a href={work.unidentifiedFileUrl} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 1rem', background: '#f8fafc', color: '#475569', border: '1px solid #e2e8f0', textDecoration: 'none', borderRadius: '6px', fontWeight: 500, fontSize: '0.875rem', transition: 'all 0.2s' }}>
                       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#ef4444' }}>
@@ -285,19 +367,84 @@ function WorkEvaluationModal({ work, onClose }: { work: any, onClose: () => void
   );
 }
 
-export function WorksTable({ works, currentUserId }: { works: any[], currentUserId: string }) {
+export function WorksTable({ 
+  works, 
+  currentUserId,
+  isCommissionMaster = false
+}: { 
+  works: any[]; 
+  currentUserId: string;
+  isCommissionMaster?: boolean;
+}) {
+  const router = useRouter();
+  const [worksList, setWorksList] = useState<any[]>(works);
   const [selectedWork, setSelectedWork] = useState<any | null>(null);
   const [isLocking, setIsLocking] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [sheetFilter, setSheetFilter] = useState<'all' | 'pending' | 'checked'>('all');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
+  useEffect(() => {
+    setWorksList(works);
+  }, [works]);
+
+  const handleToggleCheck = async (workId: string) => {
+    setWorksList(prev => prev.map(w => {
+      if (w.id === workId) {
+        const next = !w.spreadsheetChecked;
+        return {
+          ...w,
+          spreadsheetChecked: next,
+          spreadsheetCheckedAt: next ? new Date().toISOString() : null
+        };
+      }
+      return w;
+    }));
+
+    if (selectedWork && selectedWork.id === workId) {
+      setSelectedWork((prev: any) => ({
+        ...prev,
+        spreadsheetChecked: !prev.spreadsheetChecked,
+        spreadsheetCheckedAt: !prev.spreadsheetChecked ? new Date().toISOString() : null
+      }));
+    }
+
+    try {
+      const res = await toggleWorkSpreadsheetCheck(workId);
+      if (res.error) {
+        alert(res.error);
+        router.refresh();
+      }
+    } catch (err) {
+      alert('Erro ao atualizar checklist da planilha.');
+      router.refresh();
+    }
+  };
+
+  const pendingCount = worksList.filter(w => !w.spreadsheetChecked).length;
+  const checkedCount = worksList.filter(w => w.spreadsheetChecked).length;
+
   // Filter works
-  const filteredWorks = works.filter(work => {
+  const filteredWorks = worksList.filter(work => {
     const searchLower = searchTerm.toLowerCase();
     const titleMatch = work.title?.toLowerCase().includes(searchLower);
     const codeMatch = work.displayCode?.toLowerCase().includes(searchLower);
-    return titleMatch || codeMatch;
+    const areaMatch = work.categoryArea?.toLowerCase().includes(searchLower);
+    const authorMatch = isCommissionMaster && (
+      work.participant?.fullName?.toLowerCase().includes(searchLower) ||
+      work.presenter?.toLowerCase().includes(searchLower) ||
+      work.advisor?.toLowerCase().includes(searchLower) ||
+      (typeof work.authors === 'string' && work.authors.toLowerCase().includes(searchLower))
+    );
+    const matchesSearch = titleMatch || codeMatch || areaMatch || authorMatch;
+
+    if (isCommissionMaster) {
+      if (sheetFilter === 'pending') return matchesSearch && !work.spreadsheetChecked;
+      if (sheetFilter === 'checked') return matchesSearch && work.spreadsheetChecked;
+    }
+
+    return matchesSearch;
   });
 
   // Pagination
@@ -305,10 +452,10 @@ export function WorksTable({ works, currentUserId }: { works: any[], currentUser
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedWorks = filteredWorks.slice(startIndex, startIndex + itemsPerPage);
 
-  // Reset page when search changes
+  // Reset page when search or sheet filter changes
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchTerm]);
+  }, [searchTerm, sheetFilter]);
 
   const handleRowClick = async (work: any) => {
     if (isLocking) return;
@@ -344,10 +491,10 @@ export function WorksTable({ works, currentUserId }: { works: any[], currentUser
 
   return (
     <>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', gap: '1rem', flexWrap: 'wrap' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem', gap: '1rem', flexWrap: 'wrap' }}>
         <input 
           type="text" 
-          placeholder="Buscar por código, título ou autor..." 
+          placeholder={isCommissionMaster ? "Buscar por código, título, área ou autor..." : "Buscar por código, título ou área..."} 
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           style={{
@@ -365,21 +512,83 @@ export function WorksTable({ works, currentUserId }: { works: any[], currentUser
         </div>
       </div>
 
+      {isCommissionMaster && (
+        <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.25rem', flexWrap: 'wrap', alignItems: 'center' }}>
+          <span style={{ fontSize: '0.8125rem', fontWeight: 600, color: 'var(--color-text-secondary)', marginRight: '0.25rem' }}>
+            Checklist Planilha:
+          </span>
+          <button
+            type="button"
+            onClick={() => setSheetFilter('all')}
+            style={{
+              padding: '0.35rem 0.75rem',
+              borderRadius: '6px',
+              border: sheetFilter === 'all' ? '1px solid #0f172a' : '1px solid #e2e8f0',
+              background: sheetFilter === 'all' ? '#0f172a' : '#ffffff',
+              color: sheetFilter === 'all' ? '#ffffff' : '#475569',
+              fontWeight: 600,
+              fontSize: '0.75rem',
+              cursor: 'pointer',
+              transition: 'all 0.15s ease'
+            }}
+          >
+            Todos ({worksList.length})
+          </button>
+          <button
+            type="button"
+            onClick={() => setSheetFilter('pending')}
+            style={{
+              padding: '0.35rem 0.75rem',
+              borderRadius: '6px',
+              border: sheetFilter === 'pending' ? '1px solid #ea580c' : '1px solid #fed7aa',
+              background: sheetFilter === 'pending' ? '#ea580c' : '#fff7ed',
+              color: sheetFilter === 'pending' ? '#ffffff' : '#c2410c',
+              fontWeight: 600,
+              fontSize: '0.75rem',
+              cursor: 'pointer',
+              transition: 'all 0.15s ease'
+            }}
+          >
+            ⏳ Pendentes na Planilha ({pendingCount})
+          </button>
+          <button
+            type="button"
+            onClick={() => setSheetFilter('checked')}
+            style={{
+              padding: '0.35rem 0.75rem',
+              borderRadius: '6px',
+              border: sheetFilter === 'checked' ? '1px solid #10b981' : '1px solid #bbf7d0',
+              background: sheetFilter === 'checked' ? '#10b981' : '#f0fdf4',
+              color: sheetFilter === 'checked' ? '#ffffff' : '#15803d',
+              fontWeight: 600,
+              fontSize: '0.75rem',
+              cursor: 'pointer',
+              transition: 'all 0.15s ease'
+            }}
+          >
+            ✓ Registrados na Planilha ({checkedCount})
+          </button>
+        </div>
+      )}
+
       <div className={styles.tableWrapper}>
         <table className={styles.table}>
           <thead>
             <tr>
+              {isCommissionMaster && (
+                <th style={{ width: '13%', textAlign: 'center' }}>Planilha</th>
+              )}
               <th style={{ width: '12%' }}>Código</th>
-              <th style={{ width: '30%' }}>Título</th>
-              <th style={{ width: '25%' }}>Área Temática</th>
-              <th style={{ width: '15%' }}>Último Avaliador</th>
-              <th style={{ width: '18%' }}>Status</th>
+              <th style={{ width: isCommissionMaster ? '27%' : '30%' }}>Título</th>
+              <th style={{ width: isCommissionMaster ? '20%' : '25%' }}>Área Temática</th>
+              <th style={{ width: isCommissionMaster ? '13%' : '15%' }}>Último Avaliador</th>
+              <th style={{ width: '15%' }}>Status</th>
             </tr>
           </thead>
           <tbody>
             {paginatedWorks.length === 0 && (
               <tr>
-                <td colSpan={5} style={{ textAlign: 'center', color: 'var(--color-text-secondary)', padding: '2rem' }}>
+                <td colSpan={isCommissionMaster ? 6 : 5} style={{ textAlign: 'center', color: 'var(--color-text-secondary)', padding: '2rem' }}>
                   Nenhum trabalho encontrado.
                 </td>
               </tr>
@@ -401,6 +610,37 @@ export function WorksTable({ works, currentUserId }: { works: any[], currentUser
                 title={isLockedByOther ? "Sendo avaliado por outro membro" : "Clique na linha para avaliar"}
                 className={isLockedByOther ? '' : styles.tableRowHover}
               >
+                {isCommissionMaster && (
+                  <td 
+                    style={{ textAlign: 'center' }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleToggleCheck(work.id);
+                    }}
+                  >
+                    <button
+                      type="button"
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '0.35rem',
+                        padding: '0.35rem 0.65rem',
+                        borderRadius: '9999px',
+                        border: work.spreadsheetChecked ? '1px solid #10b981' : '1px solid #cbd5e1',
+                        background: work.spreadsheetChecked ? '#ecfdf5' : '#f8fafc',
+                        color: work.spreadsheetChecked ? '#065f46' : '#64748b',
+                        fontWeight: 600,
+                        fontSize: '0.75rem',
+                        cursor: 'pointer',
+                        transition: 'all 0.15s ease'
+                      }}
+                      title={work.spreadsheetChecked ? "Clique para desmarcar da planilha" : "Clique para marcar como registrado na planilha"}
+                    >
+                      <span style={{ fontSize: '0.85rem' }}>{work.spreadsheetChecked ? '✓' : '○'}</span>
+                      {work.spreadsheetChecked ? 'Registrado' : 'Pendente'}
+                    </button>
+                  </td>
+                )}
                 <td><strong style={{ color: 'var(--color-primary)' }}>{work.displayCode}</strong></td>
                 <td style={{ fontWeight: 500, maxWidth: '250px' }}>
                   <div style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
@@ -469,6 +709,8 @@ export function WorksTable({ works, currentUserId }: { works: any[], currentUser
         <WorkEvaluationModal 
           work={selectedWork} 
           onClose={handleCloseModal} 
+          isCommissionMaster={isCommissionMaster}
+          onToggleCheck={handleToggleCheck}
         />
       )}
     </>
