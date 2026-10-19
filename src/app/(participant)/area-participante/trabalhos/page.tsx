@@ -43,7 +43,14 @@ export default async function MeusTrabalhosPage() {
     redirect('/area-participante/perfil');
   }
 
-  const isConfirmed = participant.registration?.status === 'CONFIRMED';
+  let isConfirmed = participant.registration?.status === 'CONFIRMED';
+  if (!isConfirmed && participant.registration?.id) {
+    const { syncRegistrationWithAsaas } = await import('@/actions/participant');
+    const syncRes = await syncRegistrationWithAsaas(participant.registration.id);
+    if (syncRes.confirmed) {
+      isConfirmed = true;
+    }
+  }
 
   const works = await prisma.scientificWork.findMany({
     where: { participantId: participant.id },

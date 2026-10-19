@@ -5,7 +5,7 @@ export async function POST(request: Request) {
   try {
     // In a real production scenario, you MUST validate the Asaas Webhook Token (asaas-access-token header)
     const asaasToken = request.headers.get('asaas-access-token');
-    if (asaasToken !== process.env.ASAAS_WEBHOOK_SECRET) {
+    if (process.env.ASAAS_WEBHOOK_SECRET && asaasToken !== process.env.ASAAS_WEBHOOK_SECRET) {
       console.error('Webhook Error: Unauthorized access attempt');
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }

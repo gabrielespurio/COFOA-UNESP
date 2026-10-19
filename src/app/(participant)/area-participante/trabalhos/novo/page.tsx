@@ -31,6 +31,14 @@ export default async function NovoTrabalhoPage() {
   }
 
   if (participant.registration.status !== 'CONFIRMED') {
+    const { syncRegistrationWithAsaas } = await import('@/actions/participant');
+    const syncRes = await syncRegistrationWithAsaas(participant.registration.id);
+    if (syncRes.confirmed) {
+      participant.registration.status = 'CONFIRMED';
+    }
+  }
+
+  if (participant.registration.status !== 'CONFIRMED') {
     return (
       <div className={styles.container}>
         <SectionHeading title="Submissão Bloqueada" />

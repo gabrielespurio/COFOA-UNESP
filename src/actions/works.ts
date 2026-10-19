@@ -22,7 +22,16 @@ export async function submitWork(formData: FormData) {
   }
 
   if (!participant.registration || participant.registration.status !== 'CONFIRMED') {
-    return { error: 'Você precisa confirmar o pagamento da sua inscrição para submeter trabalhos.' };
+    if (participant.registration?.id) {
+      const { syncRegistrationWithAsaas } = await import('@/actions/participant');
+      const syncRes = await syncRegistrationWithAsaas(participant.registration.id);
+      if (syncRes.confirmed) {
+        participant.registration.status = 'CONFIRMED';
+      }
+    }
+    if (!participant.registration || participant.registration.status !== 'CONFIRMED') {
+      return { error: 'Você precisa confirmar o pagamento da sua inscrição para submeter trabalhos.' };
+    }
   }
 
   const title = formData.get('title') as string;

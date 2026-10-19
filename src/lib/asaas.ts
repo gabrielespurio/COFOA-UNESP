@@ -35,6 +35,9 @@ export interface AsaasPayment {
   status: string;
   dueDate: string;
   invoiceUrl: string;
+  paymentDate?: string;
+  clientPaymentDate?: string;
+  transactionReceiptUrl?: string;
 }
 
 export async function createOrGetCustomer(name: string, cpf: string, email: string, phone?: string | null): Promise<AsaasCustomer> {

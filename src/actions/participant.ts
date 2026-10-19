@@ -317,17 +317,14 @@ export async function createRegistration(formData: FormData) {
   redirect('/area-participante/pagamento');
 }
 
-export async function syncPaymentStatus(registrationId: string) {
-  const session = await getSession();
-  if (!session) return { error: 'Usuário não autenticado.' };
-
+export async function syncRegistrationWithAsaas(registrationId: string) {
   const registration = await prisma.registration.findUnique({
-    where: { id: registrationId, participant: { userId: session.userId } },
+    where: { id: registrationId },
     include: { payment: true }
   });
 
   if (!registration || !registration.payment || !registration.payment.gatewayId) {
-    return { error: 'Pagamento não encontrado.' };
+    return { isPaid: false, confirmed: false, error: 'Pagamento não encontrado.' };
   }
 
   try {
@@ -340,27 +337,59 @@ export async function syncPaymentStatus(registrationId: string) {
     if (isPaid && registration.status !== 'CONFIRMED') {
       await prisma.registration.update({
         where: { id: registrationId },
-        data: { status: 'CONFIRMED' }
+        data: {
+          status: 'CONFIRMED',
+          paymentReceiptUrl: asaasData.transactionReceiptUrl || asaasData.invoiceUrl || null
+        }
       });
       await prisma.payment.update({
         where: { id: registration.payment.id },
-        data: { status: 'PAID', gatewayResponse: asaasData as any }
+        data: {
+          status: 'PAID',
+          paidAt: asaasData.paymentDate ? new Date(asaasData.paymentDate) : new Date(),
+          method: asaasData.billingType || 'PIX',
+          gatewayResponse: asaasData as any
+        }
       });
       revalidatePath('/area-participante');
-      return { success: true, message: 'Pagamento confirmado com sucesso!' };
+      revalidatePath('/area-participante/trabalhos');
+      return { isPaid: true, confirmed: true };
     } else if (asaasData.status !== registration.payment.status && !isPaid) {
       await prisma.payment.update({
         where: { id: registration.payment.id },
         data: { gatewayResponse: asaasData as any }
       });
-      return { success: true, message: 'Status atualizado (ainda pendente).' };
+      return { isPaid: false, confirmed: false };
     }
 
-    return { success: true, message: 'Nenhuma alteração de status detectada.' };
+    return { isPaid, confirmed: registration.status === 'CONFIRMED' };
   } catch (err: any) {
-    console.error('Error syncing payment:', err);
-    return { error: err.message || 'Falha ao sincronizar pagamento.' };
+    console.error('Error syncing registration with Asaas:', err);
+    return { isPaid: false, confirmed: false, error: err.message || 'Falha ao sincronizar pagamento.' };
   }
+}
+
+export async function syncPaymentStatus(registrationId: string) {
+  const session = await getSession();
+  if (!session) return { error: 'Usuário não autenticado.' };
+
+  const registration = await prisma.registration.findUnique({
+    where: { id: registrationId, participant: { userId: session.userId } }
+  });
+
+  if (!registration) {
+    return { error: 'Inscrição não encontrada.' };
+  }
+
+  const result = await syncRegistrationWithAsaas(registrationId);
+  if (result.error) return { error: result.error };
+  if (result.confirmed) {
+    return { success: true, message: 'Pagamento confirmado com sucesso!' };
+  } else if (!result.isPaid) {
+    return { success: true, message: 'Status atualizado (ainda pendente).' };
+  }
+
+  return { success: true, message: 'Nenhuma alteração de status detectada.' };
 }
 
 export async function cancelRegistration() {
