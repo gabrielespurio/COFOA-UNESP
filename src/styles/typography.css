@@ -1,7 +1,9 @@
 :root {
-  /* Font Families - Maps to variables injected by Next.js next/font in layout.tsx */
-  --font-heading: var(--font-outfit), 'Outfit', sans-serif;
-  --font-body: var(--font-inter), 'Inter', sans-serif;
+  /* Font Families */
+  --font-inter: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-outfit: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-heading: var(--font-outfit);
+  --font-body: var(--font-inter);
 }
 
 /* Base Typographic Elements */
