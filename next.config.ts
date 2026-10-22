@@ -14,15 +14,6 @@ const nextConfig: NextConfig = {
         ],
       },
       {
-        source: '/_next/static/:path*',
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
-          },
-        ],
-      },
-      {
         // Keep dynamic pages uncached
         source: '/((?!images|_next/static|_next/image|favicon.ico).*)',
         headers: [
