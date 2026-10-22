@@ -94,6 +94,8 @@ export default async function PaymentPage() {
 
           <Button 
             href={asaasData.invoiceUrl}
+            target="_blank"
+            rel="noopener noreferrer"
             variant="primary"
             size="lg"
             fullWidth

@@ -28,10 +28,23 @@ export default async function MinhaInscricaoPage() {
       <div>
         <SectionHeading title="Minha Inscrição" />
         <div style={{ marginTop: '2rem', padding: '2rem', background: 'var(--color-surface-alt)', borderRadius: 'var(--radius-md)' }}>
-          <h3>Você já possui uma inscrição ({participant.registration.status})</h3>
+          <h3>
+            {participant.registration.status === 'PENDING' 
+              ? 'Inscrição Registrada (Aguardando Pagamento)' 
+              : 'Inscrição Confirmada'}
+          </h3>
           <p style={{ marginTop: '0.5rem', color: 'var(--color-text-secondary)' }}>
-            Sua inscrição no congresso já está registrada no sistema.
+            {participant.registration.status === 'PENDING'
+              ? 'Sua inscrição foi iniciada, mas o pagamento ainda não foi concluído. Clique no botão abaixo para efetuar o pagamento.'
+              : 'Sua inscrição no congresso já está confirmada no sistema.'}
           </p>
+          {participant.registration.status === 'PENDING' && (
+            <div style={{ marginTop: '1rem' }}>
+              <Button href="/area-participante/pagamento" variant="primary" size="md">
+                Ir para o Pagamento
+              </Button>
+            </div>
+          )}
           <div style={{ marginTop: '1.5rem', padding: '1rem', background: '#fff', borderRadius: 'var(--radius-sm, 6px)', border: '1px solid var(--color-border)' }}>
             <h4 style={{ fontWeight: 600, marginBottom: '0.5rem' }}>Deseja participar também da Banca Avaliadora Externa?</h4>
             <p style={{ fontSize: '0.9rem', color: 'var(--color-text-secondary)', marginBottom: '0.5rem' }}>

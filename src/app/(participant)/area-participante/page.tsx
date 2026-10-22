@@ -63,6 +63,11 @@ export default async function ParticipantDashboardPage() {
                 <div className={styles.cardDesc}>
                   {participant.registration.status === 'PENDING' ? 'Aguardando pagamento' : 'Inscrição efetuada com sucesso'}
                 </div>
+                {participant.registration.status === 'PENDING' && (
+                  <Button href="/area-participante/pagamento" variant="primary" size="sm" style={{ marginTop: '1rem' }}>
+                    Efetuar Pagamento
+                  </Button>
+                )}
               </>
             )}
           </div>

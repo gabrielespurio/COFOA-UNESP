@@ -56,11 +56,17 @@ export const Button = React.forwardRef<HTMLButtonElement | HTMLAnchorElement, Bu
     );
 
     if (href) {
+      const isExternal = href.startsWith('http://') || href.startsWith('https://') || href.startsWith('//') || props.target === '_blank';
+
       const handleAnchorClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
         if (props.onClick) {
           props.onClick(e);
         }
         
+        if (isExternal) {
+          return;
+        }
+
         // Force a hard navigation with a visual delay to completely bypass Next.js ChunkLoadErrors
         if (!e.defaultPrevented) {
           e.preventDefault();
