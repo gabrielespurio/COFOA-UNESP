@@ -81,7 +81,7 @@ const SCHEDULE_DATA = [
         speaker: 'Prof. Dr. Walter Cristiano Gealh',
         description: '- Graduação em Odontologia pela Universidade Estadual de Maringá (UEM)\n- Residência em CTBMF pela Universidade Estadual de Maringá\n- Mestrado em CTBMF pela FOA/UNESP\n- Doutorado em Odontologia Integrada pela Universidade Estadual de Maringá\n- Especialização em Dor Orofacial (DOF) e Disfunção Temporomandibular (DTM)\n- Especialização em Farmacologia',
         type: 'CIRURGIA / HOF',
-        image: '/images/palestras/walter-gealh.png'
+        image: '/images/palestras/walter-gealh.jpg'
       },
       {
         time: '15:50h-16:10h',
@@ -225,7 +225,7 @@ const SCHEDULE_DATA = [
         speaker: '2º Tenente Yara Gabriele Nunes Maciel',
         description: '• Área de Atuação: Dentista do Exército Brasileiro\n• Formada em Odontologia pela Universidade Federal de Mato Grosso do Sul (UFMS - Campo Grande, MS)\n• Pós-graduada em Prótese Dentária (Instituto Orofacial das Américas - São Paulo, SP)\n• Pós-graduada em Dentística (Instituto Orofacial das Américas - São Paulo, SP)\n• 2ª Tenente Dentista do Exército Brasileiro\n• Atuação em Clínica Particular desde 2023',
         type: 'CARREIRA MILITAR (EXÉRCITO)',
-        image: '/images/palestras/yara-maciel.png'
+        image: '/images/palestras/yara-maciel.jpg'
       },
       {
         time: '16:00h-16:10h',
