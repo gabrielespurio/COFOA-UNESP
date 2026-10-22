@@ -1,9 +1,10 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useTransition } from 'react';
 import styles from './page.module.css';
 import { RegistrationActions } from './RegistrationActions';
 import { ManageModalCategory } from './ManageRegistrationModal';
+import { adminSyncAllPendingPayments } from '@/actions/admin';
 
 interface InscricoesTableProps {
   initialRegistrations: any[];
@@ -14,7 +15,25 @@ export function InscricoesTable({ initialRegistrations, categories }: Inscricoes
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<'ALL' | 'CONFIRMED' | 'PENDING' | 'CANCELLED'>('ALL');
   const [currentPage, setCurrentPage] = useState(1);
+  const [isSyncing, startSyncTransition] = useTransition();
+  const [syncFeedback, setSyncFeedback] = useState<string | null>(null);
   const itemsPerPage = 15;
+
+  const handleGlobalSync = () => {
+    if (!window.confirm('Deseja consultar a API do Asaas para verificar se existem pagamentos aprovados pendentes de sincronização?')) {
+      return;
+    }
+
+    setSyncFeedback(null);
+    startSyncTransition(async () => {
+      const res = await adminSyncAllPendingPayments();
+      if (res.error) {
+        setSyncFeedback(`Erro: ${res.error}`);
+      } else {
+        setSyncFeedback(res.message || 'Sincronização concluída com sucesso!');
+      }
+    });
+  };
 
   // Filtragem
   const filteredRegistrations = initialRegistrations.filter(r => {
@@ -48,6 +67,29 @@ export function InscricoesTable({ initialRegistrations, categories }: Inscricoes
 
   return (
     <>
+      {syncFeedback && (
+        <div style={{
+          marginTop: '1rem',
+          padding: '0.75rem 1rem',
+          background: syncFeedback.startsWith('Erro') ? '#fef2f2' : '#ecfdf5',
+          border: `1px solid ${syncFeedback.startsWith('Erro') ? '#fecaca' : '#a7f3d0'}`,
+          borderRadius: '8px',
+          color: syncFeedback.startsWith('Erro') ? '#991b1b' : '#065f46',
+          fontSize: '0.875rem',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center'
+        }}>
+          <span>{syncFeedback}</span>
+          <button 
+            onClick={() => setSyncFeedback(null)} 
+            style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'inherit', fontWeight: 'bold' }}
+          >
+            ✕
+          </button>
+        </div>
+      )}
+
       <div style={{ 
         display: 'flex', 
         justifyContent: 'space-between', 
@@ -128,8 +170,32 @@ export function InscricoesTable({ initialRegistrations, categories }: Inscricoes
           </select>
         </div>
 
-        <div style={{ color: 'var(--color-text-secondary)', fontSize: '0.875rem', fontWeight: 500 }}>
-          {filteredRegistrations.length} {filteredRegistrations.length === 1 ? 'inscrição encontrada' : 'inscrições encontradas'}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
+          <button
+            type="button"
+            onClick={handleGlobalSync}
+            disabled={isSyncing}
+            style={{
+              padding: '0.65rem 1rem',
+              background: '#ffffff',
+              border: '1px solid #d1d5db',
+              borderRadius: '8px',
+              fontSize: '0.825rem',
+              fontWeight: 600,
+              color: '#1f2937',
+              cursor: isSyncing ? 'not-allowed' : 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              boxShadow: '0 1px 2px rgba(0,0,0,0.05)'
+            }}
+          >
+            <span>{isSyncing ? '⏳ Sincronizando...' : '🔄 Sincronizar Faturas com Asaas'}</span>
+          </button>
+
+          <div style={{ color: 'var(--color-text-secondary)', fontSize: '0.875rem', fontWeight: 500 }}>
+            {filteredRegistrations.length} {filteredRegistrations.length === 1 ? 'inscrição encontrada' : 'inscrições encontradas'}
+          </div>
         </div>
       </div>
 
@@ -172,6 +238,8 @@ export function InscricoesTable({ initialRegistrations, categories }: Inscricoes
               if (r.status === 'PENDING') statusClass = styles.badgeWarning;
               if (r.status === 'CANCELLED') statusClass = styles.badgeUser;
 
+              const hasDivergence = r.payment?.status === 'PAID' && r.status !== 'CONFIRMED';
+
               return (
                 <tr key={r.id}>
                   <td className={styles.nameCell}>
@@ -192,9 +260,23 @@ export function InscricoesTable({ initialRegistrations, categories }: Inscricoes
                     R$ {(r.amount / 100).toFixed(2).replace('.', ',')}
                   </td>
                   <td>
-                    <span className={statusClass}>
-                      {r.status === 'CONFIRMED' ? 'Confirmada' : r.status === 'PENDING' ? 'Pendente' : 'Cancelada'}
-                    </span>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '3px', alignItems: 'flex-start' }}>
+                      <span className={statusClass}>
+                        {r.status === 'CONFIRMED' ? 'Confirmada' : r.status === 'PENDING' ? 'Pendente' : 'Cancelada'}
+                      </span>
+                      {hasDivergence && (
+                        <span style={{ 
+                          fontSize: '0.7rem', 
+                          fontWeight: 700, 
+                          color: '#b45309', 
+                          background: '#fef3c7', 
+                          padding: '2px 6px', 
+                          borderRadius: '4px' 
+                        }}>
+                          ⚠️ Pago no Asaas
+                        </span>
+                      )}
+                    </div>
                   </td>
                   <td>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>

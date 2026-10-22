@@ -6,9 +6,12 @@ import {
   adminCancelRegistration, 
   adminChangeCategory, 
   adminUpdateParticipantData, 
-  adminManualConfirm 
+  adminManualConfirm,
+  adminSyncAsaasPayment,
+  adminChangeRegistrationStatus
 } from '@/actions/admin';
 import { formatCurrency } from '@/lib/utils';
+import { RegistrationStatus } from '@prisma/client';
 
 export interface ManageModalCategory {
   id: string;
@@ -87,12 +90,17 @@ export function ManageRegistrationModal({
     registration ? (registration.amount / 100).toFixed(2) : ''
   );
 
+  // Form states for Status change
+  const [selectedStatus, setSelectedStatus] = useState<string>(registration?.status || 'PENDING');
+
   // Form states for Cancellation
   const [cancelMode, setCancelMode] = useState<'DELETE' | 'MARK_CANCELLED'>('DELETE');
   const [cancelAsaas, setCancelAsaas] = useState(true);
   const [removeCoupon, setRemoveCoupon] = useState(false);
 
   if (!isOpen) return null;
+
+  const hasDivergence = registration && registration.payment?.status === 'PAID' && registration.status !== 'CONFIRMED';
 
   const handleUpdateParticipant = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -116,6 +124,39 @@ export function ManageRegistrationModal({
         setMessage({ text: res.error, type: 'error' });
       } else {
         setMessage({ text: 'Dados cadastrais atualizados com sucesso!', type: 'success' });
+      }
+    });
+  };
+
+  const handleSyncAsaas = async () => {
+    if (!registration) return;
+    setMessage(null);
+
+    startTransition(async () => {
+      const res = await adminSyncAsaasPayment({ registrationId: registration.id });
+      if (res.error) {
+        setMessage({ text: res.error, type: 'error' });
+      } else {
+        setMessage({ text: res.message || 'Sincronizado com Asaas!', type: 'success' });
+      }
+    });
+  };
+
+  const handleChangeStatus = async () => {
+    if (!registration) return;
+    setMessage(null);
+
+    if (!window.confirm(`Deseja alterar o status desta inscrição para "${selectedStatus}"?`)) return;
+
+    startTransition(async () => {
+      const res = await adminChangeRegistrationStatus({
+        registrationId: registration.id,
+        status: selectedStatus as RegistrationStatus
+      });
+      if (res.error) {
+        setMessage({ text: res.error, type: 'error' });
+      } else {
+        setMessage({ text: `Status atualizado para "${selectedStatus}" com sucesso!`, type: 'success' });
       }
     });
   };
@@ -258,11 +299,51 @@ export function ManageRegistrationModal({
                 </div>
               ) : (
                 <>
+                  {/* Alerta de Divergência se houver */}
+                  {hasDivergence && (
+                    <div style={{
+                      background: '#fffbeb',
+                      border: '1px solid #fde68a',
+                      borderRadius: '8px',
+                      padding: '0.85rem 1rem',
+                      marginBottom: '1.25rem',
+                      display: 'flex',
+                      alignItems: 'flex-start',
+                      gap: '0.75rem'
+                    }}>
+                      <span style={{ fontSize: '1.35rem' }}>⚠️</span>
+                      <div style={{ flex: 1 }}>
+                        <strong style={{ color: '#92400e', fontSize: '0.9rem' }}>Divergência Detectada!</strong>
+                        <p style={{ color: '#b45309', fontSize: '0.825rem', marginTop: '0.25rem', lineHeight: 1.4 }}>
+                          O pagamento desta inscrição consta como <strong>PAGO</strong> no gateway Asaas, mas a inscrição está com status <strong>{registration.status}</strong>. Isso bloqueia o participante de enviar trabalhos científicos!
+                        </p>
+                        <button
+                          type="button"
+                          onClick={() => handleManualConfirm(false)}
+                          disabled={isPending}
+                          style={{
+                            marginTop: '0.5rem',
+                            padding: '6px 12px',
+                            background: '#d97706',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '6px',
+                            fontSize: '0.8rem',
+                            fontWeight: 600,
+                            cursor: 'pointer'
+                          }}
+                        >
+                          {isPending ? 'Corrigindo...' : '✅ Corrigir para CONFIRMADA Agora'}
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
                   <div className={styles.section}>
-                    <h4 className={styles.sectionTitle}>Status Atual</h4>
+                    <h4 className={styles.sectionTitle}>Status Atual & Gateway</h4>
                     <div className={styles.infoGrid}>
                       <div className={styles.infoItem}>
-                        <label>Status</label>
+                        <label>Status da Inscrição</label>
                         <span style={{ 
                           fontWeight: 700,
                           color: registration.status === 'CONFIRMED' ? '#059669' : registration.status === 'PENDING' ? '#d97706' : '#dc2626'
@@ -284,15 +365,35 @@ export function ManageRegistrationModal({
                       </div>
                       {registration.payment?.gatewayId && (
                         <div className={styles.infoItem} style={{ gridColumn: 'span 2' }}>
-                          <label>ID Fatura Asaas</label>
-                          <span style={{ fontFamily: 'monospace', fontSize: '0.8rem' }}>
-                            {registration.payment.gatewayId} ({registration.payment.status})
-                          </span>
+                          <label>Fatura Asaas</label>
+                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem', flexWrap: 'wrap', marginTop: '0.25rem' }}>
+                            <span style={{ fontFamily: 'monospace', fontSize: '0.825rem' }}>
+                              {registration.payment.gatewayId} (Status DB: {registration.payment.status})
+                            </span>
+                            <button
+                              type="button"
+                              onClick={handleSyncAsaas}
+                              disabled={isPending}
+                              style={{
+                                padding: '4px 10px',
+                                background: '#f3f4f6',
+                                border: '1px solid #d1d5db',
+                                borderRadius: '4px',
+                                fontSize: '0.75rem',
+                                fontWeight: 600,
+                                cursor: isPending ? 'not-allowed' : 'pointer',
+                                color: '#111827'
+                              }}
+                            >
+                              {isPending ? 'Consultando...' : '🔄 Consultar & Sincronizar Asaas'}
+                            </button>
+                          </div>
                         </div>
                       )}
                     </div>
 
-                    <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                    {/* Ações rápidas de aprovação */}
+                    <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
                       {registration.status !== 'CONFIRMED' && (
                         <button
                           type="button"
@@ -331,6 +432,43 @@ export function ManageRegistrationModal({
                           Conceder Isenção (R$ 0,00)
                         </button>
                       )}
+
+                      {/* Seletor manual de status */}
+                      <div style={{ display: 'flex', gap: '0.35rem', alignItems: 'center', marginLeft: 'auto' }}>
+                        <select
+                          value={selectedStatus}
+                          onChange={(e) => setSelectedStatus(e.target.value)}
+                          style={{
+                            padding: '0.45rem 0.65rem',
+                            borderRadius: '6px',
+                            border: '1px solid #d1d5db',
+                            fontSize: '0.8rem',
+                            background: '#fff'
+                          }}
+                        >
+                          <option value="CONFIRMED">Confirmada</option>
+                          <option value="PENDING">Pendente</option>
+                          <option value="CANCELLED">Cancelada</option>
+                        </select>
+                        <button
+                          type="button"
+                          onClick={handleChangeStatus}
+                          disabled={isPending || selectedStatus === registration.status}
+                          style={{
+                            padding: '0.45rem 0.75rem',
+                            background: '#4b5563',
+                            color: '#fff',
+                            border: 'none',
+                            borderRadius: '6px',
+                            fontSize: '0.8rem',
+                            fontWeight: 600,
+                            cursor: isPending || selectedStatus === registration.status ? 'not-allowed' : 'pointer',
+                            opacity: selectedStatus === registration.status ? 0.6 : 1
+                          }}
+                        >
+                          Alterar Status
+                        </button>
+                      </div>
                     </div>
                   </div>
 

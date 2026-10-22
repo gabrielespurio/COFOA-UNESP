@@ -376,3 +376,189 @@ export async function adminManualConfirm({
   }
 }
 
+export async function adminSyncAsaasPayment({ registrationId }: { registrationId: string }) {
+  await checkAdmin();
+
+  try {
+    const reg = await prisma.registration.findUnique({
+      where: { id: registrationId },
+      include: { payment: true, category: true, participant: true }
+    });
+
+    if (!reg) {
+      return { error: 'Inscrição não encontrada.' };
+    }
+
+    if (!reg.payment?.gatewayId) {
+      return { error: 'Esta inscrição não possui fatura gerada no Asaas.' };
+    }
+
+    const { checkPaymentStatus } = await import('@/lib/asaas');
+    const asaasData = await checkPaymentStatus(reg.payment.gatewayId);
+
+    const isPaid = asaasData.status === 'RECEIVED' || asaasData.status === 'CONFIRMED' || asaasData.status === 'RECEIVED_IN_CASH';
+
+    if (isPaid) {
+      await prisma.registration.update({
+        where: { id: registrationId },
+        data: { status: 'CONFIRMED' }
+      });
+
+      await prisma.payment.update({
+        where: { id: reg.payment.id },
+        data: { status: 'PAID', gatewayResponse: asaasData as any }
+      });
+
+      if (reg.category.id === 'banca-int' || reg.category.id === 'banca-ext') {
+        const user = await prisma.user.findUnique({ where: { id: reg.participant.userId } });
+        if (user && !user.roles.includes('EVALUATOR')) {
+          await prisma.user.update({
+            where: { id: user.id },
+            data: { roles: { push: 'EVALUATOR' } }
+          });
+        }
+      }
+
+      revalidatePath('/admin/inscricoes');
+      revalidatePath('/admin/participantes');
+      revalidatePath('/admin');
+      return { 
+        success: true, 
+        isPaid: true,
+        message: `Pagamento CONFIRMADO no Asaas (R$ ${asaasData.value?.toFixed(2) || '0.00'} via ${asaasData.billingType || 'Asaas'}). A inscrição agora está Confirmada!`
+      };
+    } else {
+      await prisma.payment.update({
+        where: { id: reg.payment.id },
+        data: { gatewayResponse: asaasData as any }
+      });
+
+      revalidatePath('/admin/inscricoes');
+      return { 
+        success: true, 
+        isPaid: false,
+        message: `Consulta realizada no Asaas: o status atual da fatura é "${asaasData.status}". Ainda não consta como paga.`
+      };
+    }
+  } catch (error: any) {
+    console.error('Error in adminSyncAsaasPayment:', error);
+    return { error: error.message || 'Erro ao sincronizar com Asaas.' };
+  }
+}
+
+export async function adminChangeRegistrationStatus({
+  registrationId,
+  status,
+}: {
+  registrationId: string;
+  status: RegistrationStatus;
+}) {
+  await checkAdmin();
+
+  try {
+    const reg = await prisma.registration.findUnique({
+      where: { id: registrationId },
+      include: { payment: true, category: true, participant: true }
+    });
+
+    if (!reg) {
+      return { error: 'Inscrição não encontrada.' };
+    }
+
+    await prisma.registration.update({
+      where: { id: registrationId },
+      data: { status }
+    });
+
+    if (reg.payment) {
+      const paymentStatus = status === 'CONFIRMED' ? 'PAID' : status === 'CANCELLED' ? 'CANCELLED' : 'PENDING';
+      await prisma.payment.update({
+        where: { id: reg.payment.id },
+        data: { status: paymentStatus }
+      }).catch(console.error);
+    }
+
+    if (status === 'CONFIRMED' && (reg.category.id === 'banca-int' || reg.category.id === 'banca-ext')) {
+      const user = await prisma.user.findUnique({ where: { id: reg.participant.userId } });
+      if (user && !user.roles.includes('EVALUATOR')) {
+        await prisma.user.update({
+          where: { id: user.id },
+          data: { roles: { push: 'EVALUATOR' } }
+        });
+      }
+    }
+
+    revalidatePath('/admin/inscricoes');
+    revalidatePath('/admin/participantes');
+    revalidatePath('/admin');
+    return { success: true };
+  } catch (error: any) {
+    console.error('Error in adminChangeRegistrationStatus:', error);
+    return { error: error.message || 'Erro ao alterar status da inscrição.' };
+  }
+}
+
+export async function adminSyncAllPendingPayments() {
+  await checkAdmin();
+
+  try {
+    const regsToCheck = await prisma.registration.findMany({
+      where: {
+        payment: {
+          gatewayId: { not: null }
+        },
+        OR: [
+          { status: { not: 'CONFIRMED' } },
+          { payment: { status: { not: 'PAID' } } }
+        ]
+      },
+      include: { payment: true }
+    });
+
+    if (regsToCheck.length === 0) {
+      return { success: true, message: 'Todas as inscrições com faturas já estão sincronizadas e em dia.' };
+    }
+
+    const { checkPaymentStatus } = await import('@/lib/asaas');
+    let updatedCount = 0;
+
+    for (const reg of regsToCheck) {
+      if (!reg.payment?.gatewayId) continue;
+
+      try {
+        const asaasData = await checkPaymentStatus(reg.payment.gatewayId);
+        const isPaid = asaasData.status === 'RECEIVED' || asaasData.status === 'CONFIRMED' || asaasData.status === 'RECEIVED_IN_CASH';
+
+        if (isPaid && (reg.status !== 'CONFIRMED' || reg.payment.status !== 'PAID')) {
+          await prisma.registration.update({
+            where: { id: reg.id },
+            data: { status: 'CONFIRMED' }
+          });
+
+          await prisma.payment.update({
+            where: { id: reg.payment.id },
+            data: { status: 'PAID', gatewayResponse: asaasData as any }
+          });
+
+          updatedCount++;
+        }
+      } catch (err: any) {
+        console.warn(`Erro ao checar pagamento ${reg.payment.gatewayId}:`, err.message);
+      }
+    }
+
+    revalidatePath('/admin/inscricoes');
+    revalidatePath('/admin/participantes');
+    revalidatePath('/admin');
+
+    return {
+      success: true,
+      message: `Varredura concluída! ${regsToCheck.length} fatura(s) verificadas no Asaas. ${updatedCount} inscrição(ões) foram confirmadas.`
+    };
+  } catch (error: any) {
+    console.error('Error in adminSyncAllPendingPayments:', error);
+    return { error: error.message || 'Erro ao sincronizar todas as faturas.' };
+  }
+}
+
+
