@@ -44,14 +44,6 @@ const SCHEDULE_DATA = [
         image: '/images/palestras/vitor-stuani.jpg'
       },
       {
-        time: '9:50h-10:10h',
-        title: 'Coffee Break',
-        speaker: 'Intervalo',
-        description: 'Pausa para café.',
-        type: 'INTERVALO',
-        image: ''
-      },
-      {
         time: '10:10h-12:00h',
         title: 'Legislação da Odontologia da HOF - Simpósio',
         speaker: 'Prof. Karina Ferrão',
@@ -68,28 +60,12 @@ const SCHEDULE_DATA = [
         image: '/images/palestras/marcelo-abla.jpg'
       },
       {
-        time: '12:00h-14:00h',
-        title: 'Almoço',
-        speaker: 'Intervalo',
-        description: 'Pausa para almoço.',
-        type: 'INTERVALO',
-        image: ''
-      },
-      {
         time: '14:00h-15:50h',
         title: 'Cirurgias estéticas da face na odontologia moderna',
         speaker: 'Prof. Dr. Walter Cristiano Gealh',
         description: '- Graduação em Odontologia pela Universidade Estadual de Maringá (UEM)\n- Residência em CTBMF pela Universidade Estadual de Maringá\n- Mestrado em CTBMF pela FOA/UNESP\n- Doutorado em Odontologia Integrada pela Universidade Estadual de Maringá\n- Especialização em Dor Orofacial (DOF) e Disfunção Temporomandibular (DTM)\n- Especialização em Farmacologia',
         type: 'CIRURGIA / HOF',
         image: '/images/palestras/walter-gealh.jpg'
-      },
-      {
-        time: '15:50h-16:10h',
-        title: 'Coffee Break',
-        speaker: 'Intervalo',
-        description: 'Pausa para café.',
-        type: 'INTERVALO',
-        image: ''
       },
       {
         time: '16:10h-18:00h',
@@ -124,14 +100,6 @@ const SCHEDULE_DATA = [
         image: '/images/palestras/flavio-ferraz.jpg'
       },
       {
-        time: '9:50h-10:10h',
-        title: 'Coffee Break',
-        speaker: 'Intervalo',
-        description: 'Pausa para café.',
-        type: 'INTERVALO',
-        image: ''
-      },
-      {
         time: '10:10h-12:00h',
         title: 'Estratégias de tratamento conservador das lesões dos maxilares',
         speaker: 'André Caroli Rocha',
@@ -140,28 +108,12 @@ const SCHEDULE_DATA = [
         image: '/images/palestras/andre-caroli.jpg'
       },
       {
-        time: '12:00h-14:00h',
-        title: 'Almoço',
-        speaker: 'Intervalo',
-        description: 'Pausa para almoço.',
-        type: 'INTERVALO',
-        image: ''
-      },
-      {
         time: '14:00h-15:50h',
         title: 'Odontologia do Sono: uma nova área de atuação do cirurgião dentista',
         speaker: 'Walter da Silva Jr.',
         description: '• Formado pela Faculdade de Odontologia de Araçatuba (UNESP) – 1986\n• Doutor em Ciências da Reabilitação (distúrbios do sono) pelo HRAC/USP – Bauru – 2013\n• Diplomado em Odontologia do Sono pela American Board of Dental Sleep Medicine (ABDSM) – 2019\n• Membro do corpo editorial do Journal of Dental Sleep Medicine (JDSM) – 2020\n• Membro da força-tarefa da American Academy of Dental Sleep Medicine (AADSM) para a Educação em Odontologia do Sono – 2020\n• Certificado pelo Sistema NOA – Aparelho Intraoral (Orthoapnea Madri/ES - 2022)\n• Clínica privada desde 1986 e ministrador de cursos de capacitação em Odontologia do Sono',
         type: 'ODONTOLOGIA DO SONO',
         image: '/images/palestras/walter-silva.jpg'
-      },
-      {
-        time: '15:50h-16:10h',
-        title: 'Coffee Break',
-        speaker: 'Intervalo',
-        description: 'Pausa para café.',
-        type: 'INTERVALO',
-        image: ''
       },
       {
         time: '16:10h-18:00h',
@@ -188,28 +140,12 @@ const SCHEDULE_DATA = [
         image: '/images/palestras/fernando-lopes.jpg'
       },
       {
-        time: '9:50h-10:10h',
-        title: 'Coffee Break',
-        speaker: 'Intervalo',
-        description: 'Pausa para café.',
-        type: 'INTERVALO',
-        image: ''
-      },
-      {
         time: '10:10h-12:00h',
         title: 'Fluxo Digital aplicado a estética Dental',
         speaker: 'Paulo Eduardo Ferraz Bottura Filho',
         description: '• Cirurgião Dentista - Faculdade de Odontologia de Lins (UNIMEP - 2000)\n• Especialista em Periodontia - FOA - UNESP Araçatuba (2003)\n• Mestre - Faculdade de Medicina de São José do Rio Preto (FAMERP – 2012)\n• Especialista em Implantes - COE São José do Rio Preto (2013)\n• DSD Team Member - Miami (2014)\n• Ex-professor de Cirurgia, Periodontia e Anestesiologia da Unirp\n• Coautor dos livros “Cad Cam no laboratório e na Clínica” e “Arquitetura Facial”',
         type: 'DENTÍSTICA / ESTÉTICA DIGITAL',
         image: '/images/palestras/paulo-bottura.jpg'
-      },
-      {
-        time: '12:00h-14:00h',
-        title: 'Almoço',
-        speaker: 'Intervalo',
-        description: 'Pausa para almoço.',
-        type: 'INTERVALO',
-        image: ''
       },
       {
         time: '14:00h-15:00h',
@@ -226,14 +162,6 @@ const SCHEDULE_DATA = [
         description: '• Área de Atuação: Dentista do Exército Brasileiro\n• Formada em Odontologia pela Universidade Federal de Mato Grosso do Sul (UFMS - Campo Grande, MS)\n• Pós-graduada em Prótese Dentária (Instituto Orofacial das Américas - São Paulo, SP)\n• Pós-graduada em Dentística (Instituto Orofacial das Américas - São Paulo, SP)\n• 2ª Tenente Dentista do Exército Brasileiro\n• Atuação em Clínica Particular desde 2023',
         type: 'CARREIRA MILITAR (EXÉRCITO)',
         image: '/images/palestras/yara-maciel.jpg'
-      },
-      {
-        time: '16:00h-16:10h',
-        title: 'Intervalo',
-        speaker: 'Intervalo',
-        description: 'Breve intervalo.',
-        type: 'INTERVALO',
-        image: ''
       },
       {
         time: '16:10h-17:10h',
