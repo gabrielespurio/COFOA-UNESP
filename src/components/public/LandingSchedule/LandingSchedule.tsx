@@ -330,7 +330,7 @@ export function LandingSchedule() {
                 >
                   <div className={styles.cardImageWrapper}>
                     {event.image ? (
-                      <img src={event.image} alt={event.title} className={styles.cardImage} />
+                      <img src={event.image} alt={event.title} className={styles.cardImage} loading="lazy" decoding="async" />
                     ) : (
                       <div className={styles.cardImage} style={{ background: 'linear-gradient(135deg, #1e293b, #334155)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '1.2rem', textAlign: 'center', padding: '1rem', minHeight: '200px' }}>
                         {event.title}
@@ -386,7 +386,7 @@ export function LandingSchedule() {
         <div className={styles.modalOverlay} onClick={() => setSelectedEvent(null)}>
           <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
             <button className={styles.modalClose} onClick={() => setSelectedEvent(null)}>✕</button>
-            {selectedEvent.image && <img src={selectedEvent.image} alt={selectedEvent.title} className={styles.modalImage} />}
+            {selectedEvent.image && <img src={selectedEvent.image} alt={selectedEvent.title} className={styles.modalImage} decoding="async" />}
             <div className={styles.modalBody}>
               <div className={styles.modalTime}>{selectedEvent.time}</div>
               <h3 className={styles.modalTitle}>{selectedEvent.title}</h3>
