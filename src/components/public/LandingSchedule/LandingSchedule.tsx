@@ -33,7 +33,7 @@ const SCHEDULE_DATA = [
         speaker: 'Prof. Dr. Marcelo Ornaghi Orlandi',
         description: 'Professor titular no Instituto de Química de Araraquara (UNESP).\nGraduação em Física pela UFSCar, Mestre e Doutor em Ciência e Engenharia dos Materiais pela UFSCar.\nPesquisador visitante na University of Tuebingen, École Polytechnique Montréal (PolyMtl) e Massachusetts Institute of Technology (MIT).\nCoordenador dos laboratórios de Microscopia Eletrônica do Instituto de Química de Araraquara.\nRealiza pesquisas com ênfase em materiais cerâmicos semicondutores (+100 artigos científicos publicados, 7 capítulos de livros e editor da mais completa obra sobre óxido de estanho com +5500 citações no Google Scholar).\nAtua na inovação tecnológica, startups, patentes e é Vice-diretor da Agência UNESP de Inovação.',
         type: 'SIMPÓSIO PÓS-GRADUAÇÃO',
-        image: '/images/Palestras%20COFOA/Ecossistema%20de%20Inova%C3%A7%C3%A3o%20da%20Unesp%20-%20Transformando%20o%20Futuro.jpg'
+        image: '/images/palestras/marcelo-orlandi.jpg'
       },
       {
         time: '8:00h-9:50h',
@@ -41,7 +41,7 @@ const SCHEDULE_DATA = [
         speaker: 'Prof. Dr. Vitor de Toledo Stuani',
         description: '* Professor de Implantodontia no Departamento de Cirurgia e Traumatologia Buco-Maxilo-Facial e Periodontia da FORP-USP\n* Especialista em Periodontia e Odontologia Hospitalar\n* Mestrado em Reabilitação Oral e Doutorado em Periodontia - FOB-USP\n* Pós-doutorado - FOB-USP\n* Osteology Scholar - Harvard School of Dental Medicine\n* Membro do Comitê Diretivo do National Osteology Group Brazil\n* Cursos de atualização em planejamento CAD/CAM, cirurgia guiada, impressão 3D e bioimpressão',
         type: 'PERIODONTIA',
-        image: '/images/Palestras%20COFOA/Bases%20do%20Fluxo%20Digital%20Aplicado%20%C3%A0%20Periodontia%20e%20Implantodontia.jpg'
+        image: '/images/palestras/vitor-stuani.jpg'
       },
       {
         time: '9:50h-10:10h',
@@ -57,7 +57,7 @@ const SCHEDULE_DATA = [
         speaker: 'Prof. Karina Ferrão',
         description: '- Graduada em Odontologia pela Faculdade de Odontologia de Lins (FOL - 1994)\n- Especialista em Periodontia (ABO MS) e Especialista em Harmonização Orofacial (CFO)\n- Mestre em Educação e Saúde (UNAERP)\n- Presidente do Conselho Regional de Odontologia de São Paulo (CROSP biênio 2026/2027)\n- Professora responsável da Especialização em Harmonização Orofacial - FUNORTE Uberaba\n- Diretora da Sociedade Brasileira de Toxina Botulínica e Implantes Faciais na Odontologia (SBTI - 2017 a 2022)\n- Speaker Allergan Aesthetics e Membro do Programa Botox Masters Allergan Aesthetics',
         type: 'SIMPÓSIO PÓS-GRADUAÇÃO',
-        image: '/images/Palestras%20COFOA/Legisla%C3%A7%C3%A3o%20da%20Odontologia%20da%20HOF%20-%20Simp%C3%B3sio.jpg'
+        image: '/images/palestras/karina-ferrao.jpg'
       },
       {
         time: '10:10h-12:00h',
@@ -65,7 +65,7 @@ const SCHEDULE_DATA = [
         speaker: 'Prof. Dr. Marcelo Sabbag Abla',
         description: '• Graduado em Odontologia pela Organização Santamarense de Educação e Cultura (1993)\n• Especialista em Implantodontia pela Universidade de Santo Amaro (UNISA - 2001) e em Biologia Celular e Morfologia pela Escola Paulista de Medicina (2003)\n• Mestre em Odontologia – Implantodontia pela UNESP (2004) e Doutor em Odontologia pela UNESP (2012)\n• Coordenador de Conteúdo da ABLA+ e Coordenador dos cursos da Prime Reabilitação e Estética\n• Diretor Clínico da Clínica Abla\n• Fundador da Gent Odonto Care em 2020',
         type: 'NOVOS CAMPOS DE ATUAÇÃO',
-        image: '/images/Palestras%20COFOA/Odontologia%20alem%20do%20consultorio%20a%20atua%C3%A7%C3%A3o%20do%20cirurgiao%20dentista%20no%20atendimento%20domiciliar.jpg'
+        image: '/images/palestras/marcelo-abla.jpg'
       },
       {
         time: '12:00h-14:00h',
@@ -81,7 +81,7 @@ const SCHEDULE_DATA = [
         speaker: 'Prof. Dr. Walter Cristiano Gealh',
         description: '- Graduação em Odontologia pela Universidade Estadual de Maringá (UEM)\n- Residência em CTBMF pela Universidade Estadual de Maringá\n- Mestrado em CTBMF pela FOA/UNESP\n- Doutorado em Odontologia Integrada pela Universidade Estadual de Maringá\n- Especialização em Dor Orofacial (DOF) e Disfunção Temporomandibular (DTM)\n- Especialização em Farmacologia',
         type: 'CIRURGIA / HOF',
-        image: '/images/Palestras%20COFOA/Cirurgias%20est%C3%A9ticas%20da%20face%20na%20odontologia%20moderna.png'
+        image: '/images/palestras/walter-gealh.png'
       },
       {
         time: '15:50h-16:10h',
@@ -97,7 +97,7 @@ const SCHEDULE_DATA = [
         speaker: 'Dr. Gustavo Gregorin Coelho',
         description: '• Graduação em MEDICINA pela Universidade de São Paulo (USP)\n• Especialização e Residência médica em Anestesiologia pelo Hospital das Clínicas da Faculdade de Medicina de Ribeirão Preto – USP\n• Título de Especialista em Anestesiologia pela Sociedade Brasileira de Anestesiologia (SBA)\n• Sócio do Serviço de Anestesiologia de Araçatuba (SAA)',
         type: 'ANESTESIOLOGIA / SEDAÇÃO',
-        image: '/images/Palestras%20COFOA/Sedacao%20T%C3%A9cnicas%20-%20Indica%C3%A7%C3%B5es%20e%20Aplica%C3%A7%C3%B5es%20Cl%C3%ADnicas.jpg'
+        image: '/images/palestras/gustavo-coelho.jpg'
       },
       {
         time: '18:00h-20:00h',
@@ -121,7 +121,7 @@ const SCHEDULE_DATA = [
         speaker: 'Flávio Ferraz',
         description: '• Cirurgião Bucomaxilofacial do Hospital das Clínicas da FMUSP e do Hospital Universitário da USP\n• Residência em Cirurgia e Traumatologia Bucomaxilofacial pelo HC-FMUSP\n• Fellowship em Planejamento Cirúrgico Virtual no Houston Methodist Hospital (Texas – USA)\n• Mestrado em Ortodontia pela Universidade São Leopoldo Mandic (Campinas)\n• Membro Titular do Colégio Brasileiro de Cirurgia e Traumatologia Bucomaxilofacial\n• Graduação em Odontologia pela Faculdade de Odontologia de Araçatuba (FOA - UNESP)',
         type: 'CIRURGIA BUCOMAXILOFACIAL',
-        image: '/images/Palestras%20COFOA/Cirurgia%20Ortogn%C3%A1tica%20na%20era%20digital%20-%20Do%20Planejamento%20virtual%20%C3%A0%20sala%20cir%C3%BArgica.jpg'
+        image: '/images/palestras/flavio-ferraz.jpg'
       },
       {
         time: '9:50h-10:10h',
@@ -137,7 +137,7 @@ const SCHEDULE_DATA = [
         speaker: 'André Caroli Rocha',
         description: '• Especialista em Cirurgia e Traumatologia Bucomaxilofacial\n• Mestre em Patologia Bucal e Doutor em Diagnóstico Bucal\n• Assistente do serviço de CTBMF do Hospital das Clínicas – FMUSP\n• Assistente do departamento de Estomatologia do Hospital A.C. Camargo',
         type: 'ESTOMATOLOGIA / PATOLOGIA',
-        image: '/images/Palestras%20COFOA/Estrat%C3%A9gias%20de%20tratamento%20conservador%20das%20les%C3%B5es%20dos%20maxilares.jpg'
+        image: '/images/palestras/andre-caroli.jpg'
       },
       {
         time: '12:00h-14:00h',
@@ -153,7 +153,7 @@ const SCHEDULE_DATA = [
         speaker: 'Walter da Silva Jr.',
         description: '• Formado pela Faculdade de Odontologia de Araçatuba (UNESP) – 1986\n• Doutor em Ciências da Reabilitação (distúrbios do sono) pelo HRAC/USP – Bauru – 2013\n• Diplomado em Odontologia do Sono pela American Board of Dental Sleep Medicine (ABDSM) – 2019\n• Membro do corpo editorial do Journal of Dental Sleep Medicine (JDSM) – 2020\n• Membro da força-tarefa da American Academy of Dental Sleep Medicine (AADSM) para a Educação em Odontologia do Sono – 2020\n• Certificado pelo Sistema NOA – Aparelho Intraoral (Orthoapnea Madri/ES - 2022)\n• Clínica privada desde 1986 e ministrador de cursos de capacitação em Odontologia do Sono',
         type: 'ODONTOLOGIA DO SONO',
-        image: '/images/Palestras%20COFOA/Odontologia%20do%20Sono%20-%20uma%20nova%20%C3%A1rea%20de%20atua%C3%A7%C3%A3o%20do%20cirurgi%C3%A3o%20dentista.jpg'
+        image: '/images/palestras/walter-silva.jpg'
       },
       {
         time: '15:50h-16:10h',
@@ -169,7 +169,7 @@ const SCHEDULE_DATA = [
         speaker: 'Sérgio Bruzadelli Macedo e Maria Teresa Maiolini Bruzadelli',
         description: 'Prof. Dr. Sérgio Bruzadelli Macedo:\n• Especialista em CTBMF\n• Mestre e Doutor em CTBMF pela FOA-UNESP\n• Introdutor da Ozonioterapia em Odontologia no Brasil em 1996\n• Professor de CTBMF da Odontologia da UnB\n\nDra. Maria Teresa Maiolini Bruzadelli:\n• Graduada em Odontologia pela Universidade Federal de Alfenas (UNIFAL-MG)\n• Especialista em Periodontia e Prótese pela ABO-ES\n• Pós-graduação em Implantodontia pela Faculdade Funorte ES\n• Habilitação em Ozonioterapia na Odontologia\n• Integrante do Projeto de Extensão de Ozonioterapia na Clínica de Necroses dos Maxilares no HUB/UnB',
         type: 'TERAPIAS INTEGRATIVAS',
-        image: '/images/Palestras%20COFOA/Oz%C3%B4nio%20como%20Estrat%C3%A9gia%20Terap%C3%AAutica%20na%20Odontologia%20Contempor%C3%A2nea.jpg'
+        image: '/images/palestras/sergio-bruzadelli.jpg'
       }
     ]
   },
@@ -185,7 +185,7 @@ const SCHEDULE_DATA = [
         speaker: 'Fernando Lopes',
         description: '• Técnico em Prótese Dentária pelo Instituto Francano de Prótese Odontológica (IFPO) no ano de 1999\n• Cirurgião Dentista pela Universidade de Franca – UNIFRAN (2007)\n• Especialista em Implantodontia pela UNAERP (2015)\n• Mestrando em Implantodontia na Faculdade ILAPEO\n• CEO do laboratório especializado em CAD/CAM Digital Center (9 unidades em SP e MG)\n• Membro ativo do International Team of Implantology (ITI) desde 2015\n• Speaker Digital Straumann/Neodent desde 2017',
         type: 'ODONTOLOGIA DIGITAL',
-        image: '/images/Palestras%20COFOA/Odontologia%20Digital%20no%20dia-a-dia%20cl%C3%ADnico.jpg'
+        image: '/images/palestras/fernando-lopes.jpg'
       },
       {
         time: '9:50h-10:10h',
@@ -201,7 +201,7 @@ const SCHEDULE_DATA = [
         speaker: 'Paulo Eduardo Ferraz Bottura Filho',
         description: '• Cirurgião Dentista - Faculdade de Odontologia de Lins (UNIMEP - 2000)\n• Especialista em Periodontia - FOA - UNESP Araçatuba (2003)\n• Mestre - Faculdade de Medicina de São José do Rio Preto (FAMERP – 2012)\n• Especialista em Implantes - COE São José do Rio Preto (2013)\n• DSD Team Member - Miami (2014)\n• Ex-professor de Cirurgia, Periodontia e Anestesiologia da Unirp\n• Coautor dos livros “Cad Cam no laboratório e na Clínica” e “Arquitetura Facial”',
         type: 'DENTÍSTICA / ESTÉTICA DIGITAL',
-        image: '/images/Palestras%20COFOA/Fluxo%20Digital%20aplicado%20a%20est%C3%A9tica%20Dental.jpg'
+        image: '/images/palestras/paulo-bottura.jpg'
       },
       {
         time: '12:00h-14:00h',
@@ -217,7 +217,7 @@ const SCHEDULE_DATA = [
         speaker: 'Tenente Lívia Trevelin Arêde',
         description: '• Graduação em Odontologia FOA-Unesp\n• Mestre e especialista em Estomatologia FOA-Unesp\n• Habilitação em laser pelo IE Albert Einstein\n• Doutoranda em Periodontia FOA-Unesp com Doutorado Sanduíche pela Universidade de Toronto (Canadá)\n• Atuação em consultório particular como estomatologista desde 2010\n• Atuação na Estratégia de Saúde da Família SMS Araçatuba (2012–2018)\n• Oficial Dentista da Polícia Militar do Estado de São Paulo',
         type: 'CARREIRA MILITAR (PM)',
-        image: '/images/Palestras%20COFOA/Odontologia%20na%20Carreira%20Militar%20-%20Experi%C3%AAncias%20Desafios%20e%20Oportunidades.jpg'
+        image: '/images/palestras/livia-arede.jpg'
       },
       {
         time: '15:00h-16:00h',
@@ -225,7 +225,7 @@ const SCHEDULE_DATA = [
         speaker: '2º Tenente Yara Gabriele Nunes Maciel',
         description: '• Área de Atuação: Dentista do Exército Brasileiro\n• Formada em Odontologia pela Universidade Federal de Mato Grosso do Sul (UFMS - Campo Grande, MS)\n• Pós-graduada em Prótese Dentária (Instituto Orofacial das Américas - São Paulo, SP)\n• Pós-graduada em Dentística (Instituto Orofacial das Américas - São Paulo, SP)\n• 2ª Tenente Dentista do Exército Brasileiro\n• Atuação em Clínica Particular desde 2023',
         type: 'CARREIRA MILITAR (EXÉRCITO)',
-        image: '/images/Palestras%20COFOA/O%20Cirurgi%C3%A3o-Dentista%20no%20Ex%C3%A9rcito%20Brasileiro.png'
+        image: '/images/palestras/yara-maciel.png'
       },
       {
         time: '16:00h-16:10h',
@@ -241,7 +241,7 @@ const SCHEDULE_DATA = [
         speaker: 'Karina Camillo Carrascoza',
         description: '• Graduação em Odontologia: FOP / Unicamp (2001)\n• Especialização em Endodontia (APCD) e em Gestão Pública em Saúde (Unicamp)\n• Mestrado em Farmacologia, Anestesiologia e Terapêutica (Unicamp)\n• Doutorado em Saúde da Criança e do Adolescente (Unicamp)\n• Pesquisadora Universidade de Tübingen – Alemanha\n• Cofundadora da Plataforma OdontoQuiz\n• Convocada em 6 Concursos Públicos: Americana (2x), Campinas, Santa Bárbara d’Oeste, Cabreúva e Itupeva\n• Atual Coordenadora de Saúde Bucal',
         type: 'CONCURSOS PÚBLICOS',
-        image: '/images/Palestras%20COFOA/Odonto%20Al%C3%A9m%20do%20Consult%C3%B3rio%20-%20Como%20se%20Preparar%20para%20Concursos%20P%C3%BAblicos.jpg'
+        image: '/images/palestras/karina-carrascoza.jpg'
       },
       {
         time: '21:00h',
