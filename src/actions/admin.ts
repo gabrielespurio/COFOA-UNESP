@@ -97,3 +97,282 @@ export async function evaluateWorkStage1(formData: FormData) {
 
   return { error: 'Decisão inválida.' };
 }
+
+export async function adminCancelRegistration({
+  registrationId,
+  mode,
+  cancelAsaas = true,
+  removeCoupon = false,
+}: {
+  registrationId: string;
+  mode: 'DELETE' | 'MARK_CANCELLED';
+  cancelAsaas?: boolean;
+  removeCoupon?: boolean;
+}) {
+  await checkAdmin();
+
+  try {
+    const reg = await prisma.registration.findUnique({
+      where: { id: registrationId },
+      include: {
+        payment: true,
+        coupon: true,
+        participant: true,
+      }
+    });
+
+    if (!reg) {
+      return { error: 'Inscrição não encontrada.' };
+    }
+
+    // 1. Cancel Asaas invoice if requested and exists
+    if (cancelAsaas && reg.payment?.gatewayId) {
+      try {
+        const { deletePayment } = await import('@/lib/asaas');
+        await deletePayment(reg.payment.gatewayId);
+      } catch (asaasErr: any) {
+        console.warn('Aviso: Falha ao deletar fatura no Asaas:', asaasErr.message);
+      }
+    }
+
+    // 2. Coupon handling
+    if (reg.couponId) {
+      if (removeCoupon) {
+        await prisma.coupon.update({
+          where: { id: reg.couponId },
+          data: { active: false, usedCount: { decrement: 1 } }
+        }).catch(console.error);
+      } else {
+        await prisma.coupon.update({
+          where: { id: reg.couponId },
+          data: { usedCount: { decrement: 1 } }
+        }).catch(console.error);
+      }
+    }
+
+    if (mode === 'DELETE') {
+      if (reg.payment) {
+        await prisma.payment.delete({ where: { id: reg.payment.id } }).catch(console.error);
+      }
+      await prisma.registration.delete({
+        where: { id: registrationId }
+      });
+    } else {
+      await prisma.registration.update({
+        where: { id: registrationId },
+        data: { status: 'CANCELLED' }
+      });
+      if (reg.payment) {
+        await prisma.payment.update({
+          where: { id: reg.payment.id },
+          data: { status: 'CANCELLED' }
+        }).catch(console.error);
+      }
+    }
+
+    revalidatePath('/admin/inscricoes');
+    revalidatePath('/admin/participantes');
+    revalidatePath('/admin');
+    return { success: true };
+  } catch (error: any) {
+    console.error('Error in adminCancelRegistration:', error);
+    return { error: error.message || 'Erro ao cancelar inscrição.' };
+  }
+}
+
+export async function adminChangeCategory({
+  registrationId,
+  newCategoryId,
+  customAmountCents,
+}: {
+  registrationId: string;
+  newCategoryId: string;
+  customAmountCents?: number;
+}) {
+  await checkAdmin();
+
+  try {
+    const category = await prisma.registrationCategory.findUnique({
+      where: { id: newCategoryId }
+    });
+    if (!category) {
+      return { error: 'Categoria selecionada não existe.' };
+    }
+
+    const reg = await prisma.registration.findUnique({
+      where: { id: registrationId },
+      include: { payment: true }
+    });
+    if (!reg) {
+      return { error: 'Inscrição não encontrada.' };
+    }
+
+    const dataToUpdate: any = {
+      categoryId: newCategoryId,
+    };
+
+    if (typeof customAmountCents === 'number' && !isNaN(customAmountCents)) {
+      dataToUpdate.amount = customAmountCents;
+    }
+
+    await prisma.registration.update({
+      where: { id: registrationId },
+      data: dataToUpdate
+    });
+
+    if (dataToUpdate.amount !== undefined && reg.payment) {
+      await prisma.payment.update({
+        where: { id: reg.payment.id },
+        data: { amount: dataToUpdate.amount }
+      }).catch(console.error);
+    }
+
+    revalidatePath('/admin/inscricoes');
+    revalidatePath('/admin/participantes');
+    revalidatePath('/admin');
+    return { success: true };
+  } catch (error: any) {
+    console.error('Error in adminChangeCategory:', error);
+    return { error: error.message || 'Erro ao alterar categoria.' };
+  }
+}
+
+export async function adminUpdateParticipantData({
+  participantId,
+  fullName,
+  email,
+  cpf,
+  phone,
+  institution,
+  city,
+  state,
+  course,
+  croNumber,
+}: {
+  participantId: string;
+  fullName: string;
+  email: string;
+  cpf: string;
+  phone?: string | null;
+  institution?: string | null;
+  city?: string | null;
+  state?: string | null;
+  course?: string | null;
+  croNumber?: string | null;
+}) {
+  await checkAdmin();
+
+  try {
+    const participant = await prisma.participant.findUnique({
+      where: { id: participantId },
+      include: { user: true }
+    });
+
+    if (!participant) {
+      return { error: 'Participante não encontrado.' };
+    }
+
+    if (email && email.toLowerCase() !== participant.user.email.toLowerCase()) {
+      const existingEmail = await prisma.user.findUnique({
+        where: { email: email.toLowerCase() }
+      });
+      if (existingEmail && existingEmail.id !== participant.userId) {
+        return { error: 'Este e-mail já está sendo utilizado por outro usuário.' };
+      }
+    }
+
+    if (cpf && cpf !== participant.cpf) {
+      const existingCpf = await prisma.participant.findUnique({
+        where: { cpf }
+      });
+      if (existingCpf && existingCpf.id !== participantId) {
+        return { error: 'Este CPF já está sendo utilizado por outro participante.' };
+      }
+    }
+
+    await prisma.user.update({
+      where: { id: participant.userId },
+      data: { email: email.toLowerCase() }
+    });
+
+    await prisma.participant.update({
+      where: { id: participantId },
+      data: {
+        fullName,
+        cpf,
+        phone: phone || null,
+        institution: institution || null,
+        city: city || null,
+        state: state || null,
+        course: course || null,
+        croNumber: croNumber || null,
+      }
+    });
+
+    revalidatePath('/admin/participantes');
+    revalidatePath('/admin/inscricoes');
+    revalidatePath('/admin/usuarios');
+    return { success: true };
+  } catch (error: any) {
+    console.error('Error in adminUpdateParticipantData:', error);
+    return { error: error.message || 'Erro ao atualizar dados do participante.' };
+  }
+}
+
+export async function adminManualConfirm({
+  registrationId,
+  isExempt = false,
+}: {
+  registrationId: string;
+  isExempt?: boolean;
+}) {
+  await checkAdmin();
+
+  try {
+    const reg = await prisma.registration.findUnique({
+      where: { id: registrationId },
+      include: { payment: true, category: true, participant: true }
+    });
+
+    if (!reg) {
+      return { error: 'Inscrição não encontrada.' };
+    }
+
+    await prisma.registration.update({
+      where: { id: registrationId },
+      data: {
+        status: 'CONFIRMED',
+        ...(isExempt ? { amount: 0 } : {})
+      }
+    });
+
+    if (reg.payment) {
+      await prisma.payment.update({
+        where: { id: reg.payment.id },
+        data: {
+          status: 'PAID',
+          ...(isExempt ? { amount: 0 } : {})
+        }
+      });
+    }
+
+    if (reg.category.id === 'banca-int' || reg.category.id === 'banca-ext') {
+      const user = await prisma.user.findUnique({ where: { id: reg.participant.userId } });
+      if (user && !user.roles.includes('EVALUATOR')) {
+        await prisma.user.update({
+          where: { id: user.id },
+          data: { roles: { push: 'EVALUATOR' } }
+        });
+      }
+    }
+
+    revalidatePath('/admin/inscricoes');
+    revalidatePath('/admin/participantes');
+    revalidatePath('/admin');
+    return { success: true };
+  } catch (error: any) {
+    console.error('Error in adminManualConfirm:', error);
+    return { error: error.message || 'Erro ao confirmar inscrição.' };
+  }
+}
+

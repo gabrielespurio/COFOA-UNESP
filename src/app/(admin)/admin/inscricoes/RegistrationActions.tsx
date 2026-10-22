@@ -1,52 +1,57 @@
 'use client';
 
-import { useTransition } from 'react';
-import { updateRegistrationStatus } from '@/actions/admin';
-import { RegistrationStatus } from '@prisma/client';
+import React, { useState } from 'react';
+import { 
+  ManageRegistrationModal, 
+  ManageModalCategory, 
+  ManageModalParticipant, 
+  ManageModalRegistration 
+} from './ManageRegistrationModal';
 
 interface RegistrationActionsProps {
-  registrationId: string;
-  currentStatus: string;
+  participant: ManageModalParticipant;
+  registration: ManageModalRegistration;
+  categories: ManageModalCategory[];
 }
 
-export function RegistrationActions({ registrationId, currentStatus }: RegistrationActionsProps) {
-  const [isPending, startTransition] = useTransition();
-
-  const handleStatusChange = (status: RegistrationStatus) => {
-    startTransition(async () => {
-      await updateRegistrationStatus(registrationId, status);
-    });
-  };
+export function RegistrationActions({ 
+  participant, 
+  registration, 
+  categories 
+}: RegistrationActionsProps) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
-    <div style={{ display: 'flex', gap: '8px' }}>
-      {currentStatus !== 'CONFIRMED' && (
+    <>
+      <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
         <button 
-          onClick={() => handleStatusChange('CONFIRMED')}
-          disabled={isPending}
-          style={{ padding: '4px 8px', fontSize: '12px', background: 'var(--color-success)', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+          onClick={() => setIsModalOpen(true)}
+          style={{ 
+            padding: '6px 12px', 
+            fontSize: '12px', 
+            fontWeight: 600,
+            background: 'var(--color-primary, #0284c7)', 
+            color: 'white', 
+            border: 'none', 
+            borderRadius: '6px', 
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '4px',
+            boxShadow: '0 1px 2px rgba(0,0,0,0.05)'
+          }}
         >
-          {isPending ? '...' : 'Aprovar'}
+          <span>⚙️ Gerenciar</span>
         </button>
-      )}
-      {currentStatus !== 'CANCELLED' && (
-        <button 
-          onClick={() => handleStatusChange('CANCELLED')}
-          disabled={isPending}
-          style={{ padding: '4px 8px', fontSize: '12px', background: 'var(--color-error)', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
-        >
-          {isPending ? '...' : 'Cancelar'}
-        </button>
-      )}
-      {currentStatus !== 'PENDING' && (
-        <button 
-          onClick={() => handleStatusChange('PENDING')}
-          disabled={isPending}
-          style={{ padding: '4px 8px', fontSize: '12px', background: 'var(--color-warning)', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
-        >
-          {isPending ? '...' : 'Pendente'}
-        </button>
-      )}
-    </div>
+      </div>
+
+      <ManageRegistrationModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        participant={participant}
+        registration={registration}
+        categories={categories}
+      />
+    </>
   );
 }

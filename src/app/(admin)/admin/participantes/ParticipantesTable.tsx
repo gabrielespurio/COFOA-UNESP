@@ -2,6 +2,10 @@
 
 import React, { useState, useEffect } from 'react';
 import styles from './page.module.css';
+import { 
+  ManageRegistrationModal, 
+  ManageModalCategory 
+} from '../inscricoes/ManageRegistrationModal';
 
 function getStatusBadge(status: string) {
   switch (status) {
@@ -16,16 +20,23 @@ function getStatusBadge(status: string) {
   }
 }
 
-export function ParticipantesTable({ participants }: { participants: any[] }) {
+export function ParticipantesTable({ 
+  participants,
+  categories = []
+}: { 
+  participants: any[];
+  categories?: ManageModalCategory[];
+}) {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedParticipant, setSelectedParticipant] = useState<any | null>(null);
   const itemsPerPage = 10;
 
   // Filter participants
   const filteredParticipants = participants.filter(p => {
     const searchLower = searchTerm.toLowerCase();
     const nameMatch = p.fullName?.toLowerCase().includes(searchLower);
-    const emailMatch = p.user.email?.toLowerCase().includes(searchLower);
+    const emailMatch = p.user?.email?.toLowerCase().includes(searchLower);
     const cpfMatch = p.cpf?.includes(searchLower);
     return nameMatch || emailMatch || cpfMatch;
   });
@@ -74,12 +85,13 @@ export function ParticipantesTable({ participants }: { participants: any[] }) {
               <th>Papel</th>
               <th>Inscrição</th>
               <th>Comprovante</th>
+              <th>Ações</th>
             </tr>
           </thead>
           <tbody>
             {paginatedParticipants.length === 0 && (
               <tr>
-                <td colSpan={7} className={styles.emptyState} style={{ textAlign: 'center', padding: '2rem' }}>
+                <td colSpan={8} className={styles.emptyState} style={{ textAlign: 'center', padding: '2rem' }}>
                   Nenhum participante encontrado.
                 </td>
               </tr>
@@ -87,12 +99,12 @@ export function ParticipantesTable({ participants }: { participants: any[] }) {
             {paginatedParticipants.map(p => (
               <tr key={p.id}>
                 <td className={styles.nameCell}><strong>{p.fullName}</strong></td>
-                <td>{p.user.email}</td>
+                <td>{p.user?.email}</td>
                 <td>{p.cpf}</td>
                 <td>{p.phone || '-'}</td>
                 <td>
-                  <span className={p.user.roles.includes('ADMIN') ? styles.badgeAdmin : styles.badgeUser}>
-                    {p.user.roles.includes('ADMIN') ? 'ADMIN' : p.user.roles[0]}
+                  <span className={p.user?.roles?.includes('ADMIN') ? styles.badgeAdmin : styles.badgeUser}>
+                    {p.user?.roles?.includes('ADMIN') ? 'ADMIN' : p.user?.roles?.[0]}
                   </span>
                 </td>
                 <td>
@@ -111,6 +123,26 @@ export function ParticipantesTable({ participants }: { participants: any[] }) {
                   ) : (
                     <span style={{ color: 'var(--color-text-secondary)' }}>-</span>
                   )}
+                </td>
+                <td>
+                  <button
+                    onClick={() => setSelectedParticipant(p)}
+                    style={{
+                      padding: '5px 10px',
+                      fontSize: '12px',
+                      fontWeight: 600,
+                      background: 'var(--color-primary, #0284c7)',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '6px',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px'
+                    }}
+                  >
+                    <span>⚙️ Gerenciar</span>
+                  </button>
                 </td>
               </tr>
             ))}
@@ -156,6 +188,16 @@ export function ParticipantesTable({ participants }: { participants: any[] }) {
             Próxima
           </button>
         </div>
+      )}
+
+      {selectedParticipant && (
+        <ManageRegistrationModal
+          isOpen={!!selectedParticipant}
+          onClose={() => setSelectedParticipant(null)}
+          participant={selectedParticipant}
+          registration={selectedParticipant.registration}
+          categories={categories}
+        />
       )}
     </>
   );

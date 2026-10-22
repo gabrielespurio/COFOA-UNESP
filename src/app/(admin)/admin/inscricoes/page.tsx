@@ -9,18 +9,33 @@ export const metadata: Metadata = {
 };
 
 export default async function AdminInscricoesPage() {
-  const registrations = await prisma.registration.findMany({
-    orderBy: { createdAt: 'desc' },
-    include: {
-      participant: { select: { fullName: true, cpf: true, studentProofUrl: true, croProofUrl: true } },
-      category: { select: { name: true } },
-      payment: { select: { gatewayResponse: true, gatewayId: true } }
-    }
-  });
+  const [registrations, categories] = await Promise.all([
+    prisma.registration.findMany({
+      orderBy: { createdAt: 'desc' },
+      include: {
+        participant: { 
+          include: {
+            user: { select: { email: true } }
+          }
+        },
+        category: { select: { id: true, name: true, type: true } },
+        coupon: { select: { id: true, code: true, discountValue: true } },
+        payment: { select: { id: true, gatewayResponse: true, gatewayId: true, status: true } }
+      }
+    }),
+    prisma.registrationCategory.findMany({
+      where: { active: true },
+      orderBy: { sortOrder: 'asc' },
+      select: { id: true, name: true, type: true }
+    })
+  ]);
 
   return (
     <div>
-      <SectionHeading title="Inscrições" subtitle="Gerencie as inscrições e aprove os comprovantes dos participantes." />
+      <SectionHeading 
+        title="Inscrições" 
+        subtitle="Gerencie as inscrições, altere categorias, edite dados e aprove comprovantes dos participantes." 
+      />
       
       <div className={styles.tableContainer}>
         <table className={styles.table}>
@@ -28,6 +43,7 @@ export default async function AdminInscricoesPage() {
             <tr>
               <th>Participante (CPF)</th>
               <th>Categoria</th>
+              <th>Valor</th>
               <th>Status</th>
               <th>Comprovantes</th>
               <th>Ações</th>
@@ -37,7 +53,6 @@ export default async function AdminInscricoesPage() {
             {registrations.map(r => {
               const categoryProofUrl = r.participant.studentProofUrl || r.participant.croProofUrl;
               
-              // Tenta pegar o link de pagamento do Asaas (transactionReceiptUrl ou invoiceUrl)
               let asaasUrl = r.paymentReceiptUrl;
               if (!asaasUrl && r.payment?.gatewayResponse) {
                 const response = r.payment.gatewayResponse as any;
@@ -46,17 +61,32 @@ export default async function AdminInscricoesPage() {
               
               let statusClass = styles.badgeNeutral;
               if (r.status === 'CONFIRMED') statusClass = styles.badgeSuccess;
-              if (r.status === 'CANCELLED') statusClass = styles.badgeUser; // gray out
+              if (r.status === 'PENDING') statusClass = styles.badgeWarning;
+              if (r.status === 'CANCELLED') statusClass = styles.badgeUser;
 
               return (
                 <tr key={r.id}>
                   <td className={styles.nameCell}>
-                    {r.participant.fullName} <br/>
-                    <span style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)', fontWeight: 'normal' }}>{r.participant.cpf}</span>
+                    <strong>{r.participant.fullName}</strong> <br/>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)', fontWeight: 'normal' }}>
+                      {r.participant.cpf} • {r.participant.user.email}
+                    </span>
                   </td>
-                  <td>{r.category.name}</td>
                   <td>
-                    <span className={statusClass}>{r.status}</span>
+                    <span>{r.category.name}</span>
+                    {r.coupon && (
+                      <div style={{ fontSize: '0.75rem', color: '#0284c7', marginTop: '2px' }}>
+                        Cupom: {r.coupon.code}
+                      </div>
+                    )}
+                  </td>
+                  <td style={{ fontWeight: 600 }}>
+                    R$ {(r.amount / 100).toFixed(2).replace('.', ',')}
+                  </td>
+                  <td>
+                    <span className={statusClass}>
+                      {r.status === 'CONFIRMED' ? 'Confirmada' : r.status === 'PENDING' ? 'Pendente' : 'Cancelada'}
+                    </span>
                   </td>
                   <td>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
@@ -78,14 +108,18 @@ export default async function AdminInscricoesPage() {
                     </div>
                   </td>
                   <td>
-                    <RegistrationActions registrationId={r.id} currentStatus={r.status} />
+                    <RegistrationActions 
+                      participant={r.participant}
+                      registration={r}
+                      categories={categories}
+                    />
                   </td>
                 </tr>
               );
             })}
             {registrations.length === 0 && (
               <tr>
-                <td colSpan={5} className={styles.emptyState}>Nenhuma inscrição encontrada.</td>
+                <td colSpan={6} className={styles.emptyState}>Nenhuma inscrição encontrada.</td>
               </tr>
             )}
           </tbody>
