@@ -21,7 +21,7 @@ export function CrachaCard({
   participantId,
   cpf,
   showPrintButton = true,
-  qrSize = 210,
+  qrSize = 150,
 }: CrachaCardProps) {
   const handlePrint = () => {
     window.print();
@@ -32,40 +32,14 @@ export function CrachaCard({
   return (
     <div className={styles.crachaWrapper}>
       <div className={`${styles.crachaCard} ${styles.printOnlyArea}`}>
-        {/* Cabeçalho do Crachá */}
-        <div className={styles.crachaHeader}>
-          <h2 className={styles.eventTitle}>COFOA XV</h2>
-          <div className={styles.eventSubtitle}>15º Congresso Odontológico de Araçatuba — UNESP</div>
-        </div>
-
-        {/* Corpo do Crachá com Nome Acima do QR Code e Maior */}
         <div className={styles.crachaBody}>
           <h1 className={styles.participantName}>
             {fullName}
           </h1>
 
-          {categoryName && (
-            <span className={styles.categoryBadge}>
-              {categoryName}
-            </span>
-          )}
-
-          {institution && (
-            <span className={styles.institutionText}>
-              {institution}
-            </span>
-          )}
-
-          {/* QR Code Centralizado */}
           <div className={styles.qrContainer}>
             <QrCodeDisplay token={participantId} size={qrSize} />
           </div>
-        </div>
-
-        {/* Rodapé do Crachá */}
-        <div className={styles.crachaFooter}>
-          <span>Credencial Oficial do Participante</span>
-          {formattedCpf && <span className={styles.participantId}>CPF: {formattedCpf}</span>}
         </div>
       </div>
 

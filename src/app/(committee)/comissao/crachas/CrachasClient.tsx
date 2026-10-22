@@ -312,7 +312,7 @@ export function CrachasClient({ participants }: { participants: ParticipantData[
               participantId={modalParticipant.id}
               cpf={modalParticipant.cpf}
               showPrintButton={true}
-              qrSize={210}
+              qrSize={150}
             />
           </div>
         </div>
@@ -330,7 +330,7 @@ export function CrachasClient({ participants }: { participants: ParticipantData[
                 participantId={p.id}
                 cpf={p.cpf}
                 showPrintButton={false}
-                qrSize={190}
+                qrSize={140}
               />
             </div>
           ))}

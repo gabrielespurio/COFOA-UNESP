@@ -7,39 +7,15 @@
 
 .crachaCard {
   width: 100%;
-  max-width: 360px;
+  max-width: 320px;
   background: #ffffff;
-  border: 2px solid var(--color-border);
-  border-radius: var(--radius-xl);
+  border: 1px dashed #cbd5e1;
+  border-radius: var(--radius-lg);
   overflow: hidden;
-  box-shadow: 0 10px 25px -5px rgba(27, 45, 91, 0.1), 0 8px 10px -6px rgba(27, 45, 91, 0.05);
   display: flex;
   flex-direction: column;
   text-align: center;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.crachaHeader {
-  background: linear-gradient(135deg, var(--color-primary-dark) 0%, var(--color-primary) 100%);
-  color: #ffffff;
-  padding: 1.25rem 1rem;
-  border-bottom: 3px solid var(--color-accent-gold);
-}
-
-.eventTitle {
-  font-size: 1.25rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  color: var(--color-accent-gold);
-  margin: 0;
-  text-transform: uppercase;
-}
-
-.eventSubtitle {
-  font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.85);
-  margin-top: 0.25rem;
-  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 .crachaBody {
@@ -47,11 +23,12 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1rem;
+  justify-content: center;
+  gap: 1.25rem;
   background: #ffffff;
 }
 
-/* NOME ACIMA DO QRCODE E BEM MAIOR */
+/* NOME ACIMA DO QRCODE E BEM DESTACADO */
 .participantName {
   font-size: 1.45rem;
   font-weight: 800;
@@ -64,51 +41,12 @@
   max-width: 100%;
 }
 
-.categoryBadge {
-  display: inline-block;
-  background: var(--color-surface-alt);
-  color: var(--color-primary);
-  border: 1px solid var(--color-border);
-  font-size: 0.8rem;
-  font-weight: 700;
-  padding: 0.25rem 0.75rem;
-  border-radius: 9999px;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
-
-.institutionText {
-  font-size: 0.8125rem;
-  color: var(--color-text-secondary);
-  font-weight: 500;
-  margin-top: -0.5rem;
-}
-
 .qrContainer {
-  padding: 0.75rem;
+  padding: 0.5rem;
   background: #ffffff;
-  border: 1px solid var(--color-border-light);
-  border-radius: var(--radius-lg);
   display: flex;
   justify-content: center;
   align-items: center;
-}
-
-.crachaFooter {
-  background: var(--color-surface);
-  border-top: 1px solid var(--color-border);
-  padding: 0.75rem 1rem;
-  font-size: 0.75rem;
-  color: var(--color-text-secondary);
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-.participantId {
-  font-family: monospace;
-  font-size: 0.7rem;
-  color: var(--color-text-muted);
 }
 
 .printBtn {
@@ -134,7 +72,7 @@
   transform: scale(0.98);
 }
 
-/* Otimização de Impressão */
+/* Otimização de Impressão (Apenas Nome e QR Code) */
 @media print {
   body * {
     visibility: hidden;
@@ -150,11 +88,22 @@
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
-    width: 9cm;
-    max-width: 9cm;
-    border: 1.5px solid #000000;
-    box-shadow: none;
+    width: 8cm;
+    max-width: 8cm;
+    border: none !important;
+    box-shadow: none !important;
     margin: 0;
+    padding: 0;
+    background: transparent !important;
+  }
+
+  /* Impressão em lote: posicionamento normal na grade */
+  :global([class*="batchPrintCard"]) .printOnlyArea {
+    position: static !important;
+    transform: none !important;
+    left: auto !important;
+    top: auto !important;
+    width: 100% !important;
   }
 
   .noPrint {
