@@ -4,6 +4,7 @@ import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
 import { revalidatePath } from 'next/cache';
 import { WorkStatus } from '@prisma/client';
+import { sendWorkRevisionEmail } from '@/lib/email';
 
 export async function evaluateWork(formData: FormData) {
   const session = await getSession();
@@ -19,7 +20,16 @@ export async function evaluateWork(formData: FormData) {
     return { error: 'Dados incompletos.' };
   }
 
-  const work = await prisma.scientificWork.findUnique({ where: { id: workId } });
+  const work = await prisma.scientificWork.findUnique({
+    where: { id: workId },
+    include: {
+      participant: {
+        include: {
+          user: true,
+        },
+      },
+    },
+  });
   if (!work) {
     return { error: 'Trabalho não encontrado.' };
   }
@@ -61,6 +71,21 @@ export async function evaluateWork(formData: FormData) {
         }
       })
     ]);
+
+    if (finalStatus === 'REVISION_REQUESTED' && work.participant?.user?.email) {
+      try {
+        await sendWorkRevisionEmail({
+          to: work.participant.user.email,
+          participantName: work.participant.fullName || 'Participante',
+          workTitle: work.title,
+          displayCode: work.displayCode || 'Trabalho Científico',
+          comments: comments || '',
+          workId: work.id,
+        });
+      } catch (emailErr) {
+        console.error('Falha ao enviar e-mail de ressalva (comissão):', emailErr);
+      }
+    }
 
     revalidatePath('/comissao');
     revalidatePath('/comissao/trabalhos');

@@ -4,6 +4,7 @@ import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
 import { revalidatePath } from 'next/cache';
 import { RegistrationStatus } from '@prisma/client';
+import { sendWorkRevisionEmail } from '@/lib/email';
 
 async function checkAdmin() {
   const session = await getSession();
@@ -55,7 +56,16 @@ export async function evaluateWorkStage1(formData: FormData) {
     return { error: 'Dados incompletos.' };
   }
 
-  const work = await prisma.scientificWork.findUnique({ where: { id: workId } });
+  const work = await prisma.scientificWork.findUnique({
+    where: { id: workId },
+    include: {
+      participant: {
+        include: {
+          user: true,
+        },
+      },
+    },
+  });
   if (!work) {
     return { error: 'Trabalho não encontrado.' };
   }
@@ -87,6 +97,22 @@ export async function evaluateWorkStage1(formData: FormData) {
           stage1Approved: false
         }
       });
+
+      if (work.participant?.user?.email) {
+        try {
+          await sendWorkRevisionEmail({
+            to: work.participant.user.email,
+            participantName: work.participant.fullName || 'Participante',
+            workTitle: work.title,
+            displayCode: work.displayCode || 'Trabalho Científico',
+            comments: comments,
+            workId: work.id,
+          });
+        } catch (emailErr) {
+          console.error('Falha ao enviar e-mail de ressalva (triagem):', emailErr);
+        }
+      }
+
       revalidatePath('/triagem');
       return { success: true };
     } catch (err) {
