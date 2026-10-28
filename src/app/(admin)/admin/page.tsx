@@ -11,10 +11,11 @@ export const metadata: Metadata = {
 export default async function AdminDashboardPage({
   searchParams,
 }: {
-  searchParams: { timeRange?: string; category?: string }
+  searchParams: Promise<{ timeRange?: string; category?: string }> | { timeRange?: string; category?: string }
 }) {
-  const timeRange = searchParams.timeRange || 'all'; // '7d', '30d', 'all'
-  const categoryId = searchParams.category || 'all';
+  const resolvedParams = searchParams ? await Promise.resolve(searchParams) : {};
+  const timeRange = resolvedParams?.timeRange || 'all'; // '7d', '30d', 'all'
+  const categoryId = resolvedParams?.category || 'all';
 
   // Construct where clauses based on filters
   let createdAtFilter = {};

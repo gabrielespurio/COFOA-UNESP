@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 
 export default function AuthError({
   error,
@@ -9,6 +9,10 @@ export default function AuthError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  useEffect(() => {
+    console.error('Auth Error Boundary caught:', error);
+  }, [error]);
+
   return (
     <div style={{
       display: 'flex',
@@ -25,6 +29,20 @@ export default function AuthError({
       <p style={{ color: '#64748b', fontSize: '0.875rem' }}>
         Ocorreu um erro inesperado. Tente novamente.
       </p>
+      {error?.message && (
+        <div style={{
+          padding: '0.5rem 0.75rem',
+          backgroundColor: '#fef2f2',
+          border: '1px solid #fee2e2',
+          borderRadius: '0.375rem',
+          color: '#b91c1c',
+          fontSize: '0.8rem',
+          maxWidth: '320px',
+          wordBreak: 'break-word',
+        }}>
+          {error.message}
+        </div>
+      )}
       <button
         onClick={() => reset()}
         style={{
