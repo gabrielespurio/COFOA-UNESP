@@ -94,27 +94,11 @@ export default async function AvaliacaoTrabalhoPage({ params }: { params: Promis
 
           <div className={styles.fileSection}>
             <h3>Arquivos Anexados</h3>
-            {work.identifiedFileUrl && (
-              <a href={work.identifiedFileUrl} target="_blank" rel="noopener noreferrer" className={styles.fileLinkBtn} style={{ marginBottom: '0.5rem', display: 'block' }}>
-                Trabalho Identificado (PDF)
-              </a>
-            )}
-            {work.unidentifiedFileUrl && (
+            {work.unidentifiedFileUrl ? (
               <a href={work.unidentifiedFileUrl} target="_blank" rel="noopener noreferrer" className={styles.fileLinkBtn} style={{ marginBottom: '0.5rem', display: 'block' }}>
                 Trabalho Não Identificado (PDF)
               </a>
-            )}
-            {work.enrollmentProofUrl && (
-              <a href={work.enrollmentProofUrl} target="_blank" rel="noopener noreferrer" className={styles.fileLinkBtn} style={{ marginBottom: '0.5rem', display: 'block' }}>
-                Comprovante de Matrícula (PDF)
-              </a>
-            )}
-            {work.requiresEthics && work.ethicsCommitteeFileUrl && (
-              <a href={work.ethicsCommitteeFileUrl} target="_blank" rel="noopener noreferrer" className={styles.fileLinkBtn} style={{ display: 'block' }}>
-                Comitê de Ética (PDF)
-              </a>
-            )}
-            {(!work.identifiedFileUrl && !work.unidentifiedFileUrl && !work.enrollmentProofUrl) && (
+            ) : (
               <p style={{ color: 'var(--color-text-muted)' }}>Nenhum arquivo anexado.</p>
             )}
           </div>
