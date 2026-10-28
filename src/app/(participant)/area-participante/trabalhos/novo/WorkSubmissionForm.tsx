@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/Button/Button';
 import { submitWork, resubmitWork } from '@/actions/works';
-import { generateUploadUrls } from '@/actions/upload';
+import { generateUploadUrls, uploadWorkFileServer } from '@/actions/upload';
 import { supabase } from '@/lib/supabase';
 import styles from './page.module.css';
 
@@ -119,10 +119,16 @@ export function WorkSubmissionForm({ participantId, initialData, workId }: { par
       const prepareFile = (name: string, suffix: string) => {
         const file = formData.get(name) as File | null;
         if (file && file.size > 0) {
-          const fileExt = file.name.split('.').pop() || 'pdf';
+          let fileExt = 'pdf';
+          if (file.name && file.name.includes('.')) {
+            fileExt = file.name.split('.').pop()?.toLowerCase().trim().replace(/[^a-z0-9]/g, '') || 'pdf';
+          }
+          if (!['pdf', 'png', 'jpg', 'jpeg'].includes(fileExt)) {
+            fileExt = 'pdf';
+          }
           filesToUpload.push({ suffix, fileExt, file, name });
         }
-      }
+      };
 
       prepareFile('identifiedFile', 'id');
       prepareFile('unidentifiedFile', 'unid');
@@ -132,29 +138,57 @@ export function WorkSubmissionForm({ participantId, initialData, workId }: { par
       }
 
       if (filesToUpload.length > 0) {
-        const { urls, error: urlError } = await generateUploadUrls(filesToUpload.map(f => ({ suffix: f.suffix, fileExt: f.fileExt })));
-        
-        if (urlError || !urls) {
-          throw new Error(urlError || 'Falha ao gerar links de upload seguros.');
+        // Obter URLs assinadas (tentativa 1: envio direto do navegador para o Supabase)
+        let urls: { suffix: string, filePath: string, token: string }[] | undefined;
+        try {
+          const res = await generateUploadUrls(filesToUpload.map(f => ({ suffix: f.suffix, fileExt: f.fileExt })));
+          if (res?.urls) {
+            urls = res.urls;
+          }
+        } catch (e) {
+          console.warn('generateUploadUrls falhou, o sistema usará o upload direto via servidor:', e);
         }
 
         for (const fileObj of filesToUpload) {
-          const urlInfo = urls.find(u => u.suffix === fileObj.suffix);
-          if (!urlInfo) throw new Error('Informações de upload incompletas.');
+          let uploadedUrl: string | null = null;
 
-          const { error: uploadError } = await supabase.storage
-            .from('trabalhos')
-            .uploadToSignedUrl(urlInfo.filePath, urlInfo.token, fileObj.file, {
-               upsert: true
-            });
-            
-          if (uploadError) {
-            console.error('Supabase upload error:', uploadError);
-            throw new Error(`Falha ao enviar arquivo. O arquivo pode ser grande demais ou a rede oscilou.`);
+          // Tentativa 1: Upload direto do navegador via Signed URL
+          const urlInfo = urls?.find(u => u.suffix === fileObj.suffix);
+          if (urlInfo) {
+            try {
+              const { error: uploadError } = await supabase.storage
+                .from('trabalhos')
+                .uploadToSignedUrl(urlInfo.filePath, urlInfo.token, fileObj.file, {
+                  upsert: true
+                });
+
+              if (!uploadError) {
+                const { data: publicUrlData } = supabase.storage.from('trabalhos').getPublicUrl(urlInfo.filePath);
+                if (publicUrlData?.publicUrl) {
+                  uploadedUrl = publicUrlData.publicUrl;
+                }
+              } else {
+                console.warn(`Upload direto falhou para ${fileObj.name} (${uploadError.message}), acionando fallback via servidor...`);
+              }
+            } catch (directErr) {
+              console.warn(`Exceção de rede no upload direto de ${fileObj.name}, acionando fallback via servidor...`, directErr);
+            }
           }
-          
-          const { data: publicUrlData } = supabase.storage.from('trabalhos').getPublicUrl(urlInfo.filePath);
-          formData.set(fileObj.name + 'Url', publicUrlData.publicUrl);
+
+          // Tentativa 2: Fallback automático via Servidor (bypassa adblockers, firewalls, CORS e restrições de rede)
+          if (!uploadedUrl) {
+            const fallbackFormData = new FormData();
+            fallbackFormData.append('file', fileObj.file);
+            fallbackFormData.append('suffix', fileObj.suffix);
+
+            const serverRes = await uploadWorkFileServer(fallbackFormData);
+            if (serverRes?.error || !serverRes?.publicUrl) {
+              throw new Error(serverRes?.error || `Falha ao processar o arquivo ${fileObj.name}. Verifique o documento e tente novamente.`);
+            }
+            uploadedUrl = serverRes.publicUrl;
+          }
+
+          formData.set(fileObj.name + 'Url', uploadedUrl);
         }
       }
       
