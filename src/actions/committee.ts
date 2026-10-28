@@ -82,6 +82,11 @@ export async function evaluateWork(formData: FormData) {
           comments: comments || '',
           workId: work.id,
         });
+
+        await prisma.scientificWork.update({
+          where: { id: workId },
+          data: { revisionEmailSentAt: new Date() },
+        });
       } catch (emailErr) {
         console.error('Falha ao enviar e-mail de ressalva (comissão):', emailErr);
       }
@@ -179,4 +184,3 @@ export async function toggleWorkSpreadsheetCheck(workId: string) {
   revalidatePath('/comissao/trabalhos');
   return { success: true, spreadsheetChecked: updated.spreadsheetChecked };
 }
-

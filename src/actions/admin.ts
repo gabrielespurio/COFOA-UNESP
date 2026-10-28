@@ -67,7 +67,7 @@ export async function evaluateWorkStage1(formData: FormData) {
     },
   });
   if (!work) {
-    return { error: 'Trabalho não encontrado.' };
+    return { error: 'Trabalho nÃ£o encontrado.' };
   }
 
   if (decision === 'APPROVE') {
@@ -85,7 +85,7 @@ export async function evaluateWorkStage1(formData: FormData) {
     }
   } else if (decision === 'REJECT') {
     if (!comments || comments.trim().length === 0) {
-      return { error: 'Ao reprovar na triagem, é obrigatório preencher o motivo (ressalva).' };
+      return { error: 'Ao reprovar na triagem, Ã© obrigatÃ³rio preencher o motivo (ressalva).' };
     }
 
     try {
@@ -108,6 +108,11 @@ export async function evaluateWorkStage1(formData: FormData) {
             comments: comments,
             workId: work.id,
           });
+
+          await prisma.scientificWork.update({
+            where: { id: workId },
+            data: { revisionEmailSentAt: new Date() },
+          });
         } catch (emailErr) {
           console.error('Falha ao enviar e-mail de ressalva (triagem):', emailErr);
         }
@@ -121,7 +126,7 @@ export async function evaluateWorkStage1(formData: FormData) {
     }
   }
 
-  return { error: 'Decisão inválida.' };
+  return { error: 'DecisÃ£o invÃ¡lida.' };
 }
 
 export async function adminCancelRegistration({
@@ -148,7 +153,7 @@ export async function adminCancelRegistration({
     });
 
     if (!reg) {
-      return { error: 'Inscrição não encontrada.' };
+      return { error: 'InscriÃ§Ã£o nÃ£o encontrada.' };
     }
 
     // 1. Cancel Asaas invoice if requested and exists
@@ -202,7 +207,7 @@ export async function adminCancelRegistration({
     return { success: true };
   } catch (error: any) {
     console.error('Error in adminCancelRegistration:', error);
-    return { error: error.message || 'Erro ao cancelar inscrição.' };
+    return { error: error.message || 'Erro ao cancelar inscriÃ§Ã£o.' };
   }
 }
 
@@ -222,7 +227,7 @@ export async function adminChangeCategory({
       where: { id: newCategoryId }
     });
     if (!category) {
-      return { error: 'Categoria selecionada não existe.' };
+      return { error: 'Categoria selecionada nÃ£o existe.' };
     }
 
     const reg = await prisma.registration.findUnique({
@@ -230,7 +235,7 @@ export async function adminChangeCategory({
       include: { payment: true }
     });
     if (!reg) {
-      return { error: 'Inscrição não encontrada.' };
+      return { error: 'InscriÃ§Ã£o nÃ£o encontrada.' };
     }
 
     const dataToUpdate: any = {
@@ -295,7 +300,7 @@ export async function adminUpdateParticipantData({
     });
 
     if (!participant) {
-      return { error: 'Participante não encontrado.' };
+      return { error: 'Participante nÃ£o encontrado.' };
     }
 
     if (email && email.toLowerCase() !== participant.user.email.toLowerCase()) {
@@ -303,7 +308,7 @@ export async function adminUpdateParticipantData({
         where: { email: email.toLowerCase() }
       });
       if (existingEmail && existingEmail.id !== participant.userId) {
-        return { error: 'Este e-mail já está sendo utilizado por outro usuário.' };
+        return { error: 'Este e-mail jÃ¡ estÃ¡ sendo utilizado por outro usuÃ¡rio.' };
       }
     }
 
@@ -312,7 +317,7 @@ export async function adminUpdateParticipantData({
         where: { cpf }
       });
       if (existingCpf && existingCpf.id !== participantId) {
-        return { error: 'Este CPF já está sendo utilizado por outro participante.' };
+        return { error: 'Este CPF jÃ¡ estÃ¡ sendo utilizado por outro participante.' };
       }
     }
 
@@ -361,7 +366,7 @@ export async function adminManualConfirm({
     });
 
     if (!reg) {
-      return { error: 'Inscrição não encontrada.' };
+      return { error: 'InscriÃ§Ã£o nÃ£o encontrada.' };
     }
 
     await prisma.registration.update({
@@ -398,7 +403,7 @@ export async function adminManualConfirm({
     return { success: true };
   } catch (error: any) {
     console.error('Error in adminManualConfirm:', error);
-    return { error: error.message || 'Erro ao confirmar inscrição.' };
+    return { error: error.message || 'Erro ao confirmar inscriÃ§Ã£o.' };
   }
 }
 
@@ -412,11 +417,11 @@ export async function adminSyncAsaasPayment({ registrationId }: { registrationId
     });
 
     if (!reg) {
-      return { error: 'Inscrição não encontrada.' };
+      return { error: 'InscriÃ§Ã£o nÃ£o encontrada.' };
     }
 
     if (!reg.payment?.gatewayId) {
-      return { error: 'Esta inscrição não possui fatura gerada no Asaas.' };
+      return { error: 'Esta inscriÃ§Ã£o nÃ£o possui fatura gerada no Asaas.' };
     }
 
     const { checkPaymentStatus } = await import('@/lib/asaas');
@@ -451,7 +456,7 @@ export async function adminSyncAsaasPayment({ registrationId }: { registrationId
       return { 
         success: true, 
         isPaid: true,
-        message: `Pagamento CONFIRMADO no Asaas (R$ ${asaasData.value?.toFixed(2) || '0.00'} via ${asaasData.billingType || 'Asaas'}). A inscrição agora está Confirmada!`
+        message: `Pagamento CONFIRMADO no Asaas (R$ ${asaasData.value?.toFixed(2) || '0.00'} via ${asaasData.billingType || 'Asaas'}). A inscriÃ§Ã£o agora estÃ¡ Confirmada!`
       };
     } else {
       await prisma.payment.update({
@@ -463,7 +468,7 @@ export async function adminSyncAsaasPayment({ registrationId }: { registrationId
       return { 
         success: true, 
         isPaid: false,
-        message: `Consulta realizada no Asaas: o status atual da fatura é "${asaasData.status}". Ainda não consta como paga.`
+        message: `Consulta realizada no Asaas: o status atual da fatura Ã© "${asaasData.status}". Ainda nÃ£o consta como paga.`
       };
     }
   } catch (error: any) {
@@ -488,7 +493,7 @@ export async function adminChangeRegistrationStatus({
     });
 
     if (!reg) {
-      return { error: 'Inscrição não encontrada.' };
+      return { error: 'InscriÃ§Ã£o nÃ£o encontrada.' };
     }
 
     await prisma.registration.update({
@@ -520,7 +525,7 @@ export async function adminChangeRegistrationStatus({
     return { success: true };
   } catch (error: any) {
     console.error('Error in adminChangeRegistrationStatus:', error);
-    return { error: error.message || 'Erro ao alterar status da inscrição.' };
+    return { error: error.message || 'Erro ao alterar status da inscriÃ§Ã£o.' };
   }
 }
 
@@ -542,7 +547,7 @@ export async function adminSyncAllPendingPayments() {
     });
 
     if (regsToCheck.length === 0) {
-      return { success: true, message: 'Todas as inscrições com faturas já estão sincronizadas e em dia.' };
+      return { success: true, message: 'Todas as inscriÃ§Ãµes com faturas jÃ¡ estÃ£o sincronizadas e em dia.' };
     }
 
     const { checkPaymentStatus } = await import('@/lib/asaas');
@@ -579,7 +584,7 @@ export async function adminSyncAllPendingPayments() {
 
     return {
       success: true,
-      message: `Varredura concluída! ${regsToCheck.length} fatura(s) verificadas no Asaas. ${updatedCount} inscrição(ões) foram confirmadas.`
+      message: `Varredura concluÃ­da! ${regsToCheck.length} fatura(s) verificadas no Asaas. ${updatedCount} inscriÃ§Ã£o(Ãµes) foram confirmadas.`
     };
   } catch (error: any) {
     console.error('Error in adminSyncAllPendingPayments:', error);

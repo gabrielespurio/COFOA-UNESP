@@ -309,6 +309,7 @@ model ScientificWork {
   lockedAt        DateTime?
   spreadsheetChecked   Boolean   @default(false)
   spreadsheetCheckedAt DateTime?
+  revisionEmailSentAt  DateTime?
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
   

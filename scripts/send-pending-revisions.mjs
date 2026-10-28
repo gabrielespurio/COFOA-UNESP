@@ -68,7 +68,6 @@ async function main() {
   console.log('--- Iniciando Disparo Retroativo de E-mails de Ressalva ---');
   console.log(`Conectando ao banco Neon e SMTP (${smtpHost}:${smtpPort}) com remetente: ${smtpUser}`);
 
-  // Testar conexão SMTP antes de iniciar
   try {
     await transporter.verify();
     console.log('✅ Conexão SMTP autenticada com sucesso!\n');
@@ -77,10 +76,11 @@ async function main() {
     process.exit(1);
   }
 
-  // Buscar apenas trabalhos com ressalvas pendentes
+  // Buscar apenas trabalhos com ressalvas que ainda NÃO foram notificados
   const works = await prisma.scientificWork.findMany({
     where: {
       status: 'REVISION_REQUESTED',
+      revisionEmailSentAt: null,
     },
     include: {
       participant: {
@@ -94,7 +94,12 @@ async function main() {
     },
   });
 
-  console.log(`Encontrados ${works.length} trabalhos com status REVISION_REQUESTED pendentes.\n`);
+  console.log(`Encontrados ${works.length} trabalhos com ressalvas pendentes de notificação.\n`);
+
+  if (works.length === 0) {
+    console.log('🎉 Todos os trabalhos já foram notificados anteriormente!');
+    return;
+  }
 
   let successCount = 0;
   let failCount = 0;
@@ -114,7 +119,7 @@ async function main() {
       continue;
     }
 
-    console.log(`[${i + 1}/${works.length}] Enviando para ${email} | ${displayCode} - "${work.title.slice(0, 45)}..."`);
+    console.log(`[${i + 1}/${works.length}] Enviando para ${email} | ${displayCode} - "${work.title.slice(0, 40)}..."`);
 
     const mailOptions = {
       from: `"COFOA XV — Comissão Científica" <${smtpUser}>`,
@@ -174,20 +179,31 @@ async function main() {
 
     try {
       await transporter.sendMail(mailOptions);
+
+      // Marca no banco
+      await prisma.scientificWork.update({
+        where: { id: work.id },
+        data: { revisionEmailSentAt: new Date() },
+      });
+
       successCount++;
-      console.log(`   -> ✅ Enviado com sucesso.`);
+      console.log(`   -> ✅ Enviado e registrado no banco de dados.`);
     } catch (err) {
       failCount++;
       console.error(`   -> ❌ Erro ao enviar para ${email}:`, err.message);
+
+      if (err?.message?.toLowerCase().includes('ratelimit') || err?.message?.includes('451')) {
+        console.warn('\n⚠️ LIMITE DA HOSTINGER ATINGIDO. Interrompendo envio do lote.');
+        break;
+      }
     }
 
-    // Intervalo de 1 segundo entre disparos para respeitar os limites de envio da Hostinger
-    await sleep(1000);
+    // Intervalo de 3 segundos entre disparos para respeitar os limites da Hostinger
+    await sleep(3000);
   }
 
   console.log('\n================ RESUMO DO DISPARO ================');
-  console.log(`Total de trabalhos processados: ${works.length}`);
-  console.log(`Sucessos: ${successCount}`);
+  console.log(`Sucessos marcados no banco: ${successCount}`);
   console.log(`Falhas: ${failCount}`);
   console.log(`Ignorados (sem e-mail): ${skippedCount}`);
   console.log('====================================================\n');
