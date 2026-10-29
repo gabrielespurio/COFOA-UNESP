@@ -7,10 +7,28 @@ import { useRouter } from 'next/navigation';
 import { lockWork, unlockWork, toggleWorkSpreadsheetCheck } from '@/actions/committee';
 import styles from '../page.module.css';
 
-function getStatusBadge(status: string) {
+function getStatusBadge(status: string, isResubmitted: boolean = false) {
+  if (status === 'SUBMITTED' && isResubmitted) {
+    return (
+      <span style={{ 
+        display: 'inline-flex', 
+        alignItems: 'center', 
+        gap: '0.25rem', 
+        padding: '0.25rem 0.55rem', 
+        borderRadius: '9999px', 
+        fontSize: '0.75rem', 
+        fontWeight: 600, 
+        background: '#ede9fe', 
+        color: '#6d28d9', 
+        border: '1px solid #ddd6fe' 
+      }}>
+        🔄 Reenviado
+      </span>
+    );
+  }
   switch (status) {
     case 'SUBMITTED':
-      return <Badge variant="warning">Submetido</Badge>; // Legacy
+      return <Badge variant="warning">Submetido</Badge>;
     case 'UNDER_REVIEW':
       return <Badge variant="info">Em Análise</Badge>;
     case 'REVISION_REQUESTED':
@@ -194,6 +212,27 @@ function WorkEvaluationModal({
                   </div>
                 )}
                 
+                {/* Alerta de Trabalho Reenviado apos Correcao */}
+                {work.evaluations?.some((e: any) => e.status === 'REVISION_REQUESTED') && work.status === 'SUBMITTED' && (
+                  <div style={{ 
+                    padding: '0.75rem 1rem', 
+                    background: '#f5f3ff', 
+                    border: '1px solid #ddd6fe', 
+                    borderRadius: '8px', 
+                    color: '#5b21b6', 
+                    fontSize: '0.8125rem', 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: '0.5rem',
+                    marginBottom: '1rem'
+                  }}>
+                    <span style={{ fontSize: '1.1rem' }}>🔄</span>
+                    <div>
+                      <strong>Trabalho Corrigido e Reenviado pelo Autor:</strong> Este trabalho já passou por avaliação anterior com ressalvas. Por favor, analise a nova versão do arquivo anexo abaixo.
+                    </div>
+                  </div>
+                )}
+
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
                   {/* Título e Código */}
                   <div style={{ display: 'grid', gridTemplateColumns: '120px 1fr', gap: '1rem' }}>
@@ -635,7 +674,7 @@ export function WorksTable({
                 <td>{evaluatorName}</td>
                 <td>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', alignItems: 'flex-start' }}>
-                    {getStatusBadge(work.status)}
+                    {getStatusBadge(work.status, work.evaluations?.some((e: any) => e.status === 'REVISION_REQUESTED'))}
                     {isLockedByOther && (
                       <span style={{ fontSize: '0.7rem', color: '#64748b', display: 'flex', alignItems: 'center', gap: '0.25rem', fontWeight: 500 }}>
                         🔒 Em avaliação

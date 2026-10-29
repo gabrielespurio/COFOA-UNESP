@@ -80,7 +80,7 @@ export function EvaluationForm({ workId, currentStatus, currentComments }: { wor
         </label>
         <textarea 
           name="comments"
-          defaultValue={currentComments}
+          
           placeholder="Escreva seu feedback aqui para o aluno caso seja necessário corrigir algo..."
           style={{
             minHeight: '120px',

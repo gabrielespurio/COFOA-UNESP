@@ -54,6 +54,7 @@ export default async function MeusTrabalhosPage() {
 
   const works = await prisma.scientificWork.findMany({
     where: { participantId: participant.id },
+    include: { evaluations: true },
     orderBy: { createdAt: 'desc' }
   });
 
@@ -116,20 +117,58 @@ export default async function MeusTrabalhosPage() {
                   </div>
                 </div>
                 
-                {work.reviewerComments && (
-                  <div style={{ marginTop: 'var(--space-4)', padding: 'var(--space-3)', background: 'var(--color-surface-alt)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}>
-                    <div style={{ fontSize: 'var(--font-size-sm)', fontWeight: 600, color: 'var(--color-primary-dark)', marginBottom: 'var(--space-2)' }}>Parecer da Avaliação:</div>
-                    <p style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-secondary)', whiteSpace: 'pre-wrap', lineHeight: 1.5 }}>
-                      {work.reviewerComments}
+                {/* Mensagem de sucesso quando reenviado apos correcao */}
+                {work.status === 'SUBMITTED' && (work.evaluations?.some((e: any) => e.status === 'REVISION_REQUESTED') || (work.submittedAt && new Date(work.submittedAt).getTime() - new Date(work.createdAt).getTime() > 10000)) && (
+                  <div style={{ marginTop: 'var(--space-4)', padding: 'var(--space-3)', background: '#f0fdf4', borderRadius: 'var(--radius-md)', border: '1px solid #bbf7d0', color: '#166534', fontSize: 'var(--font-size-sm)' }}>
+                    <div style={{ fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '0.25rem' }}>
+                      <span>✓</span> Trabalho Corrigido e Reenviado!
+                    </div>
+                    <p style={{ margin: 0, color: '#15803d', lineHeight: 1.4 }}>
+                      Seu novo arquivo foi enviado com sucesso{work.submittedAt ? ` em ${new Date(work.submittedAt).toLocaleString('pt-BR')}` : ''}. A Comissão Científica já foi notificada e fará uma nova análise.
                     </p>
-                    
-                    {work.status === 'REVISION_REQUESTED' && (
-                      <div style={{ marginTop: '1rem' }}>
-                        <Button variant="outline" size="sm" href={`/area-participante/trabalhos/${work.id}/editar`} fullWidth>
-                          Corrigir e Reenviar
-                        </Button>
-                      </div>
+                  </div>
+                )}
+
+                {/* Mensagem de sucesso quando aprovado */}
+                {work.status === 'ACCEPTED' && (
+                  <div style={{ marginTop: 'var(--space-4)', padding: 'var(--space-3)', background: '#ecfdf5', borderRadius: 'var(--radius-md)', border: '1px solid #a7f3d0', color: '#065f46', fontSize: 'var(--font-size-sm)' }}>
+                    <div style={{ fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                      <span>🎉</span> Trabalho Aprovado!
+                    </div>
+                    <p style={{ margin: '0.25rem 0 0 0', color: '#047857', lineHeight: 1.4 }}>
+                      Parabéns! Seu trabalho foi aprovado pela Comissão Científica.
+                    </p>
+                  </div>
+                )}
+
+                {/* Box de Ressalvas com botao de acao */}
+                {work.status === 'REVISION_REQUESTED' && (
+                  <div style={{ marginTop: 'var(--space-4)', padding: 'var(--space-3)', background: '#fffbeb', borderRadius: 'var(--radius-md)', border: '1px solid #fde68a' }}>
+                    <div style={{ fontSize: 'var(--font-size-sm)', fontWeight: 600, color: '#b45309', marginBottom: 'var(--space-2)' }}>Parecer da Avaliação (Aprovado com Ressalvas):</div>
+                    {work.reviewerComments ? (
+                      <p style={{ fontSize: 'var(--font-size-sm)', color: '#92400e', whiteSpace: 'pre-wrap', lineHeight: 1.5, margin: 0 }}>
+                        {work.reviewerComments}
+                      </p>
+                    ) : (
+                      <p style={{ fontSize: 'var(--font-size-sm)', color: '#92400e', lineHeight: 1.5, margin: 0 }}>
+                        Foram solicitadas correções para o seu trabalho. Por favor, revise o documento e reenvie.
+                      </p>
                     )}
+                    <div style={{ marginTop: '1rem' }}>
+                      <Button variant="outline" size="sm" href={`/area-participante/trabalhos/${work.id}/editar`} fullWidth>
+                        Corrigir e Reenviar
+                      </Button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Box de Reprovado */}
+                {work.status === 'REJECTED' && (
+                  <div style={{ marginTop: 'var(--space-4)', padding: 'var(--space-3)', background: '#fef2f2', borderRadius: 'var(--radius-md)', border: '1px solid #fecaca' }}>
+                    <div style={{ fontSize: 'var(--font-size-sm)', fontWeight: 600, color: '#b91c1c', marginBottom: 'var(--space-2)' }}>Parecer da Avaliação (Reprovado):</div>
+                    <p style={{ fontSize: 'var(--font-size-sm)', color: '#991b1b', whiteSpace: 'pre-wrap', lineHeight: 1.5, margin: 0 }}>
+                      {work.reviewerComments || 'Infelizmente o trabalho não atendeu aos critérios estabelecidos no edital.'}
+                    </p>
                   </div>
                 )}
                 

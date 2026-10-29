@@ -10,7 +10,25 @@ export const metadata: Metadata = {
   title: 'Avaliação de Trabalho - Comissão',
 };
 
-function getStatusBadge(status: string) {
+function getStatusBadge(status: string, isResubmitted: boolean = false) {
+  if (status === 'SUBMITTED' && isResubmitted) {
+    return (
+      <span style={{ 
+        display: 'inline-flex', 
+        alignItems: 'center', 
+        gap: '0.25rem', 
+        padding: '0.25rem 0.55rem', 
+        borderRadius: '9999px', 
+        fontSize: '0.75rem', 
+        fontWeight: 600, 
+        background: '#ede9fe', 
+        color: '#6d28d9', 
+        border: '1px solid #ddd6fe' 
+      }}>
+        🔄 Reenviado
+      </span>
+    );
+  }
   switch (status) {
     case 'SUBMITTED':
       return <Badge variant="warning">Pendente</Badge>;
@@ -69,7 +87,7 @@ export default async function AvaliacaoTrabalhoPage({ params }: { params: Promis
           subtitle="Revise o resumo e os PDFs anexados antes de dar seu parecer."
           alignment="left"
         />
-        <div>{getStatusBadge(work.status)}</div>
+        <div>{getStatusBadge(work.status, work.evaluations?.some((e: any) => e.status === 'REVISION_REQUESTED'))}</div>
       </div>
       
       <div className={styles.contentGrid}>

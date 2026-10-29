@@ -188,12 +188,16 @@ export async function resubmitWork(formData: FormData) {
         enrollmentProofUrl,
         requiresEthics,
         ethicsCommitteeFileUrl,
-        status: 'SUBMITTED', // Voltar para triagem
-        submittedAt: new Date()
+        status: 'SUBMITTED', // Voltar para avaliacao
+        submittedAt: new Date(),
+        reviewerComments: null, // Limpa parecer anterior do trabalho ativo
+        revisionEmailSentAt: null, // Reseta controle de disparo de email de ressalva
       }
     });
 
     revalidatePath('/area-participante/trabalhos');
+    revalidatePath('/comissao');
+    revalidatePath('/comissao/trabalhos');
   } catch (err: any) {
     console.error('Error resubmitting work:', err);
     return { error: err.message || 'Ocorreu um erro ao reenviar o trabalho. Tente novamente.' };
