@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import { SectionHeading } from '@/components/ui/SectionHeading/SectionHeading';
 import { prisma } from '@/lib/prisma';
+import { BancaEvaluatorsCard } from './BancaEvaluatorsCard';
 import styles from './page.module.css';
 
 export const metadata: Metadata = {
@@ -59,24 +60,88 @@ export default async function AdminDashboardPage({
   });
 
   // 6. Faturamento (Sum of amount from CONFIRMED registrations)
-  // Since we don't have real payments yet, we sum the amount field of CONFIRMED registrations
   const revenueResult = await prisma.registration.aggregate({
     _sum: { amount: true },
     where: { ...registrationWhere, status: 'CONFIRMED' }
   });
   const totalRevenue = (revenueResult._sum.amount || 0) / 100; // Assuming cents
 
+  // 7. Usuários da Banca Avaliadora
+  const bancaUsers = await prisma.user.findMany({
+    where: {
+      OR: [
+        { roles: { has: 'EVALUATOR' } },
+        {
+          participant: {
+            OR: [
+              {
+                registration: {
+                  status: 'CONFIRMED',
+                  category: {
+                    OR: [
+                      { id: { in: ['banca-int', 'banca-ext'] } },
+                      { name: { contains: 'Banca', mode: 'insensitive' } },
+                      { priceTier: 'BANCA_EXTERNA' }
+                    ]
+                  }
+                }
+              },
+              {
+                externalBoardEnrollment: {
+                  status: 'PAID'
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    select: {
+      id: true,
+      email: true,
+      createdAt: true,
+      participant: {
+        select: {
+          fullName: true,
+          cpf: true,
+          phone: true,
+          institution: true,
+          course: true,
+          registration: {
+            select: {
+              status: true,
+              category: {
+                select: { name: true }
+              }
+            }
+          }
+        }
+      },
+      evaluatorProfile: {
+        select: {
+          fullName: true,
+          institution: true,
+          area: true,
+          phone: true
+        }
+      }
+    },
+    orderBy: { createdAt: 'desc' }
+  });
+
+  const serializedBancaUsers = bancaUsers.map(u => ({
+    id: u.id,
+    email: u.email,
+    name: u.participant?.fullName || u.evaluatorProfile?.fullName || 'Nome não informado',
+    institution: u.participant?.institution || u.evaluatorProfile?.institution || 'Não informada',
+    areaOrCourse: u.evaluatorProfile?.area || u.participant?.course || null,
+    phone: u.participant?.phone || u.evaluatorProfile?.phone || null,
+    category: u.participant?.registration?.category?.name || (u.evaluatorProfile ? 'Perfil Avaliador' : 'Banca Avaliadora'),
+    createdAt: u.createdAt.toISOString(),
+  }));
+
   // Fetch categories for the filter dropdown
   const categories = await prisma.registrationCategory.findMany({ select: { id: true, name: true }});
-
-  const STATS = [
-    { label: 'Participantes', value: totalParticipants, highlight: false },
-    { label: 'Inscrições (Total)', value: totalRegistrations, highlight: false },
-    { label: 'Inscrições Pendentes', value: pendingRegistrations, highlight: true },
-    { label: 'Inscrições Confirmadas', value: confirmedRegistrations, highlight: false },
-    { label: 'Trabalhos Submetidos', value: totalWorks, highlight: false },
-    { label: 'Faturamento Bruto', value: `R$ ${totalRevenue.toFixed(2)}`, highlight: true },
-  ];
 
   return (
     <div>
@@ -106,12 +171,37 @@ export default async function AdminDashboardPage({
       </form>
 
       <div className={styles.grid}>
-        {STATS.map((stat, i) => (
-          <div key={i} className={`${styles.card} ${stat.highlight ? styles.cardHighlight : ''}`}>
-            <div className={styles.cardTitle}>{stat.label}</div>
-            <div className={styles.cardValue}>{stat.value}</div>
-          </div>
-        ))}
+        <div className={styles.card}>
+          <div className={styles.cardTitle}>Participantes</div>
+          <div className={styles.cardValue}>{totalParticipants}</div>
+        </div>
+
+        <BancaEvaluatorsCard evaluators={serializedBancaUsers} />
+
+        <div className={styles.card}>
+          <div className={styles.cardTitle}>Inscrições (Total)</div>
+          <div className={styles.cardValue}>{totalRegistrations}</div>
+        </div>
+
+        <div className={`${styles.card} ${styles.cardHighlight}`}>
+          <div className={styles.cardTitle}>Inscrições Pendentes</div>
+          <div className={styles.cardValue}>{pendingRegistrations}</div>
+        </div>
+
+        <div className={styles.card}>
+          <div className={styles.cardTitle}>Inscrições Confirmadas</div>
+          <div className={styles.cardValue}>{confirmedRegistrations}</div>
+        </div>
+
+        <div className={styles.card}>
+          <div className={styles.cardTitle}>Trabalhos Submetidos</div>
+          <div className={styles.cardValue}>{totalWorks}</div>
+        </div>
+
+        <div className={`${styles.card} ${styles.cardHighlight}`}>
+          <div className={styles.cardTitle}>Faturamento Bruto</div>
+          <div className={styles.cardValue}>R$ {totalRevenue.toFixed(2)}</div>
+        </div>
       </div>
     </div>
   );
