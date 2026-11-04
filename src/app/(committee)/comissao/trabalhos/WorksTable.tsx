@@ -393,11 +393,13 @@ function WorkEvaluationModal({
 export function WorksTable({ 
   works, 
   currentUserId,
-  isCommissionMaster = false
+  isCommissionMaster = false,
+  canFilterModality = false
 }: { 
   works: any[]; 
   currentUserId: string;
   isCommissionMaster?: boolean;
+  canFilterModality?: boolean;
 }) {
   const router = useRouter();
   const [worksList, setWorksList] = useState<any[]>(works);
@@ -405,6 +407,7 @@ export function WorksTable({
   const [isLocking, setIsLocking] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [sheetFilter, setSheetFilter] = useState<'all' | 'pending' | 'checked'>('all');
+  const [modalityFilter, setModalityFilter] = useState<'all' | 'ONLINE' | 'PRESENCIAL'>('all');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
@@ -447,6 +450,8 @@ export function WorksTable({
 
   const pendingCount = worksList.filter(w => !w.spreadsheetChecked).length;
   const checkedCount = worksList.filter(w => w.spreadsheetChecked).length;
+  const onlineCount = worksList.filter(w => (w.modality || '').toUpperCase().includes('ONLINE') || w.participant?.registration?.category?.type === 'ONLINE').length;
+  const presencialCount = worksList.filter(w => (w.modality || '').toUpperCase().includes('PRESENCIAL') || w.participant?.registration?.category?.type === 'PRESENCIAL').length;
 
   // Filter works
   const filteredWorks = worksList.filter(work => {
@@ -467,6 +472,14 @@ export function WorksTable({
       if (sheetFilter === 'checked') return matchesSearch && work.spreadsheetChecked;
     }
 
+    if (canFilterModality && modalityFilter !== 'all') {
+      const isOnline = (work.modality || '').toUpperCase().includes('ONLINE') || work.participant?.registration?.category?.type === 'ONLINE';
+      const isPresencial = (work.modality || '').toUpperCase().includes('PRESENCIAL') || work.participant?.registration?.category?.type === 'PRESENCIAL';
+
+      if (modalityFilter === 'ONLINE' && !isOnline) return false;
+      if (modalityFilter === 'PRESENCIAL' && !isPresencial) return false;
+    }
+
     return matchesSearch;
   });
 
@@ -478,7 +491,7 @@ export function WorksTable({
   // Reset page when search or sheet filter changes
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchTerm, sheetFilter]);
+  }, [searchTerm, sheetFilter, modalityFilter]);
 
   const handleRowClick = async (work: any) => {
     if (isLocking) return;
@@ -534,6 +547,65 @@ export function WorksTable({
           {filteredWorks.length} {filteredWorks.length === 1 ? 'trabalho encontrado' : 'trabalhos encontrados'}
         </div>
       </div>
+
+      {canFilterModality && (
+        <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.25rem', flexWrap: 'wrap', alignItems: 'center' }}>
+          <span style={{ fontSize: '0.8125rem', fontWeight: 600, color: 'var(--color-text-secondary)', marginRight: '0.25rem' }}>
+            Modalidade:
+          </span>
+          <button
+            type="button"
+            onClick={() => setModalityFilter('all')}
+            style={{
+              padding: '0.35rem 0.75rem',
+              borderRadius: '6px',
+              border: modalityFilter === 'all' ? '1px solid #0f172a' : '1px solid #e2e8f0',
+              background: modalityFilter === 'all' ? '#0f172a' : '#ffffff',
+              color: modalityFilter === 'all' ? '#ffffff' : '#475569',
+              fontWeight: 600,
+              fontSize: '0.75rem',
+              cursor: 'pointer',
+              transition: 'all 0.15s ease'
+            }}
+          >
+            Todas as Modalidades ({worksList.length})
+          </button>
+          <button
+            type="button"
+            onClick={() => setModalityFilter('ONLINE')}
+            style={{
+              padding: '0.35rem 0.75rem',
+              borderRadius: '6px',
+              border: modalityFilter === 'ONLINE' ? '1px solid #0284c7' : '1px solid #bae6fd',
+              background: modalityFilter === 'ONLINE' ? '#0284c7' : '#f0f9ff',
+              color: modalityFilter === 'ONLINE' ? '#ffffff' : '#0369a1',
+              fontWeight: 600,
+              fontSize: '0.75rem',
+              cursor: 'pointer',
+              transition: 'all 0.15s ease'
+            }}
+          >
+            🌐 Online ({onlineCount})
+          </button>
+          <button
+            type="button"
+            onClick={() => setModalityFilter('PRESENCIAL')}
+            style={{
+              padding: '0.35rem 0.75rem',
+              borderRadius: '6px',
+              border: modalityFilter === 'PRESENCIAL' ? '1px solid #059669' : '1px solid #a7f3d0',
+              background: modalityFilter === 'PRESENCIAL' ? '#059669' : '#ecfdf5',
+              color: modalityFilter === 'PRESENCIAL' ? '#ffffff' : '#047857',
+              fontWeight: 600,
+              fontSize: '0.75rem',
+              cursor: 'pointer',
+              transition: 'all 0.15s ease'
+            }}
+          >
+            🏛️ Presencial ({presencialCount})
+          </button>
+        </div>
+      )}
 
       {isCommissionMaster && (
         <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.25rem', flexWrap: 'wrap', alignItems: 'center' }}>
@@ -669,6 +741,41 @@ export function WorksTable({
                   <div style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                     {work.title}
                   </div>
+                  {canFilterModality && (
+                    <div style={{ marginTop: '0.25rem', display: 'flex', gap: '0.35rem', alignItems: 'center' }}>
+                      {((work.modality || '').toUpperCase().includes('ONLINE') || work.participant?.registration?.category?.type === 'ONLINE') ? (
+                        <span style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '0.2rem',
+                          padding: '0.15rem 0.45rem',
+                          borderRadius: '4px',
+                          fontSize: '0.7rem',
+                          fontWeight: 600,
+                          background: '#f0f9ff',
+                          color: '#0369a1',
+                          border: '1px solid #bae6fd'
+                        }}>
+                          🌐 Online
+                        </span>
+                      ) : (
+                        <span style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '0.2rem',
+                          padding: '0.15rem 0.45rem',
+                          borderRadius: '4px',
+                          fontSize: '0.7rem',
+                          fontWeight: 600,
+                          background: '#ecfdf5',
+                          color: '#047857',
+                          border: '1px solid #a7f3d0'
+                        }}>
+                          🏛️ Presencial
+                        </span>
+                      )}
+                    </div>
+                  )}
                 </td>
                 <td>{work.categoryArea}</td>
                 <td>{evaluatorName}</td>

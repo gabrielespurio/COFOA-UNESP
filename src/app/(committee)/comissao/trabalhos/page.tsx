@@ -13,13 +13,26 @@ export default async function TrabalhosComissaoPage() {
   const session = await getSession();
   const userEmail = session?.email?.toLowerCase() || '';
   const isCommissionMaster = userEmail === 'comissao@cofoa.com.br' || userEmail === 'comissao@cofoa.com' || userEmail.startsWith('comissao@') || session?.roles.includes('ADMIN') || false;
+  const canFilterModality = userEmail === 'comissao@cofoa.com.br' || session?.roles.includes('ADMIN') || false;
   
   const works = await prisma.scientificWork.findMany({
     where: { status: { not: 'DRAFT' }, stage1Approved: true },
     orderBy: { submittedAt: 'asc' },
     include: {
       participant: {
-        select: { fullName: true }
+        select: { 
+          fullName: true,
+          registration: {
+            select: {
+              category: {
+                select: {
+                  type: true,
+                  name: true
+                }
+              }
+            }
+          }
+        }
       },
       evaluations: {
         include: {
@@ -47,6 +60,7 @@ export default async function TrabalhosComissaoPage() {
         works={works} 
         currentUserId={session?.userId || ''} 
         isCommissionMaster={isCommissionMaster} 
+        canFilterModality={canFilterModality}
       />
     </div>
   );
