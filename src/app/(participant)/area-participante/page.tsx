@@ -104,28 +104,12 @@ export default async function ParticipantDashboardPage() {
                     Acessar Painel
                   </Button>
                 </>
-              ) : ['grad-pos-foa', 'doc-prof'].includes(participant.registration.categoryId) ? (
-                <>
-                  <div className={styles.cardValue}>Inativo</div>
-                  <div className={styles.cardDesc}>
-                    Como aluno(a) de Pós-Graduação ou Docente/Profissional, você pode fazer parte da nossa banca avaliadora gratuitamente.
-                  </div>
-                  <form action={async () => {
-                    'use server';
-                    const { applyForBoard } = await import('@/actions/participant');
-                    await applyForBoard();
-                  }}>
-                    <Button type="submit" variant="outline" size="sm" style={{ marginTop: '1rem' }}>
-                      Quero fazer parte da banca avaliadora
-                    </Button>
-                  </form>
-                </>
               ) : (
                 <>
-                  <div className={`${styles.cardValue} ${participant.externalBoardEnrollment?.status === 'PENDING' ? styles.statusPending : ''}`}>
-                    {participant.externalBoardEnrollment?.status === 'PENDING' ? 'Aguardando Pagamento' : 'Disponível'}
+                  <div className={styles.cardValue} style={{ color: '#94a3b8' }}>Encerrada</div>
+                  <div className={styles.cardDesc}>
+                    O prazo para inscrição na Banca Avaliadora foi encerrado.
                   </div>
-                  <ExternalBoardCard enrollment={participant.externalBoardEnrollment} />
                 </>
               )}
             </div>

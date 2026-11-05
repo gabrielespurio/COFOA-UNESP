@@ -60,7 +60,7 @@ export function RegistrationForm({ categories, participantId }: RegistrationForm
       {error && <div className={styles.errorAlert}>{error}</div>}
 
       <div className={styles.categoryList}>
-        {categories.map((cat) => (
+        {categories.filter(c => c.id !== 'banca-ext').map((cat) => (
           <label 
             key={cat.id} 
             className={`${styles.categoryCard} ${selectedCategory === cat.id ? styles.selected : ''}`}

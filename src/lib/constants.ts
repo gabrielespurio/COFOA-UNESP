@@ -38,9 +38,6 @@ export const REGISTRATION_CATEGORIES = [
   { id: 'foa-ext-2', name: 'Alunos da FOA UNESP no exterior - Apresentação de 2 trabalhos online', type: 'online' as const, priceTier: 'online_tier2' as const },
   { id: 'com-ext-1', name: 'Comunidade Externa - Apresentação de 1 trabalho online', type: 'online' as const, priceTier: 'online_tier1' as const },
   { id: 'com-ext-2', name: 'Comunidade Externa - Apresentação de 2 trabalhos online', type: 'online' as const, priceTier: 'online_tier2' as const },
-  
-  // Banca Avaliadora
-  { id: 'banca-ext', name: 'Banca Avaliadora Externa', type: 'online' as const, priceTier: 'banca_externa' as const },
 ] as const;
 
 export const REGISTRATION_BATCHES = [

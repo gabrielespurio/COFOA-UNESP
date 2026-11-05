@@ -158,7 +158,9 @@ export async function createRegistration(formData: FormData) {
 
     // Fetch Category to determine price tier
     const category = await prisma.registrationCategory.findUnique({ where: { id: categoryId } });
-    if (!category) return { error: 'Categoria inválida.' };
+    if (!category || category.id === 'banca-ext' || !category.active) {
+      return { error: 'O prazo de inscrição para a Banca Avaliadora foi encerrado.' };
+    }
 
     // Get Active Batch based on date
     const currentDate = await getCurrentDate();
@@ -430,112 +432,11 @@ export async function cancelRegistration() {
 }
 
 export async function applyForBoard() {
-  const session = await getSession();
-  if (!session) return { error: 'Não autenticado.' };
-
-  const participant = await prisma.participant.findUnique({
-    where: { userId: session.userId },
-    include: { registration: { include: { category: true } } }
-  });
-
-  if (!participant?.registration || participant.registration.status !== 'CONFIRMED') {
-    return { error: 'Sua inscrição no congresso precisa estar confirmada primeiro.' };
-  }
-
-  const internalCategories = ['grad-pos-foa', 'doc-prof'];
-  if (!internalCategories.includes(participant.registration.category.id)) {
-    return { error: 'Apenas participantes de Pós-Graduação e Docentes/Profissionais podem solicitar isenção para a banca. Se você for externo, faça a inscrição diretamente na categoria Banca Externa.' };
-  }
-
-  const user = await prisma.user.findUnique({ where: { id: session.userId }});
-    if (user && !user.roles.includes('EVALUATOR')) {
-    const updatedUser = await prisma.user.update({
-      where: { id: session.userId },
-      data: { roles: { push: 'EVALUATOR' } }
-    });
-    
-    const { createSession } = await import('@/lib/auth');
-    await createSession({
-      userId: updatedUser.id,
-      email: updatedUser.email,
-      roles: updatedUser.roles,
-      role: updatedUser.roles[0]
-    });
-  }
-
-  revalidatePath('/area-participante');
-  return { success: true };
+  return { error: 'O prazo para inscrição na Banca Avaliadora foi encerrado.' };
 }
 
-export async function applyForExternalBoard() {
-  const session = await getSession();
-  if (!session) return { error: 'Não autenticado.' };
-
-  const participant = await prisma.participant.findUnique({
-    where: { userId: session.userId },
-    include: {
-      registration: { include: { category: true } },
-      externalBoardEnrollment: true
-    }
-  });
-
-  if (!participant?.registration || participant.registration.status !== 'CONFIRMED') {
-    return { error: 'Sua inscrição no congresso precisa estar confirmada primeiro para poder aderir à Banca Avaliadora Externa.' };
-  }
-
-  if (participant.externalBoardEnrollment) {
-    if (participant.externalBoardEnrollment.status === 'PAID') {
-      return { error: 'Você já possui inscrição confirmada na Banca Avaliadora Externa.' };
-    }
-    if (participant.externalBoardEnrollment.invoiceUrl) {
-      return { success: true, invoiceUrl: participant.externalBoardEnrollment.invoiceUrl };
-    }
-  }
-
-  try {
-    const asaasCustomer = await createOrGetCustomer(
-      participant.fullName,
-      participant.cpf,
-      session.email,
-      participant.phone
-    );
-
-    const dueDate = new Date();
-    dueDate.setDate(dueDate.getDate() + 4);
-    const dueDateStr = dueDate.toISOString().split('T')[0];
-
-    const asaasPayment = await createPayment(
-      asaasCustomer.id,
-      7000,
-      'Inscrição COFOA XV - Banca Avaliadora Externa',
-      dueDateStr
-    );
-
-    await prisma.externalBoardEnrollment.upsert({
-      where: { participantId: participant.id },
-      update: {
-        amount: 7000,
-        status: 'PENDING',
-        gatewayId: asaasPayment.id,
-        gatewayResponse: asaasPayment as any,
-        invoiceUrl: asaasPayment.invoiceUrl,
-      },
-      create: {
-        participantId: participant.id,
-        amount: 7000,
-        status: 'PENDING',
-        gatewayId: asaasPayment.id,
-        gatewayResponse: asaasPayment as any,
-        invoiceUrl: asaasPayment.invoiceUrl,
-      }
-    });
-
-    revalidatePath('/area-participante');
-    return { success: true, invoiceUrl: asaasPayment.invoiceUrl };
-  } catch (err: any) {
-    console.error('Error applying for external board:', err);
-    return { error: err.message || 'Erro ao gerar cobrança para Banca Avaliadora Externa.' };
-  }
+export async function applyForExternalBoard(): Promise<{ error?: string; success?: boolean; invoiceUrl?: string }> {
+  return { error: 'O prazo para inscrição na Banca Avaliadora Externa foi encerrado.' };
 }
 
 export async function syncExternalBoardPayment() {
