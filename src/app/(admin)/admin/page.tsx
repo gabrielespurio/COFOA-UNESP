@@ -12,9 +12,9 @@ export const metadata: Metadata = {
 export default async function AdminDashboardPage({
   searchParams,
 }: {
-  searchParams: Promise<{ timeRange?: string; category?: string }> | { timeRange?: string; category?: string }
+  searchParams: Promise<{ timeRange?: string; category?: string }>;
 }) {
-  const resolvedParams = searchParams ? await Promise.resolve(searchParams) : {};
+  const resolvedParams = await searchParams;
   const timeRange = resolvedParams?.timeRange || 'all'; // '7d', '30d', 'all'
   const categoryId = resolvedParams?.category || 'all';
 

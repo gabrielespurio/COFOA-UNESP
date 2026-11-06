@@ -1,0 +1,374 @@
+.container {
+  max-width: 850px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Info Card */
+.infoCard {
+  display: flex;
+  gap: 1.25rem;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, rgba(27, 45, 91, 0.05), rgba(212, 160, 23, 0.08));
+  border: 1px solid rgba(212, 160, 23, 0.25);
+  border-radius: var(--radius-lg, 12px);
+  align-items: flex-start;
+}
+
+.infoIcon {
+  font-size: 2.25rem;
+  line-height: 1;
+}
+
+.infoContent {
+  flex: 1;
+}
+
+.infoTitle {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-primary, #1B2D5B);
+  margin-bottom: 0.35rem;
+}
+
+.infoText {
+  font-size: 0.95rem;
+  color: var(--color-text-primary, #1e293b);
+  line-height: 1.5;
+  margin-bottom: 0.5rem;
+}
+
+.infoSubtext {
+  font-size: 0.9rem;
+  color: var(--color-text-secondary, #64748b);
+  line-height: 1.4;
+}
+
+/* Alerts */
+.alertError {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #991b1b;
+  border-radius: var(--radius-md, 8px);
+  font-size: 0.9rem;
+}
+
+.alertSuccess {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  color: #166534;
+  border-radius: var(--radius-md, 8px);
+  font-size: 0.9rem;
+}
+
+/* Ticket Section (When Paid) */
+.ticketSection {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.ticketCard {
+  width: 100%;
+  max-width: 580px;
+  background: #ffffff;
+  border: 2px solid var(--color-primary, #1B2D5B);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 10px 25px -5px rgba(27, 45, 91, 0.15);
+}
+
+.ticketHeader {
+  background: linear-gradient(135deg, #1B2D5B 0%, #0F1B38 100%);
+  color: #ffffff;
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.ticketBadge {
+  display: inline-block;
+  background: #D4A017;
+  color: #0F1B38;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  padding: 0.35rem 0.85rem;
+  border-radius: 20px;
+  margin-bottom: 0.5rem;
+}
+
+.ticketEvent {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.ticketPrice {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.8);
+  margin-top: 0.35rem;
+}
+
+.ticketBody {
+  padding: 2rem 1.75rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  background: #fdfdfd;
+}
+
+.qrContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+  background: #ffffff;
+  border: 1px dashed #cbd5e1;
+  border-radius: 12px;
+}
+
+.tokenCode {
+  font-family: monospace;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #64748b;
+  margin-top: 0.5rem;
+  letter-spacing: 0.1em;
+}
+
+.ticketDetails {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.detailRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 0.65rem;
+  border-bottom: 1px solid #f1f5f9;
+  font-size: 0.9rem;
+}
+
+.detailLabel {
+  color: #64748b;
+  font-weight: 500;
+}
+
+.detailValue {
+  color: #0f172a;
+  font-weight: 600;
+  text-align: right;
+}
+
+.statusConfirmed {
+  color: #166534;
+  background: #dcfce7;
+  padding: 0.2rem 0.6rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.statusUsed {
+  color: #b45309;
+  background: #fef3c7;
+  padding: 0.2rem 0.6rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.securityNotice {
+  padding: 0.85rem;
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  border-radius: 8px;
+  font-size: 0.825rem;
+  color: #92400e;
+  line-height: 1.45;
+  margin-top: 0.5rem;
+}
+
+.actionButtons {
+  display: flex;
+  gap: 1rem;
+}
+
+/* Pending Card */
+.pendingCard {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: var(--radius-lg, 12px);
+  padding: 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.pendingHeader {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.pendingIcon {
+  font-size: 2rem;
+}
+
+.pendingPriceBox {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.25rem;
+  background: #f8fafc;
+  border-radius: 8px;
+}
+
+.priceLabel {
+  font-size: 0.95rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.priceValue {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--color-primary, #1B2D5B);
+}
+
+.pendingInstruction {
+  font-size: 0.9rem;
+  color: #475569;
+  line-height: 1.5;
+}
+
+.pendingActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+  margin-top: 0.5rem;
+}
+
+/* Form Card */
+.formCard {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: var(--radius-lg, 12px);
+  padding: 2rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.formHeader h3 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--color-primary, #1B2D5B);
+  margin-bottom: 0.35rem;
+}
+
+.formHeader p {
+  font-size: 0.9rem;
+  color: #64748b;
+  margin-bottom: 1.5rem;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #334155;
+}
+
+.input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.input:focus {
+  border-color: var(--color-primary, #1B2D5B);
+  box-shadow: 0 0 0 3px rgba(27, 45, 91, 0.1);
+}
+
+.priceSummary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+}
+
+.summaryDesc {
+  display: block;
+  font-size: 0.8rem;
+  color: #64748b;
+  font-weight: normal;
+  margin-top: 0.15rem;
+}
+
+.summaryValue {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--color-primary, #1B2D5B);
+}
+
+.limitNotice {
+  font-size: 0.85rem;
+  color: #64748b;
+  background: #f1f5f9;
+  padding: 0.65rem 1rem;
+  border-radius: 6px;
+}
+
+/* Print Styles */
+@media print {
+  .noPrint {
+    display: none !important;
+  }
+
+  .ticketCard {
+    box-shadow: none !important;
+    border: 2px solid #000 !important;
+    max-width: 100% !important;
+  }
+}

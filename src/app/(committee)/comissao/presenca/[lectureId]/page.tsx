@@ -5,9 +5,9 @@ import { getLectureAttendance } from '@/actions/lectures';
 import styles from './page.module.css';
 
 interface PageProps {
-  params: {
+  params: Promise<{
     lectureId: string;
-  };
+  }>;
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
@@ -17,7 +17,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export default async function LectureAttendancePage({ params }: PageProps) {
-  const { lectureId } = await Promise.resolve(params);
+  const { lectureId } = await params;
   
   const lecture = await getLectureAttendance(lectureId);
 

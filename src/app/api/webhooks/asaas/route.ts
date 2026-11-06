@@ -47,6 +47,25 @@ export async function POST(request: Request) {
           return NextResponse.json({ received: true });
         }
 
+        const dinnerTicket = await prisma.companionDinnerTicket.findFirst({
+          where: { gatewayId: paymentId },
+          include: { participant: true }
+        });
+
+        if (dinnerTicket) {
+          await prisma.companionDinnerTicket.update({
+            where: { id: dinnerTicket.id },
+            data: {
+              status: 'PAID',
+              paidAt: new Date(),
+              gatewayResponse: payload.payment as any
+            }
+          });
+
+          console.log(`Webhook Success: Companion Dinner Payment ${paymentId} confirmed for ${dinnerTicket.participant.fullName}!`);
+          return NextResponse.json({ received: true });
+        }
+
         console.error('Webhook Error: Payment not found in database for gatewayId:', paymentId);
         return NextResponse.json({ error: 'Payment not found' }, { status: 404 });
       }

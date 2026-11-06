@@ -13,6 +13,7 @@ const MENU_ITEMS = [
   { href: '/comissao/trabalhos', label: 'Trabalhos Submetidos' },
   { href: '/comissao/presenca', label: 'Controle de Presença' },
   { href: '/comissao/crachas', label: 'Crachás e Secretaria' },
+  { href: '/comissao/jantar', label: 'Jantar Acompanhantes' },
 ];
 
 export function CommitteeSidebar({ children }: { children?: React.ReactNode }) {

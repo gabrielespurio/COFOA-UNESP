@@ -12,6 +12,7 @@ const MENU_ITEMS = [
   { label: 'Painel', href: '/area-participante' },
   { label: 'Programação', href: '/area-participante/programacao' },
   { label: 'Meus QR Codes', href: '/area-participante/programacao/meus-qrcodes' },
+  { label: 'Jantar Acompanhante', href: '/area-participante/jantar' },
   { label: 'Pagamento', href: '/area-participante/pagamento' },
   { label: 'Meus Trabalhos', href: '/area-participante/trabalhos' },
   { label: 'Meu Perfil', href: '/area-participante/perfil' },

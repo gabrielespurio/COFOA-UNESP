@@ -74,13 +74,8 @@
 
 /* Otimização de Impressão (Apenas Nome e QR Code) */
 @media print {
-  body * {
-    visibility: hidden;
-  }
-
-  .printOnlyArea,
-  .printOnlyArea * {
-    visibility: visible;
+  .noPrint {
+    display: none !important;
   }
 
   .printOnlyArea {
@@ -104,9 +99,5 @@
     left: auto !important;
     top: auto !important;
     width: 100% !important;
-  }
-
-  .noPrint {
-    display: none !important;
   }
 }

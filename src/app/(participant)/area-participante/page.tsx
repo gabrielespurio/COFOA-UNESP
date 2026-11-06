@@ -5,6 +5,7 @@ import { getSession } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import styles from './page.module.css';
 import { ExternalBoardCard } from './ExternalBoardCard';
+import { CompanionDinnerCard } from './CompanionDinnerCard';
 
 export const metadata: Metadata = {
   title: 'Área do Participante',
@@ -23,6 +24,7 @@ export default async function ParticipantDashboardPage() {
       registration: true,
       scientificWorks: true,
       externalBoardEnrollment: true,
+      companionDinnerTicket: true,
     }
   });
 
@@ -71,16 +73,24 @@ export default async function ParticipantDashboardPage() {
               </>
             )}
           </div>
+
           <div className={styles.card}>
             <div className={styles.cardTitle}>Meus Trabalhos</div>
             <div className={styles.cardValue}>{participant.scientificWorks.length}</div>
             <div className={styles.cardDesc}>Submissões cadastradas</div>
           </div>
+
           <div className={styles.card}>
             <div className={styles.cardTitle}>Certificado</div>
             <div className={styles.cardValue}>Indisponível</div>
             <div className={styles.cardDesc}>Será liberado após o evento</div>
           </div>
+
+          {/* Card do Jantar de Acompanhante */}
+          <CompanionDinnerCard 
+            ticket={participant.companionDinnerTicket}
+            isConfirmedParticipant={participant.registration?.status === 'CONFIRMED'}
+          />
           
           {session.roles.includes('COMMITTEE') && (
             <div className={styles.card}>
@@ -93,7 +103,7 @@ export default async function ParticipantDashboardPage() {
             </div>
           )}
           
-          {participant.registration?.status === 'CONFIRMED' && (
+          {(participant.registration?.status === 'CONFIRMED' || session.roles.includes('EVALUATOR')) && (
             <div className={styles.card}>
               <div className={styles.cardTitle}>Banca Avaliadora</div>
               {session.roles.includes('EVALUATOR') ? (

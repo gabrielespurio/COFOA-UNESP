@@ -78,6 +78,7 @@ model Participant {
   lectureEnrollments LectureEnrollment[]
   lectureAttendances LectureAttendance[]
   externalBoardEnrollment ExternalBoardEnrollment?
+  companionDinnerTicket CompanionDinnerTicket?
   
   @@map("participants")
 }
@@ -280,6 +281,29 @@ model ExternalBoardEnrollment {
   participant       Participant   @relation(fields: [participantId], references: [id], onDelete: Cascade)
 
   @@map("external_board_enrollments")
+}
+
+// ─── Companion Dinner Ticket (Jantar Acompanhante) ───────────
+
+model CompanionDinnerTicket {
+  id              String        @id @default(cuid())
+  participantId   String        @unique
+  companionName   String?
+  amount          Int           @default(18500) // 18500 cents = R$ 185,00
+  status          PaymentStatus @default(PENDING)
+  gatewayId       String?       // Asaas payment ID
+  gatewayResponse Json?
+  invoiceUrl      String?
+  qrCodeToken     String        @unique @default(cuid())
+  paidAt          DateTime?
+  checkedInAt     DateTime?     // When scanned at dinner door
+  scannedByUserId String?       // Commission member who scanned
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  participant     Participant   @relation(fields: [participantId], references: [id], onDelete: Cascade)
+
+  @@map("companion_dinner_tickets")
 }
 
 
