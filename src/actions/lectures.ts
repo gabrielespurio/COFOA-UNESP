@@ -3,6 +3,7 @@
 import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
 import { revalidatePath } from 'next/cache';
+import { formatBRTDateTime, formatBRTTime } from '@/lib/formatDate';
 
 // ─── Helpers ───────────────────────────────────────────────
 
@@ -157,12 +158,23 @@ export async function cancelLectureEnrollment(enrollmentId: string) {
 
 // ─── Committee Actions ─────────────────────────────────────
 
-export async function registerAttendance(participantId: string, lectureId: string, type: 'ENTRY' | 'EXIT') {
+export async function registerAttendance(rawParticipantId: string, lectureId: string, requestedType: 'ENTRY' | 'EXIT') {
   await checkCommitteeOrAdmin();
 
-  const participant = await prisma.participant.findUnique({
-    where: { id: participantId },
-    include: { user: { select: { email: true } } },
+  const cleanId = rawParticipantId.trim();
+  const cleanCpf = cleanId.replace(/\D/g, '');
+
+  const participant = await prisma.participant.findFirst({
+    where: {
+      OR: [
+        { id: cleanId },
+        ...(cleanCpf.length === 11 ? [{ cpf: cleanCpf }] : [])
+      ]
+    },
+    include: {
+      user: { select: { email: true } },
+      registration: { select: { status: true } },
+    },
   });
 
   if (!participant) {
@@ -174,19 +186,110 @@ export async function registerAttendance(participantId: string, lectureId: strin
   });
 
   if (!lecture) {
-    return { error: 'Palestra não selecionada ou não encontrada.' };
+    return { error: 'Atividade não selecionada ou não encontrada.' };
+  }
+
+  // Verifica se é a atividade especial de "Retirada de Brinde"
+  const isKitPickup =
+    lecture.id === 'credenciamento-brinde' ||
+    lecture.title.toLowerCase().includes('brinde') ||
+    lecture.title.toLowerCase().includes('kit');
+
+  // CASO 1: RETIRADA DE BRINDE (Apenas ENTRADA - Uso Único por Participante)
+  if (isKitPickup) {
+    // 1.1 Verificar se a inscrição do participante está confirmada
+    if (participant.registration?.status !== 'CONFIRMED') {
+      return {
+        error: `Inscrição não confirmada. Somente congressistas confirmados podem retirar o brinde.`,
+      };
+    }
+
+    // 1.2 Verificar se já retirou o brinde
+    const existingKit = await prisma.lectureAttendance.findFirst({
+      where: {
+        participantId: participant.id,
+        lectureId: lecture.id,
+      },
+      orderBy: { scannedAt: 'desc' },
+    });
+
+    if (existingKit) {
+      const formattedDate = formatBRTDateTime(existingKit.scannedAt);
+      return {
+        error: `ATENÇÃO: O brinde deste participante JÁ FOI RETIRADO em ${formattedDate}! Não entregar novamente.`,
+        alreadyClaimed: true,
+      };
+    }
+
+    // 1.3 Registrar retirada do brinde
+    try {
+      const attendance = await prisma.lectureAttendance.create({
+        data: {
+          participantId: participant.id,
+          lectureId: lecture.id,
+          type: 'ENTRY',
+        },
+      });
+
+      revalidatePath('/comissao/presenca');
+      revalidatePath(`/comissao/presenca/${lecture.id}`);
+
+      return {
+        success: true,
+        data: {
+          participantName: participant.fullName,
+          participantEmail: participant.user.email,
+          lectureTitle: lecture.title,
+          lectureId: lecture.id,
+          type: 'ENTRY' as const,
+          checkedInAt: attendance.scannedAt.toISOString(),
+          message: 'Brinde/Kit retirado com sucesso!',
+        },
+      };
+    } catch (err: any) {
+      console.error('Error registering kit pickup:', err);
+      return { error: 'Erro ao registrar retirada de brinde.' };
+    }
+  }
+
+  // CASO 2: ATIVIDADES NORMAIS (Regra de alternância: ENTRADA -> SAÍDA -> ENTRADA)
+  const lastAttendance = await prisma.lectureAttendance.findFirst({
+    where: {
+      participantId: participant.id,
+      lectureId: lecture.id,
+    },
+    orderBy: { scannedAt: 'desc' },
+  });
+
+  if (requestedType === 'ENTRY') {
+    // Não permite registrar ENTRADA se a última leitura já tiver sido ENTRADA
+    if (lastAttendance && lastAttendance.type === 'ENTRY') {
+      const timeStr = formatBRTTime(lastAttendance.scannedAt);
+      return {
+        error: `O participante já registrou ENTRADA nesta atividade (às ${timeStr}). É necessário registrar a SAÍDA antes de uma nova entrada.`,
+      };
+    }
+  } else if (requestedType === 'EXIT') {
+    // Não permite registrar SAÍDA se não houver ENTRADA prévia ativa
+    if (!lastAttendance || lastAttendance.type === 'EXIT') {
+      return {
+        error: `Não há registro de ENTRADA pendente para este participante nesta atividade (ou a saída já foi realizada anteriormente).`,
+      };
+    }
   }
 
   try {
     const attendance = await prisma.lectureAttendance.create({
       data: {
-        participantId,
-        lectureId,
-        type,
+        participantId: participant.id,
+        lectureId: lecture.id,
+        type: requestedType,
       },
     });
 
     revalidatePath('/comissao/presenca');
+    revalidatePath(`/comissao/presenca/${lecture.id}`);
+
     return {
       success: true,
       data: {
@@ -194,7 +297,7 @@ export async function registerAttendance(participantId: string, lectureId: strin
         participantEmail: participant.user.email,
         lectureTitle: lecture.title,
         lectureId: lecture.id,
-        type,
+        type: requestedType,
         checkedInAt: attendance.scannedAt.toISOString(),
       },
     };
@@ -206,6 +309,35 @@ export async function registerAttendance(participantId: string, lectureId: strin
 
 export async function getLecturesForAttendance() {
   await checkCommitteeOrAdmin();
+
+  // Garante que a atividade "Participante Congresso — Retirada de Brinde" exista
+  let kitLecture = await prisma.lecture.findFirst({
+    where: {
+      OR: [
+        { id: 'credenciamento-brinde' },
+        { title: { contains: 'Retirada de Brinde', mode: 'insensitive' } },
+        { title: { contains: 'Brinde', mode: 'insensitive' } }
+      ]
+    }
+  });
+
+  if (!kitLecture) {
+    try {
+      kitLecture = await prisma.lecture.create({
+        data: {
+          id: 'credenciamento-brinde',
+          title: 'Participante Congresso — Retirada de Brinde',
+          speaker: 'Secretaria / Recepção',
+          location: 'Credenciamento',
+          startTime: new Date('2026-11-06T07:00:00-03:00'),
+          endTime: new Date('2026-11-08T22:00:00-03:00'),
+          active: true,
+        }
+      });
+    } catch (e) {
+      console.warn('Could not auto-create kit lecture:', e);
+    }
+  }
 
   const lectures = await prisma.lecture.findMany({
     where: { active: true },
@@ -222,16 +354,29 @@ export async function getLecturesForAttendance() {
     orderBy: { startTime: 'asc' },
   });
 
-  return lectures.map((l: any) => ({
-    id: l.id,
-    title: l.title,
-    speaker: l.speaker,
-    startTime: l.startTime,
-    endTime: l.endTime,
-    location: l.location,
-    totalEnrolled: l._count.enrollments,
-    totalAttended: l.attendances.length,
-  }));
+  // Ordena para que a "Retirada de Brinde" fique sempre no topo
+  const formatted = lectures.map((l: any) => {
+    const isKit = l.id === 'credenciamento-brinde' || l.title.toLowerCase().includes('brinde');
+    return {
+      id: l.id,
+      title: l.title,
+      speaker: l.speaker,
+      startTime: l.startTime,
+      endTime: l.endTime,
+      location: l.location,
+      totalEnrolled: l._count.enrollments,
+      totalAttended: l.attendances.length,
+      isKitPickup: isKit,
+    };
+  });
+
+  formatted.sort((a, b) => {
+    if (a.isKitPickup) return -1;
+    if (b.isKitPickup) return 1;
+    return new Date(a.startTime).getTime() - new Date(b.startTime).getTime();
+  });
+
+  return formatted;
 }
 
 export async function getLectureAttendance(lectureId: string) {
@@ -260,6 +405,7 @@ export async function getLectureAttendance(lectureId: string) {
     startTime: lecture.startTime,
     endTime: lecture.endTime,
     location: lecture.location,
+    isKitPickup: lecture.id === 'credenciamento-brinde' || lecture.title.toLowerCase().includes('brinde'),
     attendances: lecture.attendances.map((a: any) => ({
       id: a.id,
       participantName: a.participant.fullName,

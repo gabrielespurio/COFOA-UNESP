@@ -2,6 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import { Metadata } from 'next';
 import { getLectureAttendance } from '@/actions/lectures';
+import { formatBRTDateTime, formatBRTDate, formatBRTTime } from '@/lib/formatDate';
 import styles from './page.module.css';
 
 interface PageProps {
@@ -46,16 +47,18 @@ export default async function LectureAttendancePage({ params }: PageProps) {
         </Link>
         
         <div>
-          <h1 className={styles.lectureTitle}>{lecture.title}</h1>
+          <h1 className={styles.lectureTitle}>
+            {lecture.isKitPickup ? `🎁 ${lecture.title}` : lecture.title}
+          </h1>
           <p className={styles.lectureSpeaker}>{lecture.speaker}</p>
         </div>
         
         <div className={styles.lectureMeta}>
           <span className={styles.metaItem}>
-            📅 {new Date(lecture.startTime).toLocaleDateString('pt-BR')}
+            📅 {formatBRTDate(lecture.startTime)}
           </span>
           <span className={styles.metaItem}>
-            🕒 {new Date(lecture.startTime).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })} - {new Date(lecture.endTime).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+            🕒 {formatBRTTime(lecture.startTime, false)} - {formatBRTTime(lecture.endTime, false)}
           </span>
           <span className={styles.metaItem}>
             📍 {lecture.location}
@@ -63,18 +66,29 @@ export default async function LectureAttendancePage({ params }: PageProps) {
         </div>
         
         <div className={styles.statsBar}>
-          <div className={styles.statBox}>
-            <span className={styles.statLabel}>Total Registros</span>
-            <span className={styles.statValue}>{lecture.attendances.length}</span>
-          </div>
-          <div className={styles.statBox}>
-            <span className={styles.statLabel}>Entradas</span>
-            <span className={styles.statValue}>{entries.length}</span>
-          </div>
-          <div className={styles.statBox}>
-            <span className={styles.statLabel}>Saídas</span>
-            <span className={styles.statValue}>{exits.length}</span>
-          </div>
+          {lecture.isKitPickup ? (
+            <>
+              <div className={styles.statBox}>
+                <span className={styles.statLabel}>Brindes Retirados</span>
+                <span className={styles.statValue} style={{ color: '#166534' }}>{entries.length}</span>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className={styles.statBox}>
+                <span className={styles.statLabel}>Total Registros</span>
+                <span className={styles.statValue}>{lecture.attendances.length}</span>
+              </div>
+              <div className={styles.statBox}>
+                <span className={styles.statLabel}>Entradas</span>
+                <span className={styles.statValue}>{entries.length}</span>
+              </div>
+              <div className={styles.statBox}>
+                <span className={styles.statLabel}>Saídas</span>
+                <span className={styles.statValue}>{exits.length}</span>
+              </div>
+            </>
+          )}
         </div>
       </div>
 
@@ -86,7 +100,7 @@ export default async function LectureAttendancePage({ params }: PageProps) {
                 <th className={styles.th}>Nome do Participante</th>
                 <th className={styles.th}>E-mail</th>
                 <th className={styles.th}>Ação</th>
-                <th className={styles.th}>Horário da Leitura</th>
+                <th className={styles.th}>Horário da Leitura (Brasília)</th>
               </tr>
             </thead>
             <tbody>
@@ -101,11 +115,11 @@ export default async function LectureAttendancePage({ params }: PageProps) {
                     <td className={styles.td}>{attendance.participantEmail}</td>
                     <td className={styles.td}>
                       <span className={`${styles.statusBadge} ${isEntry ? styles.statusAttended : styles.statusEnrolled}`}>
-                        {isEntry ? 'ENTRADA' : 'SAÍDA'}
+                        {lecture.isKitPickup ? '🎁 BRINDE RETIRADO' : isEntry ? 'ENTRADA' : 'SAÍDA'}
                       </span>
                     </td>
                     <td className={styles.td}>
-                      {new Date(attendance.scannedAt).toLocaleString('pt-BR')}
+                      {formatBRTDateTime(attendance.scannedAt)}
                     </td>
                   </tr>
                 );

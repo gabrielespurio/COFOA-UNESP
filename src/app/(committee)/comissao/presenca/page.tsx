@@ -5,6 +5,7 @@ import { SectionHeading } from '@/components/ui/SectionHeading/SectionHeading';
 import { Button } from '@/components/ui/Button/Button';
 import QrScanner from './QrScanner';
 import { getLecturesForAttendance } from '@/actions/lectures';
+import { formatBRTDate, formatBRTTime } from '@/lib/formatDate';
 import styles from './page.module.css';
 import { cn } from '@/lib/utils';
 
@@ -19,15 +20,15 @@ export default async function AttendancePage() {
     <div className={styles.container}>
       <SectionHeading 
         title="Controle de Presença" 
-        subtitle="Escaneie o QR Code dos participantes para registrar presença" 
+        subtitle="Escaneie o QR Code dos participantes para registrar presença e entrega de brindes" 
       />
       
-      <QrScanner lectures={lectures.map((l: any) => ({ id: l.id, title: l.title }))} />
+      <QrScanner lectures={lectures.map((l: any) => ({ id: l.id, title: l.title, isKitPickup: l.isKitPickup }))} />
       
       <div className={styles.lecturesSection}>
         <SectionHeading 
-          title="Atividades" 
-          subtitle="Acompanhe a presença nas atividades programadas" 
+          title="Atividades e Credenciamento" 
+          subtitle="Acompanhe a presença nas atividades e a retirada de brindes" 
         />
         
         <div className={styles.lecturesGrid}>
@@ -44,7 +45,10 @@ export default async function AttendancePage() {
             
             let statusText = 'Em Breve';
             let statusClass = styles.statusUpcoming;
-            if (isOngoing) {
+            if (lecture.isKitPickup) {
+              statusText = 'Ativo (Credenciamento)';
+              statusClass = styles.statusOngoing;
+            } else if (isOngoing) {
               statusText = 'Acontecendo Agora';
               statusClass = styles.statusOngoing;
             } else if (isFinished) {
@@ -52,7 +56,9 @@ export default async function AttendancePage() {
               statusClass = styles.statusFinished;
             }
 
-            const speakerInitials = lecture.speaker !== '-' && lecture.speaker !== 'Intervalo'
+            const speakerInitials = lecture.isKitPickup
+              ? '🎁'
+              : lecture.speaker !== '-' && lecture.speaker !== 'Intervalo'
               ? lecture.speaker.split(' ').filter((n: string) => n.length > 2).map((n: string) => n[0]).slice(0, 2).join('').toUpperCase()
               : 'CO';
 
@@ -68,19 +74,21 @@ export default async function AttendancePage() {
                       {speakerInitials}
                     </div>
                     <div>
-                      <h3 className={styles.lectureTitle} title={lecture.title}>{lecture.title}</h3>
+                      <h3 className={styles.lectureTitle} title={lecture.title}>
+                        {lecture.isKitPickup ? `🎁 ${lecture.title}` : lecture.title}
+                      </h3>
                       <p className={styles.lectureSpeaker}>{lecture.speaker}</p>
                     </div>
                   </div>
                   
                   <div className={styles.lectureMeta}>
                     <span className={styles.metaBadge}>
-                      📅 {start.toLocaleDateString('pt-BR')} 
+                      📅 {formatBRTDate(lecture.startTime)} 
                     </span>
                     <span className={styles.metaBadge}>
-                      🕒 {start.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })} 
+                      🕒 {formatBRTTime(lecture.startTime, false)} 
                       {' às '}
-                      {end.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                      {formatBRTTime(lecture.endTime, false)}
                     </span>
                     <span className={styles.metaBadge}>
                       📍 {lecture.location || 'A confirmar'}
@@ -89,9 +97,13 @@ export default async function AttendancePage() {
                   
                   <div className={styles.attendanceStats}>
                     <div className={styles.statsRow}>
-                      <span className={styles.statLabel}>Registros de Presença</span>
+                      <span className={styles.statLabel}>
+                        {lecture.isKitPickup ? 'Brindes Retirados' : 'Registros de Presença'}
+                      </span>
                       <span className={styles.statValue}>
-                        {lecture.totalAttended} <span style={{ fontSize: '0.85em', color: 'var(--color-text-muted)' }}>(Entradas)</span>
+                        {lecture.totalAttended} <span style={{ fontSize: '0.85em', color: 'var(--color-text-muted)' }}>
+                          {lecture.isKitPickup ? '(Entregues)' : '(Entradas/Saídas)'}
+                        </span>
                       </span>
                     </div>
                     
@@ -99,8 +111,8 @@ export default async function AttendancePage() {
                       <div 
                         className={styles.attendanceFill} 
                         style={{ 
-                          width: `${Math.min(100, attendanceRatio)}%`,
-                          backgroundColor: attendanceRatio > 0 ? 'var(--color-primary)' : 'transparent' 
+                          width: `${Math.min(100, attendanceRatio || (lecture.totalAttended > 0 ? 100 : 0))}%`,
+                          backgroundColor: lecture.totalAttended > 0 ? 'var(--color-primary)' : 'transparent' 
                         }}
                       />
                     </div>
@@ -108,8 +120,8 @@ export default async function AttendancePage() {
                   
                   <div className={styles.cardAction}>
                     <Link href={`/comissao/presenca/${lecture.id}`} passHref legacyBehavior>
-                      <Button variant={isOngoing ? 'primary' : 'outline'} fullWidth>
-                        Gerenciar Presenças
+                      <Button variant={isOngoing || lecture.isKitPickup ? 'primary' : 'outline'} fullWidth>
+                        {lecture.isKitPickup ? 'Ver Lista de Retiradas' : 'Gerenciar Presenças'}
                       </Button>
                     </Link>
                   </div>
