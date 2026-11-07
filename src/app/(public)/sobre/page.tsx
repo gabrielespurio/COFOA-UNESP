@@ -14,12 +14,16 @@ export default function SobrePage() {
       <Container>
         <SectionHeading 
           title="Sobre o COFOA XV" 
-          subtitle="Conheça mais sobre o maior congresso de Odontologia do Sul Fluminense."
+          subtitle="Conheça mais sobre o Congresso da Faculdade de Odontologia de Araçatuba — FOA UNESP."
         />
         <div className={styles.content}>
           <div className={styles.placeholder}>
-            <p>O conteúdo completo sobre a história e os objetivos do COFOA XV será disponibilizado em breve.</p>
-            <p style={{ marginTop: '1rem' }}>Estamos preparando informações detalhadas sobre a edição comemorativa de 15 anos do Congresso Odontológico da FOA.</p>
+            <p>
+              O Congresso da Faculdade de Odontologia de Araçatuba (COFOA/Unesp) chega à sua 15ª edição, reafirmando sua posição entre os mais relevantes eventos acadêmicos e científicos da Odontologia no país. Ao longo de sua trajetória, o Congresso tem ampliado seu alcance e representatividade, reunindo estudantes, cirurgiões-dentistas, pesquisadores e docentes em um ambiente dedicado à troca de experiências e construção do conhecimento.
+            </p>
+            <p style={{ marginTop: '1rem' }}>
+              A programação contempla diferentes áreas da Odontologia, promovendo educação continuada, discussão de casos clínicos e integração entre ensino, pesquisa e prática profissional. Contaremos com palestrantes renomados abordando temas contemporâneos vitais para a prática clínica.
+            </p>
           </div>
           <aside className={styles.sidebar}>
             <div className={styles.fact}>

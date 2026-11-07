@@ -66,7 +66,7 @@ export default async function HomePage() {
             <Button variant="primary" size="lg" href={checkoutHref}>
               Realizar inscrição
             </Button>
-            <Button variant="outline" size="lg" href="/sobre">
+            <Button variant="outline" size="lg" href="/#sobre">
               Saiba mais
             </Button>
           </div>
