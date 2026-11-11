@@ -23,7 +23,10 @@ export async function GET(request: NextRequest) {
   }
 
   const limitParam = request.nextUrl.searchParams.get('limit');
-  const limit = limitParam ? Math.max(1, parseInt(limitParam, 10)) : 200;
+  const limit = limitParam ? Math.max(1, parseInt(limitParam, 10)) : 40;
+
+  const skipParam = request.nextUrl.searchParams.get('skip');
+  const skip = skipParam ? Math.max(0, parseInt(skipParam, 10)) : 0;
 
   const delayParam = request.nextUrl.searchParams.get('delay');
   const delayMs = delayParam ? Math.max(500, parseInt(delayParam, 10)) : 2500;
@@ -51,6 +54,7 @@ export async function GET(request: NextRequest) {
           .error { color: #f87171; }
           .warn { color: #fbbf24; }
           .summary { margin-top: 24px; padding: 18px; background: #1e293b; border-radius: 8px; border: 1px solid #334155; }
+          .btn-continue { display: inline-block; margin-top: 14px; padding: 12px 24px; background: #0284c7; color: white; text-decoration: none; border-radius: 6px; font-weight: 700; font-size: 14px; }
         </style>
       </head><body>`);
       await write(`<div class="title">🚨 COFOA XV — Disparo de Lembrete de Prazo Final</div>`);
@@ -59,7 +63,11 @@ export async function GET(request: NextRequest) {
         await write(`<div class="badge badge-warn">MODO DE SIMULAÇÃO (DRY RUN) — Nenhum e-mail será enviado de fato</div>`);
       }
 
-      // Buscar todos os trabalhos com ressalvas ainda não enviados
+      const totalPending = await prisma.scientificWork.count({
+        where: { status: 'REVISION_REQUESTED' },
+      });
+
+      // Buscar trabalhos com suporte a skip e limit para lotes seguros
       const works = await prisma.scientificWork.findMany({
         where: {
           status: 'REVISION_REQUESTED',
@@ -74,19 +82,21 @@ export async function GET(request: NextRequest) {
         orderBy: {
           createdAt: 'asc',
         },
+        skip,
         take: limit,
       });
 
       await write(`<p style="color: #94a3b8; font-size: 14px;">
-        Total de trabalhos pendentes de correção: <strong>${works.length}</strong> | 
-        Intervalo de segurança entre envios: <strong>${delayMs}ms</strong>
+        Total pendente geral no banco: <strong>${totalPending}</strong> | 
+        Pulando primeiros: <strong>${skip}</strong> | 
+        Processando lote de: <strong>${works.length}</strong> (pausa de ${delayMs}ms)
       </p><hr style="border: 0; border-top: 1px solid #334155; margin: 16px 0;" />`);
 
       if (works.length === 0) {
         await write(`
           <div class="summary" style="border-color: #22c55e;">
-            <h3 style="margin-top: 0; color: #4ade80;">🎉 Nenhum trabalho com ressalva pendente!</h3>
-            <p>Todos os participantes já enviaram suas correções ou não há trabalhos em revisão.</p>
+            <h3 style="margin-top: 0; color: #4ade80;">🎉 Fim da lista!</h3>
+            <p>Não há mais trabalhos nesta faixa de envio.</p>
           </div>
         </body></html>`);
         return;
@@ -102,10 +112,11 @@ export async function GET(request: NextRequest) {
         const email = work.participant?.user?.email;
         const participantName = work.participant?.fullName || 'Participante';
         const displayCode = work.displayCode || 'Trabalho Científico';
+        const globalIndex = skip + i + 1;
 
         if (!email) {
           skippedCount++;
-          await write(`<div class="log warn">[${i + 1}/${works.length}] ⚠️ Sem e-mail cadastrado para ${displayCode}. Pulando.</div>`);
+          await write(`<div class="log warn">[${globalIndex}/${totalPending}] ⚠️ Sem e-mail cadastrado para ${displayCode}. Pulando.</div>`);
           continue;
         }
 
@@ -122,17 +133,17 @@ export async function GET(request: NextRequest) {
           }
 
           successCount++;
-          await write(`<div class="log success">[${i + 1}/${works.length}] ${dryRun ? '🔍 [SIMULADO]' : '✅ Enviado para'} ${email} (${displayCode} - "${work.title.slice(0, 35)}...")</div>`);
+          await write(`<div class="log success">[${globalIndex}/${totalPending}] ${dryRun ? '🔍 [SIMULADO]' : '✅ Enviado para'} ${email} (${displayCode} - "${work.title.slice(0, 35)}...")</div>`);
         } catch (err: any) {
           failCount++;
           const isRateLimit = err?.message?.toLowerCase().includes('ratelimit') || err?.message?.includes('451');
 
           if (isRateLimit) {
             rateLimitHit = true;
-            await write(`<div class="log error">[${i + 1}/${works.length}] 🛑 Cota da Hostinger atingida (${err.message}). Interrompendo envio.</div>`);
+            await write(`<div class="log error">[${globalIndex}/${totalPending}] 🛑 Cota da Hostinger atingida (${err.message}). Interrompendo envio.</div>`);
             break;
           } else {
-            await write(`<div class="log error">[${i + 1}/${works.length}] ❌ Erro ao enviar para ${email} (${displayCode}): ${err.message}</div>`);
+            await write(`<div class="log error">[${globalIndex}/${totalPending}] ❌ Erro ao enviar para ${email} (${displayCode}): ${err.message}</div>`);
           }
         }
 
@@ -141,18 +152,28 @@ export async function GET(request: NextRequest) {
         }
       }
 
+      const nextSkip = skip + successCount;
+      const remaining = Math.max(0, totalPending - nextSkip);
+
       await write(`
         <div class="summary">
-          <h3 style="margin-top: 0; color: #38bdf8;">🏁 Resumo do Disparo de Lembrete</h3>
-          <p style="margin: 4px 0;">E-mails enviados com sucesso: <strong style="color: #4ade80;">${successCount}</strong></p>
-          <p style="margin: 4px 0;">Falhas: <strong style="color: #f87171;">${failCount}</strong></p>
-          <p style="margin: 4px 0;">Ignorados (sem e-mail): <strong style="color: #fbbf24;">${skippedCount}</strong></p>
+          <h3 style="margin-top: 0; color: #38bdf8;">🏁 Resumo do Lote Atual</h3>
+          <p style="margin: 4px 0;">E-mails enviados neste lote: <strong style="color: #4ade80;">${successCount}</strong></p>
+          <p style="margin: 4px 0;">Falhas neste lote: <strong style="color: #f87171;">${failCount}</strong></p>
+          <p style="margin: 4px 0;">Total já processado no geral: <strong style="color: #38bdf8;">${nextSkip} de ${totalPending}</strong></p>
+          <p style="margin: 4px 0;">Restantes para as próximas rodadas: <strong style="color: #fbbf24;">${remaining}</strong></p>
           ${
             rateLimitHit
               ? `<div style="margin-top: 14px; padding: 12px; background: #451a03; border-radius: 6px; border: 1px solid #78350f; color: #fde68a;">
-                  ⚠️ O limite de envio do servidor foi atingido. Aguarde alguns minutos antes de tentar novamente.
+                  ⚠️ <strong>Cota horária da Hostinger atingida:</strong><br/>
+                  Aguarde cerca de 45 a 60 minutos para a Hostinger renovar a cota e clique no botão abaixo para continuar de onde parou sem reenviar para quem já recebeu:
                 </div>`
-              : `<p style="color: #4ade80; font-weight: 700; margin-top: 12px;">✅ Processo concluído com sucesso!</p>`
+              : ''
+          }
+          ${
+            remaining > 0
+              ? `<a href="?secret=${secret || ''}&skip=${nextSkip}&limit=${limit}" class="btn-continue">➡️ Continuar Próximo Lote (a partir do trabalho #${nextSkip + 1})</a>`
+              : `<p style="color: #4ade80; font-weight: 700; margin-top: 14px;">🎉 TODOS os participantes pendentes já foram notificados com sucesso!</p>`
           }
         </div>
       </body></html>`);
