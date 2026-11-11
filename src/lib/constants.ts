@@ -111,3 +111,14 @@ export function isSubmissionPeriodOpen(currentDate: Date = new Date()): boolean 
   const deadline = new Date(deadlineStr);
   return currentDate.getTime() <= deadline.getTime();
 }
+
+export const REVISION_DEADLINE_CONFIG = {
+  deadline: '2026-11-11T23:59:59-03:00',
+  deadlineDisplay: '11/11/2026 às 23:59',
+} as const;
+
+export function isRevisionPeriodOpen(currentDate: Date = new Date()): boolean {
+  const deadlineStr = process.env.NEXT_PUBLIC_REVISION_DEADLINE || REVISION_DEADLINE_CONFIG.deadline;
+  const deadline = new Date(deadlineStr);
+  return currentDate.getTime() <= deadline.getTime();
+}

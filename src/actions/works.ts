@@ -6,7 +6,7 @@ import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import { getSupabaseAdmin } from '@/lib/supabase';
 import { getCurrentDate } from '@/lib/dateUtils';
-import { SCIENTIFIC_WORKS_CONFIG, isSubmissionPeriodOpen } from '@/lib/constants';
+import { SCIENTIFIC_WORKS_CONFIG, isSubmissionPeriodOpen, REVISION_DEADLINE_CONFIG, isRevisionPeriodOpen } from '@/lib/constants';
 
 export async function submitWork(formData: FormData) {
   const currentDateCheck = await getCurrentDate();
@@ -110,6 +110,11 @@ export async function submitWork(formData: FormData) {
 }
 
 export async function resubmitWork(formData: FormData) {
+  const currentDateCheck = await getCurrentDate();
+  if (!isRevisionPeriodOpen(currentDateCheck)) {
+    return { error: `O prazo para envio de correções de trabalhos com ressalvas foi encerrado em ${REVISION_DEADLINE_CONFIG.deadlineDisplay}.` };
+  }
+
   const session = await getSession();
   if (!session) {
     return { error: 'Usuário não autenticado.' };

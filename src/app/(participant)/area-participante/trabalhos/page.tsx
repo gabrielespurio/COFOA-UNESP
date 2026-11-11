@@ -7,7 +7,7 @@ import { getSession } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { formatBRTDate, formatBRTDateTime } from '@/lib/formatDate';
 import { getCurrentDate } from '@/lib/dateUtils';
-import { SCIENTIFIC_WORKS_CONFIG, isSubmissionPeriodOpen } from '@/lib/constants';
+import { SCIENTIFIC_WORKS_CONFIG, isSubmissionPeriodOpen, REVISION_DEADLINE_CONFIG, isRevisionPeriodOpen } from '@/lib/constants';
 import styles from './page.module.css';
 
 export const metadata: Metadata = {
@@ -57,6 +57,7 @@ export default async function MeusTrabalhosPage() {
 
   const currentDate = await getCurrentDate();
   const isSubmissionOpen = isSubmissionPeriodOpen(currentDate);
+  const isRevisionOpen = isRevisionPeriodOpen(currentDate);
 
   const works = await prisma.scientificWork.findMany({
     where: { participantId: participant.id },
@@ -91,29 +92,29 @@ export default async function MeusTrabalhosPage() {
             </svg>
             <h3>Nenhum trabalho submetido</h3>
             <p>Você ainda não enviou nenhum trabalho científico para avaliação.</p>
-            {isConfirmed ? (
-              isSubmissionOpen ? (
-                <Button variant="outline" href="/area-participante/trabalhos/novo">
-                  Submeter Primeiro Trabalho
-                </Button>
-              ) : (
-                <p style={{ marginTop: '1rem', color: '#991b1b', background: '#fef2f2', padding: '1rem', borderRadius: '8px', border: '1px solid #fecaca' }}>
-                  O prazo para submissão de trabalhos científicos foi encerrado em <strong>{SCIENTIFIC_WORKS_CONFIG.deadlineDisplay}</strong>.
-                </p>
-              )
+            {isConfirmed ? (
+              isSubmissionOpen ? (
+                <Button variant="outline" href="/area-participante/trabalhos/novo">
+                  Submeter Primeiro Trabalho
+                </Button>
+              ) : (
+                <p style={{ marginTop: '1rem', color: '#991b1b', background: '#fef2f2', padding: '1rem', borderRadius: '8px', border: '1px solid #fecaca' }}>
+                  O prazo para submissão de trabalhos científicos foi encerrado em <strong>{SCIENTIFIC_WORKS_CONFIG.deadlineDisplay}</strong>.
+                </p>
+              )
             ) : (
               <p style={{ marginTop: '1rem', color: '#856404', background: '#fff3cd', padding: '1rem', borderRadius: '8px', border: '1px solid #ffeeba' }}>
                 Para submeter trabalhos, é necessário confirmar o pagamento da sua inscrição.
               </p>
             )}
           </div>
-        ) : (
-          <>
-            {!isSubmissionOpen && (
-              <div style={{ marginBottom: '1.5rem', padding: '0.75rem 1rem', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px', color: '#64748b', fontSize: '0.875rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <span>ℹ️</span> O prazo para envio de novos trabalhos científicos encerrou em {SCIENTIFIC_WORKS_CONFIG.deadlineDisplay}.
-              </div>
-            )}
+        ) : (
+          <>
+            {!isSubmissionOpen && (
+              <div style={{ marginBottom: '1.5rem', padding: '0.75rem 1rem', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px', color: '#64748b', fontSize: '0.875rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <span>ℹ️</span> O prazo para envio de novos trabalhos científicos encerrou em {SCIENTIFIC_WORKS_CONFIG.deadlineDisplay}.
+              </div>
+            )}
             <div className={styles.worksGrid}>
             {works.map(work => (
               <div key={work.id} className={styles.workCard}>
@@ -173,9 +174,15 @@ export default async function MeusTrabalhosPage() {
                       </p>
                     )}
                     <div style={{ marginTop: '1rem' }}>
-                      <Button variant="outline" size="sm" href={`/area-participante/trabalhos/${work.id}/editar`} fullWidth>
-                        Corrigir e Reenviar
-                      </Button>
+                      {isRevisionOpen ? (
+                        <Button variant="outline" size="sm" href={`/area-participante/trabalhos/${work.id}/editar`} fullWidth>
+                          Corrigir e Reenviar
+                        </Button>
+                      ) : (
+                        <div style={{ padding: '0.6rem 0.75rem', background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '6px', color: '#991b1b', fontSize: 'var(--font-size-xs)', textAlign: 'center', fontWeight: 600 }}>
+                          Prazo de reenvio de correções encerrado em {REVISION_DEADLINE_CONFIG.deadlineDisplay}
+                        </div>
+                      )}
                     </div>
                   </div>
                 )}
@@ -215,10 +222,10 @@ export default async function MeusTrabalhosPage() {
                   </div>
                 )}
               </div>
-            ))}
-          </div>
-          </>
-        )}
+            ))}
+          </div>
+          </>
+        )}
       </div>
     </div>
   );

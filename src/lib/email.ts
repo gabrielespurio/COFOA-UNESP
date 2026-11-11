@@ -125,3 +125,97 @@ export async function sendWorkRevisionEmail({
   await transporter.sendMail(mailOptions);
 }
 
+export interface RevisionDeadlineReminderParams {
+  to: string;
+  participantName: string;
+  workTitle: string;
+  displayCode: string;
+  workId: string;
+  deadlineDisplay?: string;
+}
+
+export async function sendRevisionDeadlineReminderEmail({
+  to,
+  participantName,
+  workTitle,
+  displayCode,
+  workId,
+  deadlineDisplay = 'hoje (11/11/2026) às 23h59',
+}: RevisionDeadlineReminderParams) {
+  const transporter = createTransporter();
+
+  const baseUrl =
+    process.env.NEXTAUTH_URL ||
+    process.env.NEXT_PUBLIC_APP_URL ||
+    'https://cofoa.com.br';
+
+  const editUrl = `${baseUrl}/area-participante/trabalhos/${workId}/editar`;
+
+  const mailOptions = {
+    from: `"COFOA XV — Comissão Organizadora" <${process.env.SMTP_USER || 'comissao@cofoa.com.br'}>`,
+    to,
+    subject: `[URGENTE] Prazo Final para Correção de Trabalho Científico (${displayCode}) - COFOA XV`,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 620px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 10px; overflow: hidden; background-color: #f8fafc;">
+        <div style="background-color: #0b1a30; padding: 24px; text-align: center;">
+          <h1 style="color: #ffffff; margin: 0; font-size: 22px; font-weight: 700; letter-spacing: 0.5px;">COFOA XV</h1>
+          <p style="color: #94a3b8; margin: 4px 0 0 0; font-size: 13px;">15º Congresso da Faculdade de Odontologia de Araçatuba</p>
+        </div>
+        
+        <div style="padding: 30px; background-color: #ffffff;">
+          <div style="display: inline-block; padding: 6px 14px; background-color: #fef2f2; border: 1px solid #ef4444; border-radius: 20px; color: #b91c1c; font-weight: 700; font-size: 13px; margin-bottom: 20px;">
+            ⏰ PRAZO FINAL: HOJE ATÉ 23h59
+          </div>
+
+          <h2 style="color: #0f172a; font-size: 17px; margin: 0 0 14px 0;">Prezados(as), boa tarde!</h2>
+          
+          <p style="color: #334155; font-size: 14px; line-height: 1.6; margin: 0 0 14px 0;">
+            A Comissão Organizadora do 15º Congresso da Faculdade de Odontologia de Araçatuba (15º COFOA) agradece a todos pelas submissões de trabalhos científicos e pela participação em nosso evento.
+          </p>
+
+          <p style="color: #334155; font-size: 14px; line-height: 1.6; margin: 0 0 14px 0;">
+            Reforçamos que, para os trabalhos aprovados com ressalvas, as correções solicitadas deverão ser realizadas e enviadas impreterivelmente <strong>até às 23h59 de hoje (11/11/2026)</strong>.
+          </p>
+
+          <div style="background-color: #f8fafc; border-left: 4px solid #0284c7; padding: 14px 16px; border-radius: 6px; margin: 20px 0;">
+            <p style="margin: 0 0 4px 0; font-size: 12px; color: #64748b; text-transform: uppercase; font-weight: 600;">Identificação do Trabalho</p>
+            <p style="margin: 0 0 4px 0; font-size: 14px; color: #0284c7; font-weight: 700;">${displayCode}</p>
+            <p style="margin: 0; font-size: 14px; color: #1e293b; font-weight: 600; line-height: 1.4;">${workTitle}</p>
+          </div>
+
+          <div style="text-align: center; margin: 24px 0 24px 0;">
+            <a href="${editUrl}" target="_blank" rel="noopener noreferrer" style="background-color: #0b1a30; color: #ffffff; padding: 14px 28px; border-radius: 6px; font-weight: 700; text-decoration: none; font-size: 14px; display: inline-block; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+              Corrigir e Reenviar Trabalho
+            </a>
+          </div>
+
+          <p style="color: #b91c1c; font-size: 13px; font-weight: 600; line-height: 1.5; margin: 0 0 16px 0;">
+            Ressaltamos que, após esse prazo, não serão aceitos novos envios de correções.
+          </p>
+
+          <p style="color: #334155; font-size: 14px; line-height: 1.6; margin: 0 0 20px 0;">
+            Agradecemos novamente a participação e a colaboração de todos!
+          </p>
+
+          <p style="color: #475569; font-size: 13px; line-height: 1.6; margin: 0;">
+            Atenciosamente,<br/>
+            <strong>Comissão Organizadora</strong><br/>
+            15º COFOA – FOA/UNESP
+          </p>
+
+          <p style="color: #94a3b8; font-size: 11px; text-align: center; margin-top: 24px; line-height: 1.4;">
+            Caso o botão não funcione, acesse diretamente:<br/>
+            <a href="${editUrl}" style="color: #0284c7; word-break: break-all;">${editUrl}</a>
+          </p>
+        </div>
+
+        <div style="padding: 16px; background-color: #0b1a30; text-align: center; color: #94a3b8; font-size: 12px;">
+          COFOA XV — Faculdade de Odontologia de Araçatuba (FOA UNESP)<br/>
+          Este é um comunicado oficial da Comissão Organizadora.
+        </div>
+      </div>
+    `,
+  };
+
+  await transporter.sendMail(mailOptions);
+}
