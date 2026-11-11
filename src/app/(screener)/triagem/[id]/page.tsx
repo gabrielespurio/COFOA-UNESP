@@ -4,6 +4,7 @@ import { SectionHeading } from '@/components/ui/SectionHeading/SectionHeading';
 import { Badge } from '@/components/ui/Badge/Badge';
 import { prisma } from '@/lib/prisma';
 import { EvaluationForm } from './EvaluationForm';
+import { formatBRTDateTime } from '@/lib/formatDate';
 import styles from './page.module.css';
 
 export const metadata: Metadata = {
@@ -131,7 +132,7 @@ export default async function AvaliacaoTrabalhoPage({ params }: { params: Promis
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
                         <strong style={{ color: 'var(--color-primary-dark)' }}>{evalName}</strong>
                         <span style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)' }}>
-                          {new Date(evalRecord.createdAt).toLocaleString('pt-BR')}
+                          {formatBRTDateTime(evalRecord.createdAt)}
                         </span>
                       </div>
                       <div style={{ marginBottom: '0.5rem' }}>

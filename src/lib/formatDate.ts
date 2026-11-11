@@ -4,7 +4,7 @@
  * tanto em Server Components quanto em Client Components.
  */
 
-export function formatBRTDateTime(date: Date | string | null | undefined): string {
+export function formatBRTDateTime(date: Date | string | null | undefined, includeSeconds = true): string {
   if (!date) return '';
   const d = typeof date === 'string' ? new Date(date) : date;
   if (isNaN(d.getTime())) return '';
@@ -15,7 +15,7 @@ export function formatBRTDateTime(date: Date | string | null | undefined): strin
     year: 'numeric',
     hour: '2-digit',
     minute: '2-digit',
-    second: '2-digit',
+    ...(includeSeconds ? { second: '2-digit' } : {}),
   });
 }
 

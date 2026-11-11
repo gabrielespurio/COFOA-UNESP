@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/Badge/Badge';
 import { EvaluationForm } from './EvaluationForm';
 import { useRouter } from 'next/navigation';
 import { lockWork, unlockWork, toggleWorkSpreadsheetCheck } from '@/actions/committee';
+import { formatBRTDateTime } from '@/lib/formatDate';
 import styles from '../page.module.css';
 
 function getStatusBadge(status: string, isResubmitted: boolean = false) {
@@ -340,7 +341,7 @@ function WorkEvaluationModal({
                             <strong style={{ color: '#0f172a', fontSize: '0.875rem' }}>{evalName}</strong>
                           </div>
                           <span style={{ fontSize: '0.75rem', color: '#64748b' }}>
-                            {new Date(evalRecord.createdAt).toLocaleString('pt-BR')}
+                            {formatBRTDateTime(evalRecord.createdAt)}
                           </span>
                         </div>
                         <div style={{ marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>

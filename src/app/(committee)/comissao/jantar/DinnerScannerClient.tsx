@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button/Button';
 import { scanDinnerTicket } from '@/actions/dinner';
+import { formatBRTDate, formatBRTTime } from '@/lib/formatDate';
 import styles from './page.module.css';
 
 interface TicketItem {
@@ -333,8 +334,8 @@ export function DinnerScannerClient({ initialTickets, stats }: DinnerScannerClie
                   </div>
                   <div className={styles.resultRow}>
                     <strong>Entrada registrada em:</strong>{' '}
-                    {new Date(scanResult.checkedInAt!).toLocaleDateString('pt-BR')} às{' '}
-                    {new Date(scanResult.checkedInAt!).toLocaleTimeString('pt-BR')}
+                    {formatBRTDate(scanResult.checkedInAt!)} às{' '}
+                    {formatBRTTime(scanResult.checkedInAt!)}
                   </div>
                   <div className={styles.dangerNotice}>
                     ❌ Não permita nova entrada com este mesmo QR Code.

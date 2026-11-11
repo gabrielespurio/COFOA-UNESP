@@ -4,6 +4,9 @@ import { SectionHeading } from '@/components/ui/SectionHeading/SectionHeading';
 import { WorkSubmissionForm } from './WorkSubmissionForm';
 import { getSession } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import { Button } from '@/components/ui/Button/Button';
+import { getCurrentDate } from '@/lib/dateUtils';
+import { SCIENTIFIC_WORKS_CONFIG, isSubmissionPeriodOpen } from '@/lib/constants';
 import styles from './page.module.css';
 
 export const metadata: Metadata = {
@@ -11,6 +14,25 @@ export const metadata: Metadata = {
 };
 
 export default async function NovoTrabalhoPage() {
+  const currentDate = await getCurrentDate();
+  if (!isSubmissionPeriodOpen(currentDate)) {
+    return (
+      <div className={styles.container}>
+        <SectionHeading title="Submissões Encerradas" />
+        <div className={styles.warningBox} style={{ background: '#fef2f2', borderColor: '#fecaca', color: '#991b1b' }}>
+          <p>
+            O prazo para submissão de trabalhos científicos foi encerrado em{' '}
+            <strong>{SCIENTIFIC_WORKS_CONFIG.deadlineDisplay}</strong> (Horário de Brasília).
+          </p>
+          <div style={{ marginTop: '1rem' }}>
+            <Button variant="outline" href="/area-participante/trabalhos">
+              Voltar para Meus Trabalhos
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
   const session = await getSession();
   if (!session) redirect('/login');
 

@@ -41,9 +41,18 @@ export const SCHEDULE_DATA = [
         title: 'Bases do Fluxo Digital Aplicado à Periodontia e Implantodontia',
         speaker: 'Prof. Dr. Vitor de Toledo Stuani',
         description: 'Professor de Implantodontia no Departamento de Cirurgia e Traumatologia Buco-Maxilo-Facial e Periodontia da FORP-USP. Especialista em Periodontia e Odontologia Hospitalar. Mestre em Reabilitação Oral e Doutor em Periodontia pela FOB-USP. Pós-doutorado pela FOB-USP. Osteology Scholar na Harvard School of Dental Medicine. Membro do Comitê Diretivo do National Osteology Group Brazil.',
-        type: 'PERIODONTIA / IMPLANTODONTIA',
-        track: 'Congresso de Odontologia FOA',
-        image: ''
+        type: 'PERIODONTIA / IMPLANTODONTIA',
+        track: 'Congresso de Odontologia FOA',
+        image: ''
+      },
+      {
+        time: '08:30h - 11:30h',
+        title: 'Integrando o cuidado: a odontologia hospitalar como pilar da assistência oncológica e das complexidades médicas associadas',
+        speaker: 'Prof. Dr. Alexandre Franco Miranda',
+        description: '17º Encontro do Centro de Assistência Odontológica à Pessoa com Deficiência (CAOE). Coordenador e Cirurgião-Dentista do Núcleo de Odontologia do Hospital Sírio-Libanês em Brasília (DF). Mestre e Doutor em Ciências da Saúde pela UnB. Pós-Doutorado pela USP e São Leopoldo Mandic. Especialista em Odontologia Hospitalar, Pacientes com Necessidades Especiais (OPNE), Periodontia, Saúde Coletiva e Gerontologia.',
+        type: 'ODONTOLOGIA HOSPITALAR',
+        track: '17º Encontro do CAOE',
+        image: '/images/palestras/alexandre-miranda.jpg'
       },
       {
         time: '10:10h - 12:00h',

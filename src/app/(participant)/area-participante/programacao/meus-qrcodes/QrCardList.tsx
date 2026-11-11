@@ -4,6 +4,7 @@ import { useState, useTransition } from 'react';
 import { cancelLectureEnrollment } from '@/actions/lectures';
 import { QrCodeDisplay } from './QrCodeDisplay';
 import { cn } from '@/lib/utils';
+import { formatBRTDate, formatBRTTime, formatBRTDateTime } from '@/lib/formatDate';
 import styles from './page.module.css';
 
 interface EnrollmentData {
@@ -22,13 +23,7 @@ interface EnrollmentData {
 
 function formatDateTime(dateStr: string) {
   const date = new Date(dateStr);
-  return date.toLocaleDateString('pt-BR', {
-    day: '2-digit',
-    month: '2-digit',
-  }) + ' às ' + date.toLocaleTimeString('pt-BR', {
-    hour: '2-digit',
-    minute: '2-digit',
-  });
+  return formatBRTDate(date) + ' às ' + formatBRTTime(date, false);
 }
 
 export function QrCardList({ enrollments }: { enrollments: EnrollmentData[] }) {
@@ -80,7 +75,7 @@ function QrCard({ enrollment }: { enrollment: EnrollmentData }) {
 
       {isAttended && enrollment.checkedInAt && (
         <span style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-muted)' }}>
-          Check-in: {new Date(enrollment.checkedInAt).toLocaleString('pt-BR')}
+          Check-in: {formatBRTDateTime(enrollment.checkedInAt)}
         </span>
       )}
 

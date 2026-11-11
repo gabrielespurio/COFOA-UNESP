@@ -5,6 +5,9 @@ import { Button } from '@/components/ui/Button/Button';
 import { Badge } from '@/components/ui/Badge/Badge';
 import { getSession } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import { formatBRTDate, formatBRTDateTime } from '@/lib/formatDate';
+import { getCurrentDate } from '@/lib/dateUtils';
+import { SCIENTIFIC_WORKS_CONFIG, isSubmissionPeriodOpen } from '@/lib/constants';
 import styles from './page.module.css';
 
 export const metadata: Metadata = {
@@ -52,6 +55,9 @@ export default async function MeusTrabalhosPage() {
     }
   }
 
+  const currentDate = await getCurrentDate();
+  const isSubmissionOpen = isSubmissionPeriodOpen(currentDate);
+
   const works = await prisma.scientificWork.findMany({
     where: { participantId: participant.id },
     include: { evaluations: true },
@@ -66,7 +72,7 @@ export default async function MeusTrabalhosPage() {
           subtitle="Acompanhe o status das suas submissões científicas."
           alignment="left"
         />
-        {isConfirmed && (
+        {isConfirmed && isSubmissionOpen && (
           <Button variant="primary" href="/area-participante/trabalhos/novo">
             + Novo Trabalho
           </Button>
@@ -85,18 +91,30 @@ export default async function MeusTrabalhosPage() {
             </svg>
             <h3>Nenhum trabalho submetido</h3>
             <p>Você ainda não enviou nenhum trabalho científico para avaliação.</p>
-            {isConfirmed ? (
-              <Button variant="outline" href="/area-participante/trabalhos/novo">
-                Submeter Primeiro Trabalho
-              </Button>
+            {isConfirmed ? (
+              isSubmissionOpen ? (
+                <Button variant="outline" href="/area-participante/trabalhos/novo">
+                  Submeter Primeiro Trabalho
+                </Button>
+              ) : (
+                <p style={{ marginTop: '1rem', color: '#991b1b', background: '#fef2f2', padding: '1rem', borderRadius: '8px', border: '1px solid #fecaca' }}>
+                  O prazo para submissão de trabalhos científicos foi encerrado em <strong>{SCIENTIFIC_WORKS_CONFIG.deadlineDisplay}</strong>.
+                </p>
+              )
             ) : (
               <p style={{ marginTop: '1rem', color: '#856404', background: '#fff3cd', padding: '1rem', borderRadius: '8px', border: '1px solid #ffeeba' }}>
                 Para submeter trabalhos, é necessário confirmar o pagamento da sua inscrição.
               </p>
             )}
           </div>
-        ) : (
-          <div className={styles.worksGrid}>
+        ) : (
+          <>
+            {!isSubmissionOpen && (
+              <div style={{ marginBottom: '1.5rem', padding: '0.75rem 1rem', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px', color: '#64748b', fontSize: '0.875rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <span>ℹ️</span> O prazo para envio de novos trabalhos científicos encerrou em {SCIENTIFIC_WORKS_CONFIG.deadlineDisplay}.
+              </div>
+            )}
+            <div className={styles.worksGrid}>
             {works.map(work => (
               <div key={work.id} className={styles.workCard}>
                 <div className={styles.workHeader}>
@@ -112,7 +130,7 @@ export default async function MeusTrabalhosPage() {
                   <div className={styles.metaItem}>
                     <span className={styles.metaLabel}>Data:</span>
                     <span className={styles.metaValue}>
-                      {new Date(work.createdAt).toLocaleDateString('pt-BR')}
+                      {formatBRTDate(work.submittedAt || work.createdAt)}
                     </span>
                   </div>
                 </div>
@@ -124,7 +142,7 @@ export default async function MeusTrabalhosPage() {
                       <span>✓</span> Trabalho Corrigido e Reenviado!
                     </div>
                     <p style={{ margin: 0, color: '#15803d', lineHeight: 1.4 }}>
-                      Seu novo arquivo foi enviado com sucesso{work.submittedAt ? ` em ${new Date(work.submittedAt).toLocaleString('pt-BR')}` : ''}. A Comissão Científica já foi notificada e fará uma nova análise.
+                      Seu novo arquivo foi enviado com sucesso{work.submittedAt ? ` em ${formatBRTDateTime(work.submittedAt)}` : ''}. A Comissão Científica já foi notificada e fará uma nova análise.
                     </p>
                   </div>
                 )}
@@ -197,9 +215,10 @@ export default async function MeusTrabalhosPage() {
                   </div>
                 )}
               </div>
-            ))}
-          </div>
-        )}
+            ))}
+          </div>
+          </>
+        )}
       </div>
     </div>
   );

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button/Button';
 import { QrCodeDisplay } from '../programacao/meus-qrcodes/QrCodeDisplay';
 import { purchaseCompanionDinnerTicket, syncCompanionDinnerPayment, cancelCompanionDinnerTicket } from '@/actions/dinner';
+import { formatBRTDate, formatBRTTime } from '@/lib/formatDate';
 import styles from './page.module.css';
 
 interface TicketData {
@@ -157,7 +158,7 @@ export function DinnerClient({
                   <span className={styles.detailValue}>
                     {ticket.checkedInAt ? (
                       <span className={styles.statusUsed}>
-                        ✓ Utilizado na entrada ({new Date(ticket.checkedInAt).toLocaleDateString('pt-BR')} às {new Date(ticket.checkedInAt).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })})
+                        ✓ Utilizado na entrada ({formatBRTDate(ticket.checkedInAt)} às {formatBRTTime(ticket.checkedInAt, false)})
                       </span>
                     ) : (
                       <span className={styles.statusConfirmed}>

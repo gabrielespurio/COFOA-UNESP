@@ -3,6 +3,7 @@
 import { useState, useTransition } from 'react';
 import { enrollInLecture } from '@/actions/lectures';
 import { cn } from '@/lib/utils';
+import { formatBRTDate, formatBRTTime } from '@/lib/formatDate';
 import styles from './page.module.css';
 
 interface LectureData {
@@ -23,22 +24,12 @@ interface LectureCardProps {
 
 function formatDateTime(dateStr: string) {
   const date = new Date(dateStr);
-  return date.toLocaleDateString('pt-BR', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-  }) + ' às ' + date.toLocaleTimeString('pt-BR', {
-    hour: '2-digit',
-    minute: '2-digit',
-  });
+  return formatBRTDate(date) + ' às ' + formatBRTTime(date, false);
 }
 
 function formatTime(dateStr: string) {
   const date = new Date(dateStr);
-  return date.toLocaleTimeString('pt-BR', {
-    hour: '2-digit',
-    minute: '2-digit',
-  });
+  return formatBRTTime(date, false);
 }
 
 export function LectureCard({ lecture, isEnrolled }: LectureCardProps) {

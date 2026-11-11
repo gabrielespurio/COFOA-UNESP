@@ -100,3 +100,14 @@ export const NAV_LINKS: readonly NavLink[] = [
   { href: '/trabalhos', label: 'Trabalhos', requiresAuth: true },
   { href: '/#local', label: 'Local' },
 ];
+
+export const SCIENTIFIC_WORKS_CONFIG = {
+  submissionDeadline: '2026-11-10T23:59:59-03:00',
+  deadlineDisplay: '10/11/2026 às 23:59',
+} as const;
+
+export function isSubmissionPeriodOpen(currentDate: Date = new Date()): boolean {
+  const deadlineStr = process.env.NEXT_PUBLIC_SUBMISSION_DEADLINE || SCIENTIFIC_WORKS_CONFIG.submissionDeadline;
+  const deadline = new Date(deadlineStr);
+  return currentDate.getTime() <= deadline.getTime();
+}

@@ -44,6 +44,14 @@ const SCHEDULE_DATA = [
         image: '/images/palestras/vitor-stuani.jpg'
       },
       {
+        time: '08:30h',
+        title: 'Integrando o cuidado: a odontologia hospitalar como pilar da assistência oncológica e das complexidades médicas associadas',
+        speaker: 'Prof. Dr. Alexandre Franco Miranda',
+        description: '• 17º Encontro do Centro de Assistência Odontológica à Pessoa com Deficiência (CAOE)\n• Coordenador e Cirurgião-Dentista do Núcleo de Odontologia do Hospital Sírio-Libanês em Brasília (DF)\n• Mestre e Doutor em Ciências da Saúde pela Universidade de Brasília (UnB)\n• Pós-Doutorado em Odontologia pela USP e Faculdade São Leopoldo Mandic\n• Especialista em Odontologia Hospitalar, Pacientes com Necessidades Especiais (OPNE), Periodontia, Saúde Coletiva e Gerontologia (SBGG)\n• Habilitado em Laserterapia, Ozonioterapia e Sedação Consciente\n• Professor permanente do Mestrado e Doutorado da Universidade Católica de Brasília (UCB)',
+        type: '17º ENCONTRO CAOE',
+        image: '/images/palestras/alexandre-miranda.jpg'
+      },
+      {
         time: '10:10h-12:00h',
         title: 'Legislação da Odontologia da HOF - Simpósio',
         speaker: 'Prof. Karina Ferrão',

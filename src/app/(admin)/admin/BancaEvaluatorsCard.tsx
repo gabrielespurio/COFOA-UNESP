@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useMemo, useEffect } from 'react';
+import { formatBRTDate } from '@/lib/formatDate';
 import styles from './BancaEvaluatorsCard.module.css';
 
 export type EvaluatorItem = {
@@ -83,7 +84,7 @@ export function BancaEvaluatorsCard({ evaluators }: BancaEvaluatorsCardProps) {
       `"${(e.institution || '').replace(/"/g, '""')}"`,
       `"${(e.areaOrCourse || '').replace(/"/g, '""')}"`,
       `"${(e.category || '').replace(/"/g, '""')}"`,
-      `"${new Date(e.createdAt).toLocaleDateString('pt-BR')}"`,
+      `"${formatBRTDate(e.createdAt)}"`,
     ]);
 
     const csvContent = '\uFEFF' + [headers.join(';'), ...rows.map(r => r.join(';'))].join('\n');
