@@ -161,9 +161,19 @@ export function ApresentacaoTrabalhosClient() {
     <div className={styles.container}>
       {/* Banner de Orientações */}
       <div className={styles.infoBanner}>
-        <div className={styles.infoBannerIcon}>💻</div>
+        <div className={styles.infoBannerIcon}>
+          {activeDay.format === 'Online' ? '💻' : '🏛️'}
+        </div>
         <div className={styles.infoBannerText}>
-          <strong>Atenção:</strong> As apresentações do dia <strong>25/11</strong> são realizadas de forma <strong>100% ONLINE</strong> nas salas virtuais. Conecte-se com pelo menos 10 minutos de antecedência ao horário previsto do seu trabalho.
+          {activeDay.format === 'Online' ? (
+            <>
+              <strong>Atenção:</strong> As apresentações do dia <strong>25/11</strong> são realizadas de forma <strong>100% ONLINE</strong> nas salas virtuais. Conecte-se com pelo menos 10 minutos de antecedência ao horário previsto do seu trabalho.
+            </>
+          ) : (
+            <>
+              <strong>Atenção:</strong> As apresentações de Painéis do dia <strong>26/11</strong> são na modalidade <strong>PRESENCIAL</strong> e ocorrem na <strong>Sala 4 nos Totens Digitais (Totens 1 a 4)</strong>. Compareça com antecedência ao totem da sua apresentação!
+            </>
+          )}
         </div>
       </div>
 
@@ -422,7 +432,7 @@ export function ApresentacaoTrabalhosClient() {
 
                         <div className={styles.itemFooter}>
                           <span style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-muted)' }}>
-                            Modalidade: Online
+                            Modalidade: {item.format === 'Presencial' ? 'Presencial (Sala 4)' : 'Online'}
                           </span>
                           <button
                             type="button"
