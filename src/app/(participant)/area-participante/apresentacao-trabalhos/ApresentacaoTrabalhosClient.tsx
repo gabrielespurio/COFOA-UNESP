@@ -171,7 +171,7 @@ export function ApresentacaoTrabalhosClient() {
             </>
           ) : (
             <>
-              <strong>Atenção:</strong> As apresentações de Painéis do dia <strong>26/11</strong> são na modalidade <strong>PRESENCIAL</strong> e ocorrem na <strong>Sala 4 nos Totens Digitais (Totens 1 a 4)</strong>. Compareça com antecedência ao totem da sua apresentação!
+              <strong>Atenção:</strong> As apresentações de Painéis do dia <strong>{activeDay.dateStr}</strong> são na modalidade <strong>PRESENCIAL</strong> e ocorrem na <strong>Sala 4 nos Totens Digitais (Totens 1 a 4)</strong>. Compareça com antecedência ao totem da sua apresentação!
             </>
           )}
         </div>

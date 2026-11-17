@@ -82,8 +82,8 @@ export default async function ParticipantDashboardPage() {
 
           <div className={styles.card}>
             <div className={styles.cardTitle}>Apresentação de Trabalhos</div>
-            <div className={styles.cardValue}>226</div>
-            <div className={styles.cardDesc}>Grade completa: trabalhos online (25/11) e presenciais (26/11)</div>
+            <div className={styles.cardValue}>311</div>
+            <div className={styles.cardDesc}>Grade completa: trabalhos online (25/11) e presenciais (26 e 27/11)</div>
             <Button href="/area-participante/apresentacao-trabalhos" variant="outline" size="sm" style={{ marginTop: '1rem' }}>
               Ver Apresentações
             </Button>
