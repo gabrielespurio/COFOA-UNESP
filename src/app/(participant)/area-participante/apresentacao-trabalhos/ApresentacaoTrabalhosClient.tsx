@@ -241,9 +241,9 @@ export function ApresentacaoTrabalhosClient() {
               )}
             </div>
 
-            {/* Linha de Filtros (Turno, Sala, Área, Nível) */}
-            <div className={styles.filterRow}>
-              {/* Filtro de Turno */}
+            {/* Filtro de Turno */}
+            <div className={styles.shiftRow}>
+              <span className={styles.filterSectionLabel}>Turno:</span>
               <div className={styles.shiftPills}>
                 {(['TODOS', 'MANHÃ', 'TARDE'] as const).map((shift) => (
                   <button
@@ -259,60 +259,60 @@ export function ApresentacaoTrabalhosClient() {
                   </button>
                 ))}
               </div>
+            </div>
 
-              {/* Menus Dropdown */}
-              <div className={styles.selectGroup}>
-                {/* Filtro de Área */}
-                <div className={styles.selectWrapper}>
-                  <label htmlFor="areaSelect" className={styles.selectLabel}>Área:</label>
-                  <select
-                    id="areaSelect"
-                    className={styles.customSelect}
-                    value={selectedArea}
-                    onChange={(e) => setSelectedArea(e.target.value)}
-                  >
-                    <option value="TODAS">Todas as Áreas ({availableAreas.length})</option>
-                    {availableAreas.map((area) => (
-                      <option key={area} value={area}>
-                        {area}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+            {/* Grid de Dropdowns (Área, Sala, Nível) */}
+            <div className={styles.dropdownGrid}>
+              {/* Filtro de Área */}
+              <div className={styles.selectWrapper}>
+                <label htmlFor="areaSelect" className={styles.selectLabel}>Área Temática:</label>
+                <select
+                  id="areaSelect"
+                  className={styles.customSelect}
+                  value={selectedArea}
+                  onChange={(e) => setSelectedArea(e.target.value)}
+                >
+                  <option value="TODAS">Todas as Áreas ({availableAreas.length})</option>
+                  {availableAreas.map((area) => (
+                    <option key={area} value={area}>
+                      {area}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-                {/* Filtro de Sala / Totem */}
-                <div className={styles.selectWrapper}>
-                  <label htmlFor="roomSelect" className={styles.selectLabel}>Sala / Totem:</label>
-                  <select
-                    id="roomSelect"
-                    className={styles.customSelect}
-                    value={selectedRoom}
-                    onChange={(e) => setSelectedRoom(e.target.value)}
-                  >
-                    <option value="TODAS">Todas as Salas ({availableRooms.length})</option>
-                    {availableRooms.map((room) => (
-                      <option key={room} value={room}>
-                        {room}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+              {/* Filtro de Sala / Totem */}
+              <div className={styles.selectWrapper}>
+                <label htmlFor="roomSelect" className={styles.selectLabel}>Sala / Totem:</label>
+                <select
+                  id="roomSelect"
+                  className={styles.customSelect}
+                  value={selectedRoom}
+                  onChange={(e) => setSelectedRoom(e.target.value)}
+                >
+                  <option value="TODAS">Todas as Salas ({availableRooms.length})</option>
+                  {availableRooms.map((room) => (
+                    <option key={room} value={room}>
+                      {room}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-                {/* Filtro de Nível */}
-                <div className={styles.selectWrapper}>
-                  <label htmlFor="catSelect" className={styles.selectLabel}>Nível:</label>
-                  <select
-                    id="catSelect"
-                    className={styles.customSelect}
-                    value={selectedCategory}
-                    onChange={(e) => setSelectedCategory(e.target.value)}
-                  >
-                    <option value="TODAS">Todos os Níveis</option>
-                    <option value="Graduação">Graduação</option>
-                    <option value="Pós-Graduação">Pós-Graduação</option>
-                    <option value="Graduação e Pós-Graduação">Graduação e Pós-Graduação</option>
-                  </select>
-                </div>
+              {/* Filtro de Nível */}
+              <div className={styles.selectWrapper}>
+                <label htmlFor="catSelect" className={styles.selectLabel}>Nível Acadêmico:</label>
+                <select
+                  id="catSelect"
+                  className={styles.customSelect}
+                  value={selectedCategory}
+                  onChange={(e) => setSelectedCategory(e.target.value)}
+                >
+                  <option value="TODAS">Todos os Níveis</option>
+                  <option value="Graduação">Graduação</option>
+                  <option value="Pós-Graduação">Pós-Graduação</option>
+                  <option value="Graduação e Pós-Graduação">Graduação e Pós-Graduação</option>
+                </select>
               </div>
             </div>
 

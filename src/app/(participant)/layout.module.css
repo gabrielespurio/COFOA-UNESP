@@ -66,6 +66,8 @@
   display: flex;
   flex-direction: column;
   min-width: 0;
+  width: 100%;
+  overflow-x: hidden;
 }
 
 .topbar {
@@ -110,8 +112,12 @@
 
 .content {
   flex: 1;
-  padding: var(--space-12);
+  padding: var(--space-8);
+  min-width: 0;
+  width: 100%;
   overflow-y: auto;
+  overflow-x: hidden;
+  box-sizing: border-box;
 }
 
 @media (max-width: 768px) {
@@ -129,6 +135,6 @@
     display: block;
   }
   .content {
-    padding: var(--space-6);
+    padding: var(--space-4) var(--space-3);
   }
 }

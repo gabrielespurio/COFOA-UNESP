@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 export default function ApresentacaoTrabalhosPage() {
   return (
-    <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+    <div style={{ width: '100%', maxWidth: '100%', minWidth: 0, boxSizing: 'border-box', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
       <SectionHeading
         overline="Grade Científica"
         title="Apresentação de Trabalhos"
