@@ -11,6 +11,7 @@ import styles from './layout.module.css';
 const MENU_ITEMS = [
   { label: 'Painel', href: '/area-participante' },
   { label: 'Programação', href: '/area-participante/programacao' },
+  { label: 'Apresentação de Trabalhos', href: '/area-participante/apresentacao-trabalhos' },
   { label: 'Meus QR Codes', href: '/area-participante/programacao/meus-qrcodes' },
   { label: 'Jantar Acompanhante', href: '/area-participante/jantar' },
   { label: 'Pagamento', href: '/area-participante/pagamento' },
