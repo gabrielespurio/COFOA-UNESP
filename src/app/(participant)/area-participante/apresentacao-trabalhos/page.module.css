@@ -491,6 +491,32 @@
   white-space: nowrap;
 }
 
+.badgeOral {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  background: rgba(27, 45, 91, 0.1);
+  color: var(--color-primary);
+  border: 1px solid rgba(27, 45, 91, 0.25);
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+}
+
+.badgePainel {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  background: rgba(196, 163, 90, 0.15);
+  color: #8c6f2d;
+  border: 1px solid rgba(196, 163, 90, 0.4);
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+}
+
 .roomPresentationCount {
   font-size: 0.75rem;
   font-weight: 500;

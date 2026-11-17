@@ -15,6 +15,7 @@ export function ApresentacaoTrabalhosClient() {
   const [selectedArea, setSelectedArea] = useState<string>('TODAS');
   const [selectedRoom, setSelectedRoom] = useState<string>('TODAS');
   const [selectedCategory, setSelectedCategory] = useState<string>('TODAS');
+  const [selectedModality, setSelectedModality] = useState<'TODOS' | 'Oral' | 'Painel'>('TODOS');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [viewMode, setViewMode] = useState<'grouped' | 'table'>('grouped');
   const [copiedId, setCopiedId] = useState<string | null>(null);
@@ -31,15 +32,28 @@ export function ApresentacaoTrabalhosClient() {
     return Array.from(set).sort();
   }, [activeDay]);
 
-  // List of unique rooms in the active day
+  // List of unique rooms in the active day (Salas first, then Totens)
   const availableRooms = useMemo(() => {
     const set = new Set<string>();
     activeDay.presentations.forEach((p) => set.add(p.room));
     return Array.from(set).sort((a, b) => {
+      const isSalaA = a.startsWith('Sala');
+      const isSalaB = b.startsWith('Sala');
+      if (isSalaA && !isSalaB) return -1;
+      if (!isSalaA && isSalaB) return 1;
       const numA = parseInt(a.replace(/\D/g, ''), 10) || 0;
       const numB = parseInt(b.replace(/\D/g, ''), 10) || 0;
       return numA - numB;
     });
+  }, [activeDay]);
+
+  // Available modalities in active day (Oral vs Painel)
+  const availableModalities = useMemo(() => {
+    const mods = new Set<string>();
+    activeDay.presentations.forEach((p) => {
+      if (p.modalityType) mods.add(p.modalityType);
+    });
+    return Array.from(mods);
   }, [activeDay]);
 
   // Turno counts
@@ -78,6 +92,10 @@ export function ApresentacaoTrabalhosClient() {
       if (selectedCategory !== 'TODAS' && item.category !== selectedCategory) {
         return false;
       }
+      // Modality filter
+      if (selectedModality !== 'TODOS' && item.modalityType !== selectedModality) {
+        return false;
+      }
       // Search query
       if (q) {
         const matchTitle = item.title.toLowerCase().includes(q);
@@ -98,6 +116,7 @@ export function ApresentacaoTrabalhosClient() {
     selectedArea,
     selectedRoom,
     selectedCategory,
+    selectedModality,
     searchQuery,
   ]);
 
@@ -131,7 +150,18 @@ export function ApresentacaoTrabalhosClient() {
       groupsMap.get(groupKey)!.presentations.push(item);
     });
 
-    return Array.from(groupsMap.values());
+    return Array.from(groupsMap.values()).sort((a, b) => {
+      if (a.shift !== b.shift) {
+        return a.shift === 'MANHÃ' ? -1 : 1;
+      }
+      const isSalaA = a.room.startsWith('Sala');
+      const isSalaB = b.room.startsWith('Sala');
+      if (isSalaA && !isSalaB) return -1;
+      if (!isSalaA && isSalaB) return 1;
+      const numA = parseInt(a.room.replace(/\D/g, ''), 10) || 0;
+      const numB = parseInt(b.room.replace(/\D/g, ''), 10) || 0;
+      return numA - numB;
+    });
   }, [filteredPresentations]);
 
   const hasActiveFilters =
@@ -139,6 +169,7 @@ export function ApresentacaoTrabalhosClient() {
     selectedArea !== 'TODAS' ||
     selectedRoom !== 'TODAS' ||
     selectedCategory !== 'TODAS' ||
+    selectedModality !== 'TODOS' ||
     searchQuery !== '';
 
   const handleResetFilters = () => {
@@ -146,6 +177,7 @@ export function ApresentacaoTrabalhosClient() {
     setSelectedArea('TODAS');
     setSelectedRoom('TODAS');
     setSelectedCategory('TODAS');
+    setSelectedModality('TODOS');
     setSearchQuery('');
   };
 
@@ -168,6 +200,10 @@ export function ApresentacaoTrabalhosClient() {
           {activeDay.format === 'Online' ? (
             <>
               <strong>Atenção:</strong> As apresentações do dia <strong>25/11</strong> são realizadas de forma <strong>100% ONLINE</strong> nas salas virtuais. Conecte-se com pelo menos 10 minutos de antecedência ao horário previsto do seu trabalho.
+            </>
+          ) : activeDay.key === '2026-11-26' ? (
+            <>
+              <strong>Atenção:</strong> No dia <strong>26/11 (Presencial)</strong> teremos <strong>Apresentações Orais</strong> nas <strong>Salas 1, 2, 3, 5, 6 e 7</strong> e <strong>Painéis Digitais</strong> na <strong>Sala 4 (Totens 1 a 4)</strong>. Compareça com antecedência à sua sala ou totem!
             </>
           ) : (
             <>
@@ -324,6 +360,23 @@ export function ApresentacaoTrabalhosClient() {
                   <option value="Graduação e Pós-Graduação">Graduação e Pós-Graduação</option>
                 </select>
               </div>
+
+              {/* Filtro de Formato (se houver mais de 1 formato no dia) */}
+              {availableModalities.length > 1 && (
+                <div className={styles.selectWrapper}>
+                  <label htmlFor="modalitySelect" className={styles.selectLabel}>Formato:</label>
+                  <select
+                    id="modalitySelect"
+                    className={styles.customSelect}
+                    value={selectedModality}
+                    onChange={(e) => setSelectedModality(e.target.value as 'TODOS' | 'Oral' | 'Painel')}
+                  >
+                    <option value="TODOS">Todos os Formatos ({availableModalities.length})</option>
+                    <option value="Oral">🎤 Apresentação Oral</option>
+                    <option value="Painel">📌 Painel Digital (Totem)</option>
+                  </select>
+                </div>
+              )}
             </div>
 
             {/* Sub-controles: Contador de resultados + Alternador de Visualização */}
@@ -407,6 +460,11 @@ export function ApresentacaoTrabalhosClient() {
                             ⏰ {item.time}
                           </span>
                           <div className={styles.itemBadges}>
+                            {item.modalityType && (
+                              <span className={item.modalityType === 'Oral' ? styles.badgeOral : styles.badgePainel}>
+                                {item.modalityType === 'Oral' ? '🎤 Oral' : '📌 Painel'}
+                              </span>
+                            )}
                             <Badge variant="outline" size="sm">
                               {item.room}
                             </Badge>
@@ -432,7 +490,13 @@ export function ApresentacaoTrabalhosClient() {
 
                         <div className={styles.itemFooter}>
                           <span style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-muted)' }}>
-                            Modalidade: {item.format === 'Presencial' ? 'Presencial (Sala 4)' : 'Online'}
+                            Modalidade: {
+                              item.format === 'Online'
+                                ? 'Online'
+                                : item.room.startsWith('Totem')
+                                  ? `Presencial • Sala 4 (${item.room})`
+                                  : `Presencial • ${item.room}`
+                            }
                           </span>
                           <button
                             type="button"
@@ -472,6 +536,11 @@ export function ApresentacaoTrabalhosClient() {
                       </td>
                       <td className={styles.tableRoom}>
                         {item.room}
+                        {item.modalityType && (
+                          <div style={{ fontSize: '0.6875rem', color: item.modalityType === 'Oral' ? 'var(--color-primary)' : '#8c6f2d', fontWeight: '600', marginTop: '2px' }}>
+                            {item.modalityType === 'Oral' ? '🎤 Oral' : '📌 Painel'}
+                          </div>
+                        )}
                       </td>
                       <td>
                         <span className={styles.tableArea}>{item.area}</span>
