@@ -82,7 +82,7 @@ export default async function ParticipantDashboardPage() {
 
           <div className={styles.card}>
             <div className={styles.cardTitle}>Apresentação de Trabalhos</div>
-            <div className={styles.cardValue}>487</div>
+            <div className={styles.cardValue}>564</div>
             <div className={styles.cardDesc}>Grade completa de apresentações orais e painéis nos totens</div>
             <Button href="/area-participante/apresentacao-trabalhos" variant="outline" size="sm" style={{ marginTop: '1rem' }}>
               Ver Apresentações
