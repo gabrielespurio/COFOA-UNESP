@@ -209,6 +209,10 @@ export function ApresentacaoTrabalhosClient() {
             <>
               <strong>Atenção:</strong> No dia <strong>27/11 (Presencial)</strong> teremos <strong>Apresentações Orais</strong> nas <strong>Salas 1, 3, 5 e 6</strong> e <strong>Painéis Digitais</strong> na <strong>Sala 4 (Totens 1 a 4)</strong>. Compareça com antecedência à sua sala ou totem!
             </>
+          ) : activeDay.key === '2026-11-28' ? (
+            <>
+              <strong>Atenção:</strong> No dia <strong>28/11 (Sábado - Presencial)</strong> teremos <strong>Apresentações Orais</strong> nas <strong>Salas 1, 2, 3, 5 e 6</strong> e <strong>Painéis Digitais</strong> na <strong>Sala 4 (Totens 1 a 4)</strong>. Compareça com antecedência à sua sala ou totem!
+            </>
           ) : (
             <>
               <strong>Atenção:</strong> As apresentações de Painéis do dia <strong>{activeDay.dateStr}</strong> são na modalidade <strong>PRESENCIAL</strong> e ocorrem na <strong>Sala 4 nos Totens Digitais (Totens 1 a 4)</strong>. Compareça com antecedência ao totem da sua apresentação!
