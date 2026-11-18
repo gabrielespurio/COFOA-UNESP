@@ -6264,6 +6264,21 @@ export const PRESENTATION_SCHEDULE: DayPresentationSchedule[] = [
         "modalityType": "Oral"
       },
       {
+        "id": "27m-oral-s3-8",
+        "time": "09:45h",
+        "normalizedTime": "09:45h",
+        "title": "POTENCIAL CITOLÓGICO DE UM NOVO BIOMATERIAL À BASE DE HEXAMETAFOSFATO DE SÓDIO PARA APLICAÇÕES ODONTOLÓGICAS",
+        "authors": "Oliveira CRS*, Morais LA, Madruga LYC, Pessan JP, Sampaio C, Moraes JCS, Hosida TY, Delbem ACB.",
+        "presenter": "Oliveira CRS",
+        "room": "Sala 3",
+        "roomFullName": "SALA 3 – ENDODONTIA",
+        "area": "Endodontia",
+        "category": "Pós-Graduação",
+        "shift": "MANHÃ",
+        "format": "Presencial",
+        "modalityType": "Oral"
+      },
+      {
         "id": "27m-oral-s5-1",
         "time": "08h",
         "normalizedTime": "08:00h",
