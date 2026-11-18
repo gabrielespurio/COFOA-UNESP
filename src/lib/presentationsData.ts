@@ -3629,6 +3629,21 @@ export const PRESENTATION_SCHEDULE: DayPresentationSchedule[] = [
         "modalityType": "Oral"
       },
       {
+        "id": "26m-oral-s1-13",
+        "time": "11h",
+        "normalizedTime": "11:00h",
+        "title": "GRAU DE CONVERSÃO E CITOTOXICIDADE DE RESINAS PARA BASES DE PRÓTESES DENTÁRIAS IMPRESSAS EM 3D: REVISÃO DE ESCOPO",
+        "authors": "Neves Silva ML*, Gomes JML, Zanon BS, Marino J, Matias LP, Areb da Silva R, Kobayashi LY, Limirio JPJO",
+        "presenter": "Neves Silva ML",
+        "room": "Sala 1",
+        "roomFullName": "SALA 1 – PRÓTESE DENTÁRIA / MATERIAIS DENTÁRIOS / OCLUSÃO / ATM",
+        "area": "Prótese Dentária / Materiais Dentários / Oclusão / ATM",
+        "category": "Graduação",
+        "shift": "MANHÃ",
+        "format": "Presencial",
+        "modalityType": "Oral"
+      },
+      {
         "id": "26m-oral-s3-1",
         "time": "08h",
         "normalizedTime": "08:00h",
