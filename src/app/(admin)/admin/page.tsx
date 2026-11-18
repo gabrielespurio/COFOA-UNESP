@@ -2,6 +2,12 @@ import { Metadata } from 'next';
 import { SectionHeading } from '@/components/ui/SectionHeading/SectionHeading';
 import { prisma } from '@/lib/prisma';
 import { BancaEvaluatorsCard } from './BancaEvaluatorsCard';
+import {
+  HandsOnEnrollmentsCard,
+  HandsOnWorkshopItem,
+  HandsOnEnrollmentItem,
+} from './HandsOnEnrollmentsCard';
+import { parseLectureConfig } from '@/lib/lectureConfig';
 import styles from './page.module.css';
 
 export const metadata: Metadata = {
@@ -140,6 +146,89 @@ export default async function AdminDashboardPage({
     createdAt: u.createdAt.toISOString(),
   }));
 
+  // 8. Hands-On & Mini-Hands Sessions & Enrollments
+  const handsOnLectures = await prisma.lecture.findMany({
+    where: {
+      OR: [
+        { title: { contains: '[HANDS-ON]' } },
+        { title: { contains: '[MINI-HANDS]' } },
+        { title: { contains: 'Hands', mode: 'insensitive' } },
+        { id: { startsWith: 'handson-' } },
+        { id: { startsWith: 'minihands-' } },
+      ],
+      active: true,
+    },
+    include: {
+      enrollments: {
+        where: { status: { not: 'CANCELLED' } },
+        include: {
+          participant: {
+            select: {
+              id: true,
+              fullName: true,
+              cpf: true,
+              phone: true,
+              institution: true,
+              user: { select: { email: true } },
+              registration: {
+                select: {
+                  status: true,
+                  category: { select: { name: true } },
+                },
+              },
+            },
+          },
+        },
+        orderBy: { createdAt: 'asc' },
+      },
+    },
+    orderBy: { startTime: 'asc' },
+  });
+
+  const serializedWorkshops: HandsOnWorkshopItem[] = handsOnLectures.map((lec) => {
+    const config = parseLectureConfig(lec);
+    return {
+      id: lec.id,
+      title: lec.title,
+      speaker: lec.speaker,
+      location: lec.location,
+      startTime: lec.startTime.toISOString(),
+      endTime: lec.endTime.toISOString(),
+      type: config.type,
+      typeLabel: config.typeLabel,
+      maxCapacity: config.maxCapacity,
+      isOpen: config.isOpen,
+      cleanDescription: config.cleanDescription,
+      enrolledCount: lec.enrollments.length,
+      isFull: lec.enrollments.length >= config.maxCapacity,
+    };
+  });
+
+  const flatEnrollments: HandsOnEnrollmentItem[] = [];
+  for (const lec of handsOnLectures) {
+    const config = parseLectureConfig(lec);
+    for (const enr of lec.enrollments) {
+      flatEnrollments.push({
+        id: enr.id,
+        participantId: enr.participant.id,
+        name: enr.participant.fullName,
+        email: enr.participant.user.email,
+        phone: enr.participant.phone,
+        cpf: enr.participant.cpf,
+        institution: enr.participant.institution || 'Não informada',
+        category: enr.participant.registration?.category?.name || 'Não informada',
+        registrationStatus: enr.participant.registration?.status || 'PENDING',
+        enrolledAt: enr.createdAt.toISOString(),
+        workshopId: lec.id,
+        workshopTitle: lec.title,
+        workshopType: config.type,
+        workshopLocation: lec.location,
+        workshopStartTime: lec.startTime.toISOString(),
+        workshopEndTime: lec.endTime.toISOString(),
+      });
+    }
+  }
+
   // Fetch categories for the filter dropdown
   const categories = await prisma.registrationCategory.findMany({ select: { id: true, name: true }});
 
@@ -175,6 +264,11 @@ export default async function AdminDashboardPage({
           <div className={styles.cardTitle}>Participantes</div>
           <div className={styles.cardValue}>{totalParticipants}</div>
         </div>
+
+        <HandsOnEnrollmentsCard
+          workshops={serializedWorkshops}
+          enrollments={flatEnrollments}
+        />
 
         <BancaEvaluatorsCard evaluators={serializedBancaUsers} />
 

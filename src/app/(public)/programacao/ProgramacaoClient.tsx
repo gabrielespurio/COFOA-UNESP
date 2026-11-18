@@ -12,8 +12,10 @@ interface LectureItem {
   title: string;
   speaker: string;
   curriculum: string;
-  track: 'Simpósio da Pós-Graduação' | 'Congresso de Odontologia FOA' | 'Encerramento';
+  track: 'Simpósio da Pós-Graduação' | 'Congresso de Odontologia FOA' | 'Encerramento' | 'Hands-on & Mini-Hands';
   category: string;
+  location?: string;
+  capacity?: number;
   isSpecial?: boolean;
 }
 
@@ -49,6 +51,18 @@ const PROGRAMACAO_DATA: DaySchedule[] = [
         category: 'Periodontia & Implantodontia',
         curriculum:
           'Professor de Implantodontia no Departamento de Cirurgia e Traumatologia Buco-Maxilo-Facial e Periodontia da FORP-USP. Especialista em Periodontia e Odontologia Hospitalar. Mestrado em Reabilitação Oral e Doutorado em Periodontia pela FOB-USP. Pós-doutorado pela FOB-USP. Osteology Scholar na Harvard School of Dental Medicine. Membro do Comitê Diretivo do National Osteology Group Brazil. Ministrador de cursos em planejamento CAD/CAM, cirurgia guiada, impressão 3D e bioimpressão.',
+      },
+      {
+        id: 'handson-dentoflex-26',
+        time: '10:00h - 12:00h',
+        title: '[HANDS-ON] Apresentação do Sistema de fresagem: Dentoflex',
+        speaker: 'Prof. Dr. André Fabris',
+        track: 'Hands-on & Mini-Hands',
+        category: 'Prática Laboratorial (20 Vagas)',
+        location: 'Multidisciplinar 1',
+        capacity: 20,
+        curriculum:
+          'Atividade prática laboratorial de imersão e domínio das técnicas e instrumentais do Sistema de fresagem Dentoflex. Vagas estritamente limitadas a 20 congressistas. Ministrado pelo Prof. Dr. André Fabris. Inscrições serão abertas em breve na Área do Participante.',
       },
       {
         id: 'qui-3',
@@ -98,6 +112,18 @@ const PROGRAMACAO_DATA: DaySchedule[] = [
     dayOfWeek: 'Sexta-feira',
     lectures: [
       {
+        id: 'minihands-sutura-27',
+        time: '08:00h - 10:00h',
+        title: '[MINI-HANDS] A Arte da Sutura: Precisão e Previsibilidade em Cirurgias Orais',
+        speaker: 'Prof. Me. Ruan Barra e Dra. Ester Santos',
+        track: 'Hands-on & Mini-Hands',
+        category: 'Prática Laboratorial (20 Vagas)',
+        location: 'SALA 7',
+        capacity: 20,
+        curriculum:
+          'Treinamento prático intensivo sobre técnicas contemporâneas de sutura em cirurgia oral menor e periodontal. Vagas estritamente limitadas a 20 congressistas. Ministrado pelo Prof. Me. Ruan Barra e Dra. Ester Santos. Inscrições serão abertas em breve na Área do Participante.',
+      },
+      {
         id: 'sex-1',
         time: '08:00h - 09:50h',
         title: 'Cirurgia Ortognática na era digital: Do Planejamento virtual à sala cirúrgica',
@@ -106,6 +132,18 @@ const PROGRAMACAO_DATA: DaySchedule[] = [
         category: 'Cirurgia Bucomaxilofacial',
         curriculum:
           'Cirurgião Bucomaxilofacial do Hospital das Clínicas da Faculdade de Medicina da Universidade de São Paulo – USP e do Hospital Universitário da USP. Residência em CTBMF pelo HC-FMUSP. Fellowship em Planejamento Cirúrgico Virtual no Houston Methodist Hospital (Texas – USA). Mestrado em Ortodontia pela Universidade São Leopoldo Mandic (Campinas). Membro Titular do Colégio Brasileiro de Cirurgia e Traumatologia Bucomaxilofacial. Graduação em Odontologia pela Faculdade de Odontologia de Araçatuba (FOA - UNESP).',
+      },
+      {
+        id: 'handson-sinuslift-27',
+        time: '10:00h - 12:00h',
+        title: '[HANDS-ON] Dominando o Sinus Lift: Hands-on em Técnica de Janela Lateral',
+        speaker: 'Prof. Dr. André Fabris e Profa. Me. Maria Eduarda Freitas',
+        track: 'Hands-on & Mini-Hands',
+        category: 'Prática Laboratorial (20 Vagas)',
+        location: 'SALA 7',
+        capacity: 20,
+        curriculum:
+          'Prática laboratorial focada no levantamento de seio maxilar com técnica de janela lateral, materiais osteocondutores e manejo de membrana. Vagas limitadas a 20 participantes. Ministrado pelo Prof. Dr. André Fabris e Profa. Me. Maria Eduarda Freitas. Inscrições serão abertas em breve na Área do Participante.',
       },
       {
         id: 'sex-2',
@@ -126,6 +164,18 @@ const PROGRAMACAO_DATA: DaySchedule[] = [
         category: 'Odontologia do Sono',
         curriculum:
           'Formado pela Faculdade de Odontologia de Araçatuba (UNESP - 1986). Doutor em Ciências da Reabilitação (distúrbios do sono) pelo HRAC/USP Bauru (2013). Diplomado em Odontologia do Sono pelo American Board of Dental Sleep Medicine (ABDSM - 2019). Membro do corpo editorial do Journal of Dental Sleep Medicine (JDSM - 2020) e da força-tarefa da AADSM para Educação em Odontologia do Sono (2020). Certificado pelo Sistema NOA – Aparelho Intraoral (Orthoapnea Madri/ES - 2022). Clínica privada desde 1986 e ministrador de cursos de capacitação na área.',
+      },
+      {
+        id: 'minihands-planejamento-27',
+        time: '16:00h - 18:00h',
+        title: '[MINI-HANDS] Planejamento Digital e Análise Tomográfica',
+        speaker: 'Dr. João Paulo Schmitt e Prof. Me. Jozeias Fernandes',
+        track: 'Hands-on & Mini-Hands',
+        category: 'Prática Laboratorial (20 Vagas)',
+        location: 'SALA 7',
+        capacity: 20,
+        curriculum:
+          'Workshop prático de navegação tomográfica computadorizada e planejamento digital para cirurgia e prótese guiada. Vagas limitadas a 20 participantes. Ministrado pelo Dr. João Paulo Schmitt e Prof. Me. Jozeias Fernandes. Inscrições serão abertas em breve na Área do Participante.',
       },
       {
         id: 'sex-4',
@@ -155,6 +205,18 @@ const PROGRAMACAO_DATA: DaySchedule[] = [
           'Técnico em Prótese Dentária pelo Instituto Francano de Prótese Odontológica (IFPO - 1999). Cirurgião Dentista pela UNIFRAN (2007). Especialista em Implantodontia pela UNAERP (2015). Mestrando em Implantodontia na Faculdade ILAPEO. CEO do laboratório especializado em CAD/CAM Digital Center (responsável técnico por 9 unidades em SP e MG). Membro ativo do International Team of Implantology (ITI) desde 2015. Speaker Digital Straumann/Neodent desde 2017.',
       },
       {
+        id: 'handson-dentoflex-28',
+        time: '10:00h - 12:00h',
+        title: '[HANDS-ON] Apresentação do Sistema de fresagem: Dentoflex',
+        speaker: 'Prof. Dr. André Fabris',
+        track: 'Hands-on & Mini-Hands',
+        category: 'Prática Laboratorial (20 Vagas)',
+        location: 'SALA 7',
+        capacity: 20,
+        curriculum:
+          'Segunda sessão prática laboratorial do Sistema de fresagem Dentoflex. Vagas estritamente limitadas a 20 participantes. Ministrado pelo Prof. Dr. André Fabris. Inscrições serão abertas em breve na Área do Participante.',
+      },
+      {
         id: 'sab-2',
         time: '10:10h - 12:00h',
         title: 'Fluxo Digital aplicado a estética Dental',
@@ -163,6 +225,18 @@ const PROGRAMACAO_DATA: DaySchedule[] = [
         category: 'Dentística & Estética Dental',
         curriculum:
           'Cirurgião Dentista pela Faculdade de Odontologia de Lins (UNIMEP - 2000). Especialista em Periodontia pela FOA-UNESP (2003). Mestre pela Faculdade de Medicina de São José do Rio Preto (FAMERP - 2012). Especialista em Implantes pelo COE São José do Rio Preto (2013). DSD Team Member (Miami - 2014). Ex-professor de Cirurgia, Periodontia e Anestesiologia da Unirp. Coautor dos livros "Cad Cam no laboratório e na Clínica" e "Arquitetura Facial".',
+      },
+      {
+        id: 'minihands-escaneamento-28',
+        time: '14:00h - 16:00h',
+        title: '[MINI-HANDS] Escaneamento Intraoral na Prática: Técnicas e Protocolos de Aquisição Digital',
+        speaker: 'Dr. João Paulo Schmitt e Prof. Me. Jozeias Fernandes',
+        track: 'Hands-on & Mini-Hands',
+        category: 'Prática Laboratorial (20 Vagas)',
+        location: 'SALA 7',
+        capacity: 20,
+        curriculum:
+          'Hands-on com scanner intraoral ao vivo, detalhando estratégias de escaneamento em dentes, implantes e tecidos moles. Vagas limitadas a 20 participantes. Ministrado pelo Dr. João Paulo Schmitt e Prof. Me. Jozeias Fernandes. Inscrições serão abertas em breve na Área do Participante.',
       },
       {
         id: 'sab-3',
@@ -211,6 +285,7 @@ const PROGRAMACAO_DATA: DaySchedule[] = [
 
 export function ProgramacaoClient() {
   const [selectedDay, setSelectedDay] = useState<string>('all');
+  const [activityFilter, setActivityFilter] = useState<'all' | 'palestras' | 'handson'>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [expandedCurriculums, setExpandedCurriculums] = useState<Record<string, boolean>>({});
 
@@ -228,8 +303,13 @@ export function ProgramacaoClient() {
         return null;
       }
 
-      // Filter by search query
+      // Filter by activity filter & search query
       const filteredLectures = day.lectures.filter((lec) => {
+        const isHandsOn = lec.track === 'Hands-on & Mini-Hands';
+
+        if (activityFilter === 'handson' && !isHandsOn) return false;
+        if (activityFilter === 'palestras' && isHandsOn) return false;
+
         if (!searchQuery.trim()) return true;
         const q = searchQuery.toLowerCase();
         return (
@@ -237,6 +317,7 @@ export function ProgramacaoClient() {
           lec.speaker.toLowerCase().includes(q) ||
           lec.category.toLowerCase().includes(q) ||
           lec.track.toLowerCase().includes(q) ||
+          (lec.location && lec.location.toLowerCase().includes(q)) ||
           lec.curriculum.toLowerCase().includes(q)
         );
       });
@@ -248,7 +329,7 @@ export function ProgramacaoClient() {
         lectures: filteredLectures,
       };
     }).filter(Boolean) as DaySchedule[];
-  }, [selectedDay, searchQuery]);
+  }, [selectedDay, activityFilter, searchQuery]);
 
   return (
     <div className={styles.wrapper}>
@@ -273,7 +354,7 @@ export function ProgramacaoClient() {
           <input
             type="text"
             className={styles.searchInput}
-            placeholder="Buscar por tema, palestrante, especialidade..."
+            placeholder="Buscar por tema, palestrante, especialidade, sala..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
@@ -289,8 +370,34 @@ export function ProgramacaoClient() {
         </div>
 
         <Link href="/area-participante/programacao" className={styles.enrollCtaBtn}>
-          🎟️ Inscrever-se em Palestras
+          🎟️ Inscrever-se em Palestras & Hands-On
         </Link>
+      </div>
+
+      {/* Activity Filter (All, Palestras, Hands-On & Mini-Hands) */}
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+        <button
+          type="button"
+          className={`${styles.tabBtn} ${activityFilter === 'all' ? styles.tabBtnActive : ''}`}
+          onClick={() => setActivityFilter('all')}
+        >
+          Todas as Atividades
+        </button>
+        <button
+          type="button"
+          className={`${styles.tabBtn} ${activityFilter === 'handson' ? styles.tabBtnActive : ''}`}
+          onClick={() => setActivityFilter('handson')}
+          style={{ borderColor: 'rgba(217, 119, 6, 0.5)' }}
+        >
+          🛠️ Hands-On & Mini-Hands (20 Vagas)
+        </button>
+        <button
+          type="button"
+          className={`${styles.tabBtn} ${activityFilter === 'palestras' ? styles.tabBtnActive : ''}`}
+          onClick={() => setActivityFilter('palestras')}
+        >
+          🎓 Palestras & Simpósio
+        </button>
       </div>
 
       {/* Day Tabs */}
@@ -319,8 +426,16 @@ export function ProgramacaoClient() {
       <div className={styles.timelineContainer}>
         {filteredDays.length === 0 ? (
           <div className={styles.noResults}>
-            <p>Nenhuma palestra encontrada com os critérios pesquisados.</p>
-            <Button variant="outline" size="sm" onClick={() => { setSearchQuery(''); setSelectedDay('all'); }}>
+            <p>Nenhuma atividade encontrada com os critérios pesquisados.</p>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                setSearchQuery('');
+                setSelectedDay('all');
+                setActivityFilter('all');
+              }}
+            >
               Limpar filtros
             </Button>
           </div>
@@ -341,6 +456,7 @@ export function ProgramacaoClient() {
                 {day.lectures.map((lec) => {
                   const isExpanded = !!expandedCurriculums[lec.id];
                   const isSimposio = lec.track === 'Simpósio da Pós-Graduação';
+                  const isHandsOn = lec.track === 'Hands-on & Mini-Hands';
                   const isEncerramento = lec.isSpecial;
 
                   return (
@@ -348,19 +464,50 @@ export function ProgramacaoClient() {
                       key={lec.id}
                       className={`${styles.lectureCard} ${
                         isSimposio ? styles.simposioCard : ''
-                      } ${isEncerramento ? styles.encerramentoCard : ''}`}
+                      } ${isEncerramento ? styles.encerramentoCard : ''} ${
+                        isHandsOn ? styles.handsonCard : ''
+                      }`}
+                      style={
+                        isHandsOn
+                          ? {
+                              borderLeft: '5px solid #d97706',
+                              background:
+                                'linear-gradient(to right, rgba(245, 158, 11, 0.03), var(--color-surface) 35%)',
+                            }
+                          : undefined
+                      }
                     >
                       <div className={styles.cardHeader}>
                         <div className={styles.timeBadgeWrapper}>
                           <span className={styles.timeTag}>🕒 {lec.time}</span>
                           <Badge
                             variant={
-                              isEncerramento ? 'gold' : isSimposio ? 'info' : 'primary'
+                              isEncerramento
+                                ? 'gold'
+                                : isHandsOn
+                                ? 'warning'
+                                : isSimposio
+                                ? 'info'
+                                : 'primary'
                             }
                             size="sm"
                           >
                             {lec.track}
                           </Badge>
+                          {lec.location && (
+                            <span
+                              style={{
+                                fontSize: '0.75rem',
+                                fontWeight: 700,
+                                background: 'rgba(0, 0, 0, 0.05)',
+                                padding: '2px 8px',
+                                borderRadius: '4px',
+                                color: 'var(--color-text-secondary)',
+                              }}
+                            >
+                              📍 {lec.location}
+                            </span>
+                          )}
                         </div>
                         <span className={styles.categoryTag}>{lec.category}</span>
                       </div>
@@ -369,10 +516,12 @@ export function ProgramacaoClient() {
 
                       <div className={styles.speakerRow}>
                         <div className={styles.speakerAvatar}>
-                          {isEncerramento ? '🥂' : '👨‍⚕️'}
+                          {isEncerramento ? '🥂' : isHandsOn ? '🛠️' : '👨‍⚕️'}
                         </div>
                         <div>
-                          <span className={styles.speakerLabel}>Palestrante / Responsável</span>
+                          <span className={styles.speakerLabel}>
+                            {isHandsOn ? 'Instrutor / Ministrador' : 'Palestrante / Responsável'}
+                          </span>
                           <h4 className={styles.speakerName}>{lec.speaker}</h4>
                         </div>
                       </div>
@@ -383,22 +532,47 @@ export function ProgramacaoClient() {
                           className={styles.curriculumToggleBtn}
                           onClick={() => toggleCurriculum(lec.id)}
                         >
-                          <span>{isExpanded ? 'Ocultar mini-currículo' : 'Ver mini-currículo'}</span>
+                          <span>
+                            {isExpanded
+                              ? isHandsOn
+                                ? 'Ocultar detalhes da prática'
+                                : 'Ocultar mini-currículo'
+                              : isHandsOn
+                              ? 'Ver detalhes da prática'
+                              : 'Ver mini-currículo'}
+                          </span>
                           <span className={styles.arrowIcon}>{isExpanded ? '▲' : '▼'}</span>
                         </button>
 
                         <Link
                           href="/area-participante/programacao"
                           className={styles.cardActionLink}
+                          style={isHandsOn ? { color: '#d97706', fontWeight: 700 } : undefined}
                         >
-                          Inscrever-se →
+                          {isHandsOn ? 'Inscrições na Área do Participante →' : 'Inscrever-se →'}
                         </Link>
                       </div>
 
                       {isExpanded && (
                         <div className={styles.curriculumBox}>
-                          <div className={styles.curriculumTitle}>Mini Currículo:</div>
+                          <div className={styles.curriculumTitle}>
+                            {isHandsOn ? 'Sobre a Atividade Prática:' : 'Mini Currículo:'}
+                          </div>
                           <p className={styles.curriculumText}>{lec.curriculum}</p>
+                          {isHandsOn && (
+                            <div
+                              style={{
+                                marginTop: '0.75rem',
+                                padding: '0.5rem 0.75rem',
+                                background: 'rgba(217, 119, 6, 0.1)',
+                                borderRadius: '6px',
+                                fontSize: '0.8rem',
+                                color: '#92400e',
+                              }}
+                            >
+                              ⚠️ <strong>Atenção:</strong> Vagas estritamente limitadas a 20 participantes. Abertura das inscrições na Área do Participante.
+                            </div>
+                          )}
                         </div>
                       )}
                     </article>

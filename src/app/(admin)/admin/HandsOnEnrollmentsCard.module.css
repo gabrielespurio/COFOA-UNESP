@@ -1,0 +1,561 @@
+.card {
+  background: var(--color-surface, #F8F7F4);
+  border: 1px solid var(--color-border, #E2E0DB);
+  border-radius: var(--radius-lg, 12px);
+  padding: var(--space-6, 1.5rem);
+  box-shadow: var(--shadow-sm, 0 1px 3px rgba(0,0,0,0.05));
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  text-align: left;
+  position: relative;
+  outline: none;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(217, 119, 6, 0.15);
+  border-color: #d97706;
+}
+
+.card:focus-visible {
+  border-color: #b45309;
+  box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.25);
+}
+
+.cardTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-4, 1rem);
+}
+
+.cardTitle {
+  color: var(--color-text-secondary, #5A6A85);
+  font-size: var(--text-sm, 0.875rem);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.badgeClickable {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.2rem 0.55rem;
+  border-radius: 9999px;
+  font-size: 0.725rem;
+  font-weight: 600;
+  background: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fde68a;
+  transition: background-color 0.15s;
+}
+
+.card:hover .badgeClickable {
+  background: #fde68a;
+  color: #78350f;
+}
+
+.cardValue {
+  color: #b45309;
+  font-size: var(--text-4xl, 2.25rem);
+  font-weight: 800;
+  font-family: var(--font-heading, inherit);
+  line-height: 1;
+  margin-bottom: 0.5rem;
+}
+
+.cardSubtitle {
+  font-size: 0.8125rem;
+  color: #78350f;
+  margin-bottom: 0.75rem;
+  font-weight: 500;
+}
+
+.cardFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.8125rem;
+  color: #b45309;
+  font-weight: 600;
+  padding-top: 0.5rem;
+  border-top: 1px dashed #fde68a;
+}
+
+/* Modal styles */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.7);
+  backdrop-filter: blur(4px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+  animation: overlayFadeIn 0.2s ease-out;
+}
+
+@keyframes overlayFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal {
+  background: #ffffff;
+  border-radius: 14px;
+  width: 100%;
+  max-width: 1100px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+  animation: modalEnter 0.2s ease-out;
+}
+
+@keyframes modalEnter {
+  from {
+    opacity: 0;
+    transform: scale(0.97) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.modalHeader {
+  padding: 1.25rem 1.75rem;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fffbeb;
+}
+
+.headerInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.modalTitle {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #78350f;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.modalSubtitle {
+  font-size: 0.875rem;
+  color: #92400e;
+  margin: 0;
+}
+
+.closeButton {
+  background: transparent;
+  border: none;
+  font-size: 1.35rem;
+  cursor: pointer;
+  color: #92400e;
+  border-radius: 8px;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+}
+
+.closeButton:hover {
+  background: #fef3c7;
+  color: #78350f;
+}
+
+/* Workshop Overview Strip */
+.workshopsSection {
+  padding: 1rem 1.75rem;
+  background: #fafafa;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.workshopsSectionTitle {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #6b7280;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.workshopsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 0.75rem;
+  max-height: 220px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.workshopCard {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.workshopCard:hover {
+  border-color: #f59e0b;
+  box-shadow: 0 2px 6px rgba(245, 158, 11, 0.15);
+}
+
+.workshopCardSelected {
+  border-color: #d97706 !important;
+  background: #fffdf5 !important;
+  box-shadow: 0 0 0 2px rgba(217, 119, 6, 0.3) !important;
+}
+
+.workshopCardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.workshopCardTitle {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #1f2937;
+  line-height: 1.3;
+}
+
+.workshopBadge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.badgeHands {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.badgeMini {
+  background: #ede9fe;
+  color: #5b21b6;
+}
+
+.workshopMeta {
+  font-size: 0.775rem;
+  color: #6b7280;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.workshopCardFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 0.4rem;
+  border-top: 1px solid #f3f4f6;
+  font-size: 0.775rem;
+}
+
+.vacanciesCount {
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.statusIndicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 600;
+  font-size: 0.725rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.statusOpen {
+  background: #ecfdf5;
+  color: #065f46;
+}
+
+.statusClosed {
+  background: #fef2f2;
+  color: #991b1b;
+}
+
+.toggleStatusBtn {
+  background: transparent;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  padding: 2px 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.15s;
+}
+
+.toggleStatusBtn:hover {
+  background: #f3f4f6;
+}
+
+/* Toolbar & Filters */
+.toolbar {
+  padding: 0.875rem 1.75rem;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #f3f4f6;
+  background: #ffffff;
+  flex-wrap: wrap;
+}
+
+.filtersLeft {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex: 1;
+  min-width: 280px;
+}
+
+.workshopSelect {
+  padding: 0.55rem 0.85rem;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  font-size: 0.825rem;
+  background: #ffffff;
+  color: #374151;
+  max-width: 280px;
+}
+
+.searchBox {
+  flex: 1;
+  min-width: 200px;
+  position: relative;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 0.875rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #9ca3af;
+  pointer-events: none;
+  font-size: 0.95rem;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 0.55rem 0.85rem 0.55rem 2.25rem;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  font-size: 0.85rem;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.searchInput:focus {
+  border-color: #d97706;
+  box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.15);
+}
+
+.exportButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.625rem 1.15rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #065f46;
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+
+.exportButton:hover {
+  background: #d1fae5;
+  border-color: #6ee7b7;
+  transform: translateY(-1px);
+}
+
+.tableContainer {
+  overflow-y: auto;
+  flex: 1;
+  max-height: calc(88vh - 350px);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.875rem;
+}
+
+.table th {
+  position: sticky;
+  top: 0;
+  background: #f9fafb;
+  padding: 0.75rem 1.25rem;
+  font-weight: 600;
+  color: #4b5563;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  z-index: 1;
+}
+
+.table td {
+  padding: 0.75rem 1.25rem;
+  border-bottom: 1px solid #f3f4f6;
+  color: #374151;
+  vertical-align: middle;
+}
+
+.table tbody tr:hover td {
+  background: #fffdf5;
+}
+
+.participantName {
+  font-weight: 600;
+  color: #111827;
+  display: block;
+}
+
+.participantEmail {
+  font-size: 0.8125rem;
+  color: #6b7280;
+  display: block;
+}
+
+.workshopColumnTitle {
+  font-weight: 600;
+  font-size: 0.825rem;
+  color: #1f2937;
+  display: block;
+}
+
+.workshopColumnMeta {
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+.categoryTag {
+  display: inline-block;
+  padding: 0.2rem 0.5rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  background: #f3f4f6;
+  color: #374151;
+  border: 1px solid #e5e7eb;
+}
+
+.emptyState {
+  padding: 3rem 1.5rem;
+  text-align: center;
+  color: #6b7280;
+  font-size: 0.95rem;
+}
+
+.modalFooter {
+  padding: 0.875rem 1.75rem;
+  border-top: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fafafa;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.footerCount {
+  font-size: 0.8125rem;
+  color: #6b7280;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.pageBtn {
+  padding: 0.4rem 0.75rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.pageBtn:hover:not(:disabled) {
+  background: #f3f4f6;
+  border-color: #9ca3af;
+}
+
+.pageBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pageInfo {
+  font-size: 0.8125rem;
+  color: #4b5563;
+}
+
+@media (max-width: 768px) {
+  .workshopsGrid {
+    grid-template-columns: 1fr;
+    max-height: 180px;
+  }
+  .toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .filtersLeft {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .workshopSelect {
+    max-width: none;
+  }
+  .exportButton {
+    width: 100%;
+    justify-content: center;
+  }
+}

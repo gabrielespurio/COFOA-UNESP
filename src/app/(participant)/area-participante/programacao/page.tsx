@@ -1,12 +1,10 @@
 import React from 'react';
 import { SectionHeading } from '@/components/ui/SectionHeading/SectionHeading';
-import { Button } from '@/components/ui/Button/Button';
 import { getLectures, getMyEnrolledLectureIds } from '@/actions/lectures';
-import { LectureCard } from './LectureCard';
-import styles from './page.module.css';
+import { ParticipantProgramacaoClient } from './ParticipantProgramacaoClient';
 
 export const metadata = {
-  title: 'Programação — COFOA XV',
+  title: 'Programação & Inscrições — COFOA XV',
 };
 
 export default async function ProgramacaoPage() {
@@ -15,47 +13,29 @@ export default async function ProgramacaoPage() {
     getMyEnrolledLectureIds(),
   ]);
 
-  const enrolledSet = new Set(enrolledIds);
+  // Serialize date objects for client component
+  const serializedLectures = lectures.map((lecture: any) => ({
+    id: lecture.id,
+    title: lecture.title,
+    description: lecture.description,
+    speaker: lecture.speaker,
+    location: lecture.location,
+    startTime: lecture.startTime.toISOString(),
+    endTime: lecture.endTime.toISOString(),
+    _count: lecture._count,
+  }));
 
   return (
-    <div style={{ maxWidth: '900px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+    <div style={{ maxWidth: '960px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '1.25rem', paddingBottom: '3rem' }}>
       <SectionHeading
-        title="Programação do Evento"
-        subtitle="Confira as palestras disponíveis e inscreva-se nas que mais combinam com a sua jornada acadêmica."
+        title="Programação & Inscrição em Atividades"
+        subtitle="Inscreva-se nas palestras científicas e nos workshops práticos laboratoriais (Hands-On e Mini-Hands com limite de 20 vagas)."
       />
 
-      {enrolledIds.length > 0 && (
-        <div className={styles.topActions}>
-          <Button href="/area-participante/programacao/meus-qrcodes" variant="outline" size="sm">
-            🎫 Meu QR Code
-          </Button>
-        </div>
-      )}
-
-      {lectures.length === 0 ? (
-        <div className={styles.emptyState}>
-          <div className={styles.emptyIcon}>📋</div>
-          <div className={styles.emptyTitle}>Em Breve</div>
-          <div className={styles.emptyText}>
-            A grade científica do COFOA XV está sendo cuidadosamente preparada.<br />
-            Em breve divulgaremos todos os detalhes das palestras.
-          </div>
-        </div>
-      ) : (
-        <div className={styles.lecturesGrid}>
-          {lectures.map((lecture: any) => (
-            <LectureCard
-              key={lecture.id}
-              lecture={{
-                ...lecture,
-                startTime: lecture.startTime.toISOString(),
-                endTime: lecture.endTime.toISOString(),
-              }}
-              isEnrolled={enrolledSet.has(lecture.id)}
-            />
-          ))}
-        </div>
-      )}
+      <ParticipantProgramacaoClient
+        lectures={serializedLectures}
+        enrolledIds={enrolledIds}
+      />
     </div>
   );
 }

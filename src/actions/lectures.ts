@@ -4,6 +4,7 @@ import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
 import { revalidatePath } from 'next/cache';
 import { formatBRTDateTime, formatBRTTime } from '@/lib/formatDate';
+import { parseLectureConfig, buildDescriptionWithConfig } from '@/lib/lectureConfig';
 
 // ─── Helpers ───────────────────────────────────────────────
 
@@ -88,9 +89,34 @@ export async function enrollInLecture(lectureId: string) {
   }
 
   // Check lecture exists and is active
-  const lecture = await prisma.lecture.findUnique({ where: { id: lectureId } });
+  const lecture = await prisma.lecture.findUnique({
+    where: { id: lectureId },
+    include: {
+      _count: {
+        select: {
+          enrollments: { where: { status: { not: 'CANCELLED' } } },
+        },
+      },
+    },
+  });
   if (!lecture || !lecture.active) {
-    return { error: 'Palestra não encontrada ou não está disponível.' };
+    return { error: 'Atividade não encontrada ou não está disponível.' };
+  }
+
+  // Parse Hands-On / Capacity / Open status configuration
+  const config = parseLectureConfig(lecture);
+
+  if (!config.isOpen) {
+    return {
+      error:
+        'As inscrições para esta atividade prática ainda estão em preparação e serão abertas em breve pela comissão organizadora.',
+    };
+  }
+
+  if (lecture._count.enrollments >= config.maxCapacity) {
+    return {
+      error: `Desculpe, as vagas para esta atividade estão esgotadas (limite máximo de ${config.maxCapacity} participantes atingido).`,
+    };
   }
 
   // Check not already enrolled
@@ -414,4 +440,110 @@ export async function getLectureAttendance(lectureId: string) {
       scannedAt: a.scannedAt,
     })),
   };
+}
+
+// ─── Hands-On & Mini-Hands Admin Management ────────────────
+
+export async function toggleLectureEnrollmentStatus(lectureId: string, isOpen: boolean) {
+  await checkCommitteeOrAdmin();
+
+  const lecture = await prisma.lecture.findUnique({
+    where: { id: lectureId },
+  });
+
+  if (!lecture) {
+    return { error: 'Atividade não encontrada.' };
+  }
+
+  const currentConfig = parseLectureConfig(lecture);
+  const updatedDescription = buildDescriptionWithConfig(currentConfig.cleanDescription, {
+    maxCapacity: currentConfig.maxCapacity,
+    isOpen,
+  });
+
+  await prisma.lecture.update({
+    where: { id: lectureId },
+    data: {
+      description: updatedDescription,
+    },
+  });
+
+  revalidatePath('/admin');
+  revalidatePath('/programacao');
+  revalidatePath('/area-participante/programacao');
+
+  return { success: true, isOpen };
+}
+
+export async function getHandsOnManagementData() {
+  await checkCommitteeOrAdmin();
+
+  const lectures = await prisma.lecture.findMany({
+    where: {
+      OR: [
+        { title: { contains: '[HANDS-ON]' } },
+        { title: { contains: '[MINI-HANDS]' } },
+        { title: { contains: 'Hands', mode: 'insensitive' } },
+        { id: { startsWith: 'handson-' } },
+        { id: { startsWith: 'minihands-' } },
+      ],
+      active: true,
+    },
+    include: {
+      enrollments: {
+        where: { status: { not: 'CANCELLED' } },
+        include: {
+          participant: {
+            select: {
+              id: true,
+              fullName: true,
+              cpf: true,
+              phone: true,
+              institution: true,
+              user: { select: { email: true } },
+              registration: {
+                select: {
+                  status: true,
+                  category: { select: { name: true } },
+                },
+              },
+            },
+          },
+        },
+        orderBy: { createdAt: 'asc' },
+      },
+    },
+    orderBy: { startTime: 'asc' },
+  });
+
+  return lectures.map((lec) => {
+    const config = parseLectureConfig(lec);
+    return {
+      id: lec.id,
+      title: lec.title,
+      speaker: lec.speaker,
+      location: lec.location,
+      startTime: lec.startTime.toISOString(),
+      endTime: lec.endTime.toISOString(),
+      type: config.type,
+      typeLabel: config.typeLabel,
+      maxCapacity: config.maxCapacity,
+      isOpen: config.isOpen,
+      cleanDescription: config.cleanDescription,
+      enrolledCount: lec.enrollments.length,
+      isFull: lec.enrollments.length >= config.maxCapacity,
+      enrollments: lec.enrollments.map((enr) => ({
+        id: enr.id,
+        participantId: enr.participant.id,
+        name: enr.participant.fullName,
+        email: enr.participant.user.email,
+        phone: enr.participant.phone,
+        cpf: enr.participant.cpf,
+        institution: enr.participant.institution || 'Não informada',
+        category: enr.participant.registration?.category?.name || 'Não informada',
+        registrationStatus: enr.participant.registration?.status || 'PENDING',
+        enrolledAt: enr.createdAt.toISOString(),
+      })),
+    };
+  });
 }
