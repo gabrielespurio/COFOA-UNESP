@@ -46,7 +46,7 @@ export function LectureCard({ lecture, isEnrolled }: LectureCardProps) {
     setError(null);
     startTransition(async () => {
       const result = await enrollInLecture(lecture.id);
-      if (result.error) {
+      if ('error' in result && result.error) {
         setError(result.error);
       } else {
         setEnrolled(true);
@@ -115,7 +115,7 @@ export function LectureCard({ lecture, isEnrolled }: LectureCardProps) {
                 {config.isOpen ? (
                   isFull ? (
                     <span className={styles.soldOutText}>
-                      Esgotado ({enrollCount}/{config.maxCapacity} vagas)
+                      🛑 Bloqueado ({enrollCount}/{config.maxCapacity} vagas)
                     </span>
                   ) : (
                     <span>
@@ -123,12 +123,12 @@ export function LectureCard({ lecture, isEnrolled }: LectureCardProps) {
                       <strong>
                         {enrollCount} / {config.maxCapacity}
                       </strong>{' '}
-                      preenchidas ({config.maxCapacity - enrollCount} restantes)
+                      preenchidas ({config.maxCapacity - enrollCount} restantes até o bloqueio)
                     </span>
                   )
                 ) : (
                   <span className={styles.offlineText}>
-                    Limite de 20 vagas • Inscrições em breve
+                    Bloqueio estrito em 20 vagas • Inscrições em breve
                   </span>
                 )}
               </div>
@@ -156,9 +156,9 @@ export function LectureCard({ lecture, isEnrolled }: LectureCardProps) {
             <button
               className={cn(styles.enrollBtn, styles.enrollBtnSoldOut)}
               disabled
-              title="Todas as 20 vagas foram preenchidas."
+              title="Inscrições bloqueadas: o limite máximo de 20 vagas foi atingido."
             >
-              🚫 Esgotado
+              🔒 Bloqueado (20 Vagas)
             </button>
           ) : (
             <button

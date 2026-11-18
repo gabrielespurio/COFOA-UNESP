@@ -85,19 +85,12 @@ export async function enrollInLecture(lectureId: string) {
     where: { participantId: participant.id },
   });
   if (!registration || registration.status !== 'CONFIRMED') {
-    return { error: 'Você precisa ter uma inscrição confirmada no evento para se inscrever em palestras.' };
+    return { error: 'Você precisa ter uma inscrição confirmada no evento para se inscrever em palestras e workshops.' };
   }
 
   // Check lecture exists and is active
   const lecture = await prisma.lecture.findUnique({
     where: { id: lectureId },
-    include: {
-      _count: {
-        select: {
-          enrollments: { where: { status: { not: 'CANCELLED' } } },
-        },
-      },
-    },
   });
   if (!lecture || !lecture.active) {
     return { error: 'Atividade não encontrada ou não está disponível.' };
@@ -113,42 +106,59 @@ export async function enrollInLecture(lectureId: string) {
     };
   }
 
-  if (lecture._count.enrollments >= config.maxCapacity) {
-    return {
-      error: `Desculpe, as vagas para esta atividade estão esgotadas (limite máximo de ${config.maxCapacity} participantes atingido).`,
-    };
-  }
-
   // Check not already enrolled
   const existing = await prisma.lectureEnrollment.findUnique({
     where: { participantId_lectureId: { participantId: participant.id, lectureId } },
   });
   if (existing && existing.status !== 'CANCELLED') {
-    return { error: 'Você já está inscrito nesta palestra.' };
+    return { error: 'Você já possui inscrição confirmada nesta atividade.' };
   }
 
   try {
-    if (existing && existing.status === 'CANCELLED') {
-      // Re-enroll
-      await prisma.lectureEnrollment.update({
-        where: { id: existing.id },
-        data: { status: 'ENROLLED', checkedInAt: null },
-      });
-    } else {
-      await prisma.lectureEnrollment.create({
-        data: {
-          participantId: participant.id,
+    const result = await prisma.$transaction(async (tx) => {
+      // Re-count active enrollments inside transaction for atomic concurrency lock
+      const activeCount = await tx.lectureEnrollment.count({
+        where: {
           lectureId,
+          status: { not: 'CANCELLED' },
         },
       });
-    }
+
+      // Strict 20-seat lock
+      if (activeCount >= config.maxCapacity) {
+        throw new Error(
+          `BLOQUEIO_20_VAGAS: O limite máximo de ${config.maxCapacity} inscrições para esta atividade foi atingido. Inscrições bloqueadas e encerradas.`
+        );
+      }
+
+      if (existing && existing.status === 'CANCELLED') {
+        // Re-enroll
+        await tx.lectureEnrollment.update({
+          where: { id: existing.id },
+          data: { status: 'ENROLLED', checkedInAt: null },
+        });
+      } else {
+        await tx.lectureEnrollment.create({
+          data: {
+            participantId: participant.id,
+            lectureId,
+          },
+        });
+      }
+
+      return { success: true };
+    });
 
     revalidatePath('/area-participante/programacao');
     revalidatePath('/area-participante/programacao/meus-qrcodes');
-    return { success: true };
+    revalidatePath('/admin');
+    return result;
   } catch (err: any) {
+    if (err.message && err.message.startsWith('BLOQUEIO_20_VAGAS:')) {
+      return { error: err.message.replace('BLOQUEIO_20_VAGAS: ', '') };
+    }
     console.error('Error enrolling in lecture:', err);
-    return { error: 'Erro ao se inscrever na palestra.' };
+    return { error: 'Erro ao se inscrever na atividade.' };
   }
 }
 

@@ -259,7 +259,7 @@ export function HandsOnEnrollmentsCard({
             <div className={styles.workshopsSection}>
               <div className={styles.workshopsSectionTitle}>
                 <span>Painel das 6 Atividades (Clique para filtrar)</span>
-                <span>Limite: 20 vagas / turma</span>
+                <span>Bloqueio Automático em 20 Vagas / Turma</span>
               </div>
 
               <div className={styles.workshopsGrid}>
@@ -291,7 +291,7 @@ export function HandsOnEnrollmentsCard({
 
                       <div className={styles.workshopCardFooter}>
                         <span className={styles.vacanciesCount}>
-                          👥 {w.enrolledCount} / {w.maxCapacity} vagas
+                          👥 {w.enrolledCount} / {w.maxCapacity} vagas {w.isFull ? '• 🛑 Bloqueado' : ''}
                         </span>
 
                         <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
