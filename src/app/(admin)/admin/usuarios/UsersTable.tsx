@@ -76,8 +76,9 @@ export function UsersTable({ initialUsers }: { initialUsers: UserWithParticipant
       <div style={{ display: 'flex', gap: '0.25rem', flexWrap: 'wrap' }}>
         {roles.includes('ADMIN') && <span className={styles.badgeAdmin}>Admin</span>}
         {roles.includes('COMMITTEE') && <span className={styles.badgeSuccess}>Comissão</span>}
+        {roles.includes('SECRETARY') && <span className={styles.badgeSuccess} style={{ background: '#d1fae5', color: '#065f46', padding: '0.25rem 0.5rem', borderRadius: '9999px', fontSize: '0.75rem', fontWeight: 600 }}>Secretaria</span>}
         {roles.includes('SCREENER') && <span className={styles.badgeWarning} style={{ background: '#fef08a', color: '#854d0e', padding: '0.25rem 0.5rem', borderRadius: '9999px', fontSize: '0.75rem', fontWeight: 600 }}>Triagem</span>}
-        {roles.includes('PARTICIPANT') && !roles.includes('ADMIN') && !roles.includes('COMMITTEE') && !roles.includes('SCREENER') && (
+        {roles.includes('PARTICIPANT') && !roles.includes('ADMIN') && !roles.includes('COMMITTEE') && !roles.includes('SECRETARY') && !roles.includes('SCREENER') && (
           <span className={styles.badgeUser}>Participante</span>
         )}
       </div>
@@ -163,7 +164,16 @@ export function UsersTable({ initialUsers }: { initialUsers: UserWithParticipant
                             disabled={updatingId === user.id}
                             onChange={() => handleRoleToggle(user.id, user.roles, 'COMMITTEE')}
                           />
-                          Comissão (2ª Etapa)
+                          Comissão Científica (2ª Etapa)
+                        </label>
+                        <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: updatingId === user.id ? 'not-allowed' : 'pointer' }}>
+                          <input 
+                            type="checkbox" 
+                            checked={user.roles.includes('SECRETARY')}
+                            disabled={updatingId === user.id}
+                            onChange={() => handleRoleToggle(user.id, user.roles, 'SECRETARY')}
+                          />
+                          Secretaria (Presença/Crachás)
                         </label>
                         <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: updatingId === user.id ? 'not-allowed' : 'pointer' }}>
                           <input 

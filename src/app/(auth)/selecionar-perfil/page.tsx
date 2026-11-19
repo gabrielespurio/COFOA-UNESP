@@ -14,7 +14,7 @@ export default async function SelecionarPerfilPage() {
   
   if (session.roles.length === 1) {
     if (session.roles[0] === 'ADMIN') redirect('/admin');
-    if (session.roles[0] === 'COMMITTEE') redirect('/comissao');
+    if (session.roles[0] === 'COMMITTEE' || session.roles[0] === 'SECRETARY') redirect('/comissao');
     if (session.roles[0] === 'SCREENER') redirect('/triagem');
     if (session.roles[0] === 'EVALUATOR') redirect('/avaliador');
     redirect('/area-participante');
@@ -62,8 +62,30 @@ export default async function SelecionarPerfilPage() {
               </svg>
             </div>
             <div className={styles.optionContent}>
-              <h2 className={styles.optionTitle}>Comissão (2ª Etapa)</h2>
+              <h2 className={styles.optionTitle}>Comissão Científica (2ª Etapa)</h2>
               <p className={styles.optionDescription}>Emita pareceres científicos finais.</p>
+            </div>
+            <div className={styles.arrow}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+            </div>
+          </Link>
+        )}
+
+        {(session.roles.includes('SECRETARY') || session.roles.includes('ADMIN')) && (
+          <Link href="/comissao" className={styles.optionCard}>
+            <div className={styles.iconWrapper} style={{ backgroundColor: 'rgba(16, 185, 129, 0.1)', color: 'var(--color-success)' }}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+              </svg>
+            </div>
+            <div className={styles.optionContent}>
+              <h2 className={styles.optionTitle}>Comissão de Secretaria</h2>
+              <p className={styles.optionDescription}>Controle de presença, leitura de QR Code e crachás.</p>
             </div>
             <div className={styles.arrow}>
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

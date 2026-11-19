@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils';
 import { logout } from '@/actions/auth';
 import styles from '../(participant)/layout.module.css';
 
-const MENU_ITEMS = [
+const COMMITTEE_MENU_ITEMS = [
   { href: '/comissao', label: 'Painel Gerencial' },
   { href: '/comissao/trabalhos', label: 'Trabalhos Submetidos' },
   { href: '/comissao/presenca', label: 'Controle de Presença' },
@@ -16,10 +16,25 @@ const MENU_ITEMS = [
   { href: '/comissao/jantar', label: 'Jantar Acompanhantes' },
 ];
 
-export function CommitteeSidebar({ children }: { children?: React.ReactNode }) {
+const SECRETARY_MENU_ITEMS = [
+  { href: '/comissao', label: 'Painel Gerencial' },
+  { href: '/comissao/presenca', label: 'Controle de Presença' },
+  { href: '/comissao/crachas', label: 'Crachás e Secretaria' },
+];
+
+export function CommitteeSidebar({ 
+  children,
+  isSecretary = false 
+}: { 
+  children?: React.ReactNode;
+  isSecretary?: boolean;
+}) {
   const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [desktopCollapsed, setDesktopCollapsed] = useState(false);
+
+  const menuItems = isSecretary ? SECRETARY_MENU_ITEMS : COMMITTEE_MENU_ITEMS;
+  const headerTitle = isSecretary ? 'COMISSÃO DE SECRETARIA' : 'COMISSÃO CIENTÍFICA';
 
   return (
     <>
@@ -36,12 +51,12 @@ export function CommitteeSidebar({ children }: { children?: React.ReactNode }) {
         <div className={styles.sidebarHeader}>
           <Logo variant="full" height={40} />
           <div style={{ marginTop: '0.5rem', fontSize: '0.75rem', color: 'var(--color-primary-light)', fontWeight: 600, letterSpacing: '0.05em' }}>
-            COMISSÃO CIENTÍFICA
+            {headerTitle}
           </div>
         </div>
         
         <nav className={styles.nav}>
-          {MENU_ITEMS.map((item) => {
+          {menuItems.map((item) => {
             const isActive = pathname === item.href;
             return (
               <Link 

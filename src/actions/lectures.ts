@@ -22,7 +22,7 @@ async function checkCommitteeOrAdmin() {
   const session = await getSession();
   if (!session) throw new Error('Unauthorized');
   const user = await prisma.user.findUnique({ where: { id: session.userId } });
-  if (!user?.roles.some(r => r === 'COMMITTEE' || r === 'ADMIN')) {
+  if (!user?.roles.some(r => r === 'COMMITTEE' || r === 'ADMIN' || r === 'SECRETARY')) {
     throw new Error('Forbidden');
   }
   return session;

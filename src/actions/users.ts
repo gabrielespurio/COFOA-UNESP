@@ -24,7 +24,7 @@ export async function updateUserRoles(userId: string, newRoles: Role[]) {
       return { error: 'Você não pode alterar o seu próprio perfil.' };
     }
 
-    const validRoles: Role[] = ['PARTICIPANT', 'COMMITTEE', 'ADMIN', 'SCREENER'];
+    const validRoles: Role[] = ['PARTICIPANT', 'COMMITTEE', 'ADMIN', 'SCREENER', 'SECRETARY'];
     const invalidRoles = newRoles.filter(role => !validRoles.includes(role));
     
     if (invalidRoles.length > 0) {

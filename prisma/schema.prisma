@@ -38,6 +38,7 @@ enum Role {
   COMMITTEE
   SCREENER
   EVALUATOR
+  SECRETARY
 }
 
 // ─── Participant ───────────────────────────────────────────

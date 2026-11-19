@@ -97,7 +97,7 @@ export async function login(prevState: any, formData: FormData) {
     let defaultRedirect = '/selecionar-perfil';
     if (roles.length === 1) {
       if (roles[0] === 'ADMIN') defaultRedirect = '/admin';
-      else if (roles[0] === 'COMMITTEE') defaultRedirect = '/comissao';
+      else if (roles[0] === 'COMMITTEE' || roles[0] === 'SECRETARY') defaultRedirect = '/comissao';
       else if (roles[0] === 'SCREENER') defaultRedirect = '/triagem';
       else defaultRedirect = '/area-participante';
     }
@@ -331,7 +331,7 @@ export async function googleLogin(token: string) {
     let redirectUrl = '/selecionar-perfil';
     if (roles.length === 1) {
       if (roles[0] === 'ADMIN') redirectUrl = '/admin';
-      else if (roles[0] === 'COMMITTEE') redirectUrl = '/comissao';
+      else if (roles[0] === 'COMMITTEE' || roles[0] === 'SECRETARY') redirectUrl = '/comissao';
       else if (roles[0] === 'SCREENER') redirectUrl = '/triagem';
       else redirectUrl = '/area-participante';
     }
@@ -362,7 +362,7 @@ export async function setActiveRole(role: string) {
   
   let redirectUrl = '/area-participante';
   if (role === 'ADMIN') redirectUrl = '/admin';
-  else if (role === 'COMMITTEE') redirectUrl = '/comissao';
+  else if (role === 'COMMITTEE' || role === 'SECRETARY') redirectUrl = '/comissao';
   else if (role === 'SCREENER') redirectUrl = '/triagem';
 
   return { success: true, redirectUrl };

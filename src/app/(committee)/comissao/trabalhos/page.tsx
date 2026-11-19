@@ -3,6 +3,7 @@ import { SectionHeading } from '@/components/ui/SectionHeading/SectionHeading';
 import { WorksTable } from './WorksTable';
 import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
+import { redirect } from 'next/navigation';
 import styles from '../page.module.css';
 
 export const metadata: Metadata = {
@@ -11,6 +12,10 @@ export const metadata: Metadata = {
 
 export default async function TrabalhosComissaoPage() {
   const session = await getSession();
+  if (!session || (!session.roles.includes('COMMITTEE') && !session.roles.includes('ADMIN'))) {
+    redirect('/comissao');
+  }
+
   const userEmail = session?.email?.toLowerCase() || '';
   const isCommissionMaster = userEmail === 'comissao@cofoa.com.br' || userEmail === 'comissao@cofoa.com' || userEmail.startsWith('comissao@') || session?.roles.includes('ADMIN') || false;
   const canFilterModality = userEmail === 'comissao@cofoa.com.br' || session?.roles.includes('ADMIN') || false;

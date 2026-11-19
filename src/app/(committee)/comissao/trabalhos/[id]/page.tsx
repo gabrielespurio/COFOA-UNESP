@@ -3,6 +3,7 @@ import { notFound, redirect } from 'next/navigation';
 import { SectionHeading } from '@/components/ui/SectionHeading/SectionHeading';
 import { Badge } from '@/components/ui/Badge/Badge';
 import { prisma } from '@/lib/prisma';
+import { getSession } from '@/lib/auth';
 import { EvaluationForm } from './EvaluationForm';
 import { formatBRTDateTime } from '@/lib/formatDate';
 import styles from './page.module.css';
@@ -47,6 +48,11 @@ function getStatusBadge(status: string, isResubmitted: boolean = false) {
 }
 
 export default async function AvaliacaoTrabalhoPage({ params }: { params: Promise<{ id: string }> }) {
+  const session = await getSession();
+  if (!session || (!session.roles.includes('COMMITTEE') && !session.roles.includes('ADMIN'))) {
+    redirect('/comissao');
+  }
+
   const { id } = await params;
   const work = await prisma.scientificWork.findUnique({
     where: { id },
