@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useMemo, useEffect, useTransition } from 'react';
-import { formatBRTDate, formatBRTTime } from '@/lib/formatDate';
+import { formatBRTDate, formatBRTTime, formatBRTDateTime } from '@/lib/formatDate';
 import { toggleLectureEnrollmentStatus } from '@/actions/lectures';
 import styles from './HandsOnEnrollmentsCard.module.css';
 
@@ -153,35 +153,42 @@ export function HandsOnEnrollmentsCard({
 
   // Export to CSV for Excel
   const handleExportCSV = () => {
+    // Ordena rigorosamente por ordem de inscrição cronológica (quem se inscreveu primeiro fica no topo)
+    const sorted = [...filteredEnrollments].sort(
+      (a, b) => new Date(a.enrolledAt).getTime() - new Date(b.enrolledAt).getTime()
+    );
+
     const headers = [
-      'Atividade',
+      'Ordem de Inscrição',
+      'Nome Completo',
+      'E-mail',
+      'Horário da Inscrição',
+      'Atividade (Hands-On / Mini-Hands)',
       'Tipo',
       'Local',
-      'Data e Horário',
-      'Nome do Congressista',
-      'E-mail',
+      'Data e Horário do Evento',
       'Telefone',
       'CPF',
       'Instituição',
       'Categoria',
       'Status Congresso',
-      'Data Inscrição Hands-On',
       'Assinatura de Presença',
     ];
 
-    const rows = filteredEnrollments.map((e) => [
+    const rows = sorted.map((e, index) => [
+      `"${index + 1}º"`,
+      `"${(e.name || '').replace(/"/g, '""')}"`,
+      `"${(e.email || '').replace(/"/g, '""')}"`,
+      `"${formatBRTDateTime(e.enrolledAt, true)}"`,
       `"${(e.workshopTitle || '').replace(/"/g, '""')}"`,
       `"${e.workshopType === 'HANDS_ON' ? 'Hands-On' : 'Mini-Hands'}"`,
       `"${(e.workshopLocation || '').replace(/"/g, '""')}"`,
       `"${formatWorkshopDateTime(e.workshopStartTime, e.workshopEndTime)}"`,
-      `"${(e.name || '').replace(/"/g, '""')}"`,
-      `"${(e.email || '').replace(/"/g, '""')}"`,
       `"${(e.phone || '').replace(/"/g, '""')}"`,
       `"${(e.cpf || '').replace(/"/g, '""')}"`,
       `"${(e.institution || '').replace(/"/g, '""')}"`,
       `"${(e.category || '').replace(/"/g, '""')}"`,
       `"${e.registrationStatus === 'CONFIRMED' ? 'Confirmado' : 'Pendente'}"`,
-      `"${formatBRTDate(e.enrolledAt)}"`,
       '""', // Blank for physical signature sheet
     ]);
 
@@ -194,7 +201,7 @@ export function HandsOnEnrollmentsCard({
       selectedWorkshopId !== 'all' ? `handson_${selectedWorkshopId}` : 'todos_handson';
     link.setAttribute(
       'download',
-      `${filenamePrefix}_lista_presenca_${new Date().toISOString().slice(0, 10)}.csv`
+      `${filenamePrefix}_inscritos_ordem_${new Date().toISOString().slice(0, 10)}.csv`
     );
     document.body.appendChild(link);
     link.click();
@@ -352,9 +359,9 @@ export function HandsOnEnrollmentsCard({
                 type="button"
                 className={styles.exportButton}
                 onClick={handleExportCSV}
-                title="Exportar dados com nomes, e-mails e espaço de assinatura para o Excel"
+                title="Exportar dados com nomes, e-mails, horários e ordem de inscrição para o Excel"
               >
-                📊 Exportar Lista Excel (.csv)
+                📊 Baixar Lista em Excel (.csv)
               </button>
             </div>
 
@@ -372,17 +379,21 @@ export function HandsOnEnrollmentsCard({
                 <table className={styles.table}>
                   <thead>
                     <tr>
+                      <th style={{ width: '60px', textAlign: 'center' }}>#</th>
                       <th>Atividade</th>
                       <th>Congressista</th>
                       <th>Contato</th>
                       <th>CPF</th>
                       <th>Categoria</th>
-                      <th>Inscrição</th>
+                      <th>Data e Horário Inscrição</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {paginatedEnrollments.map((item) => (
+                    {paginatedEnrollments.map((item, idx) => (
                       <tr key={item.id}>
+                        <td style={{ textAlign: 'center', fontWeight: 700, color: '#1e3a8a' }}>
+                          {(currentPage - 1) * itemsPerPage + idx + 1}º
+                        </td>
                         <td style={{ maxWidth: '240px' }}>
                           <span className={styles.workshopColumnTitle}>{item.workshopTitle}</span>
                           <span className={styles.workshopColumnMeta}>
@@ -405,8 +416,8 @@ export function HandsOnEnrollmentsCard({
                           <span className={styles.categoryTag}>{item.category}</span>
                         </td>
                         <td>
-                          <span style={{ fontSize: '0.8125rem', color: '#6b7280' }}>
-                            {formatBRTDate(item.enrolledAt)}
+                          <span style={{ fontSize: '0.8125rem', color: '#1f2937', fontWeight: 500 }}>
+                            {formatBRTDateTime(item.enrolledAt, true)}
                           </span>
                         </td>
                       </tr>
