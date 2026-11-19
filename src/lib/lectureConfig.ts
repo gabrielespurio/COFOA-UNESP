@@ -9,7 +9,7 @@ export interface ParsedLectureConfig {
   cleanDescription: string;
 }
 
-const CONFIG_REGEX = /<!--CONFIG:(.*?)-->/;
+const CONFIG_REGEX = /<!--CONFIG:(.*?)(-->|→)/;
 
 /**
  * Extracts and parses configuration embedded in a lecture's description or title.

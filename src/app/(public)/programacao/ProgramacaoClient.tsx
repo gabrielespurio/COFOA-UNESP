@@ -53,18 +53,6 @@ const PROGRAMACAO_DATA: DaySchedule[] = [
           'Professor de Implantodontia no Departamento de Cirurgia e Traumatologia Buco-Maxilo-Facial e Periodontia da FORP-USP. Especialista em Periodontia e Odontologia Hospitalar. Mestrado em Reabilitação Oral e Doutorado em Periodontia pela FOB-USP. Pós-doutorado pela FOB-USP. Osteology Scholar na Harvard School of Dental Medicine. Membro do Comitê Diretivo do National Osteology Group Brazil. Ministrador de cursos em planejamento CAD/CAM, cirurgia guiada, impressão 3D e bioimpressão.',
       },
       {
-        id: 'handson-dentoflex-26',
-        time: '10:00h - 12:00h',
-        title: '[HANDS-ON] Apresentação do Sistema de fresagem: Dentoflex',
-        speaker: 'Prof. Dr. André Fabris',
-        track: 'Hands-on & Mini-Hands',
-        category: 'Prática Laboratorial (20 Vagas)',
-        location: 'Multidisciplinar 1',
-        capacity: 20,
-        curriculum:
-          'Atividade prática laboratorial de imersão e domínio das técnicas e instrumentais do Sistema de fresagem Dentoflex. Vagas estritamente limitadas a 20 congressistas. Ministrado pelo Prof. Dr. André Fabris. Inscrições serão abertas em breve na Área do Participante.',
-      },
-      {
         id: 'qui-3',
         time: '10:10h - 12:00h',
         title: 'Legislação da Odontologia da HOF - Simpósio',
@@ -111,6 +99,18 @@ const PROGRAMACAO_DATA: DaySchedule[] = [
     dateStr: '27 de Novembro',
     dayOfWeek: 'Sexta-feira',
     lectures: [
+      {
+        id: 'handson-dentoflex-26',
+        time: '08:00h - 09:50h',
+        title: '[HANDS-ON] Apresentação do Sistema de fresagem: Dentoflex',
+        speaker: 'Prof. Dr. André Fabris',
+        track: 'Hands-on & Mini-Hands',
+        category: 'Prática Laboratorial (20 Vagas)',
+        location: 'Multidisciplinar 1',
+        capacity: 20,
+        curriculum:
+          'Atividade prática laboratorial de imersão e domínio das técnicas e instrumentais do Sistema de fresagem Dentoflex. Vagas estritamente limitadas a 20 congressistas. Ministrado pelo Prof. Dr. André Fabris. Inscrições serão abertas em breve na Área do Participante.',
+      },
       {
         id: 'minihands-sutura-27',
         time: '08:00h - 10:00h',
