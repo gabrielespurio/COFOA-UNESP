@@ -1,4 +1,5 @@
 import styles from './page.module.css';
+import Image from 'next/image';
 import { Container } from '@/components/ui/Container/Container';
 import { SectionHeading } from '@/components/ui/SectionHeading/SectionHeading';
 import { Button } from '@/components/ui/Button/Button';
@@ -159,7 +160,7 @@ export default async function HomePage() {
         </Container>
       </section>
 
-      <SectionDivider flip />
+      <SectionDivider />
 
       {/* ═══════════════════ ORGANIZAÇÃO ═══════════════════ */}
       <section className={styles.section} id="organizacao">
@@ -320,6 +321,57 @@ export default async function HomePage() {
                 referrerPolicy="no-referrer-when-downgrade"
                 title="Mapa de Localização - FOA UNESP"
               ></iframe>
+            </div>
+          </div>
+        </Container>
+      </section>
+
+      <SectionDivider />
+
+      {/* ═══════════════════ PATROCINADORES & CAMPUS ═══════════════════ */}
+      <section className={styles.section} id="patrocinadores">
+        <Container>
+          <SectionHeading
+            overline="Parceiros & Apoio"
+            title="Patrocinadores Oficiais"
+            subtitle="Agradecemos a todas as empresas e marcas parceiras pelo apoio fundamental à realização do COFOA XV no campus da FOA/UNESP."
+            alignment="center"
+          />
+
+          <div className={styles.sponsorsWrapper}>
+            <div className={styles.sponsorsCard}>
+              <a
+                href="/images/patrocinadores-campus.jpg"
+                target="_blank"
+                rel="noopener noreferrer"
+                className={styles.sponsorsLink}
+                title="Toque para ampliar em alta resolução"
+              >
+                <Image
+                  src="/images/patrocinadores-campus.jpg"
+                  alt="Patrocinadores Oficiais e Campus da Faculdade de Odontologia de Araçatuba — COFOA XV"
+                  width={1024}
+                  height={682}
+                  className={styles.sponsorsImage}
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 1024px"
+                  priority={false}
+                />
+                <div className={styles.sponsorsOverlay}>
+                  <span className={styles.sponsorsOverlayBadge}>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="11" cy="11" r="8" />
+                      <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                      <line x1="11" y1="8" x2="11" y2="14" />
+                      <line x1="8" y1="11" x2="14" y2="11" />
+                    </svg>
+                    Toque para ampliar
+                  </span>
+                </div>
+              </a>
+            </div>
+
+            <div className={styles.sponsorsFooterNotice}>
+              <span>✨ 15º Congresso da Faculdade de Odontologia de Araçatuba — FOA UNESP</span>
             </div>
           </div>
         </Container>
