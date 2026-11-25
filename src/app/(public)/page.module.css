@@ -751,4 +751,92 @@
   font-size: var(--text-sm);
 }
 
+/* ─── Sponsors Banner ───────────────────────────────────── */
+
+.sponsorsWrapper {
+  max-width: 1024px;
+  margin: var(--space-8) auto 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  width: 100%;
+}
+
+.sponsorsCard {
+  width: 100%;
+  background: var(--color-background, #ffffff);
+  border: 1px solid var(--color-border, #e2e8f0);
+  border-radius: var(--radius-xl, 16px);
+  overflow: hidden;
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+  transition: transform var(--duration-normal, 0.25s) var(--ease-out, ease-out),
+              box-shadow var(--duration-normal, 0.25s) var(--ease-out, ease-out);
+  position: relative;
+}
+
+.sponsorsCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.12), 0 6px 10px -2px rgba(0, 0, 0, 0.05);
+}
+
+.sponsorsLink {
+  display: block;
+  width: 100%;
+  position: relative;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.sponsorsImage {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.sponsorsOverlay {
+  position: absolute;
+  bottom: 14px;
+  right: 14px;
+  pointer-events: none;
+  opacity: 0.92;
+  transition: opacity 0.2s ease;
+}
+
+.sponsorsOverlayBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: rgba(11, 30, 54, 0.88);
+  color: #ffffff;
+  padding: 0.45rem 0.85rem;
+  border-radius: 9999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  backdrop-filter: blur(6px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+@media (max-width: 640px) {
+  .sponsorsOverlay {
+    bottom: 8px;
+    right: 8px;
+  }
+  .sponsorsOverlayBadge {
+    font-size: 0.7rem;
+    padding: 0.35rem 0.65rem;
+  }
+}
+
+.sponsorsFooterNotice {
+  text-align: center;
+  font-size: var(--text-sm, 0.875rem);
+  color: var(--color-text-secondary, #64748b);
+  font-weight: 500;
+  margin-top: 0.25rem;
+}
+
 

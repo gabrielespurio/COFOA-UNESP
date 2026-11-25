@@ -7,6 +7,7 @@ import {
   PRESENTATION_SCHEDULE,
   PresentationItem,
 } from '@/lib/presentationsData';
+import { ONLINE_ROOMS } from '@/lib/onlineRoomsData';
 import styles from './page.module.css';
 
 export function ApresentacaoTrabalhosClient() {
@@ -198,9 +199,30 @@ export function ApresentacaoTrabalhosClient() {
         </div>
         <div className={styles.infoBannerText}>
           {activeDay.format === 'Online' ? (
-            <>
-              <strong>Atenção:</strong> As apresentações do dia <strong>25/11</strong> são realizadas de forma <strong>100% ONLINE</strong> nas salas virtuais. Conecte-se com pelo menos 10 minutos de antecedência ao horário previsto do seu trabalho.
-            </>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
+              <div>
+                <strong>Atenção:</strong> As apresentações do dia <strong>25/11</strong> são realizadas de forma <strong>100% ONLINE</strong> nas salas virtuais. Conecte-se com pelo menos 10 minutos de antecedência ao horário previsto do seu trabalho.
+              </div>
+              <div>
+                <a
+                  href="/area-participante/salas-online"
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.4rem',
+                    background: '#1a73e8',
+                    color: '#ffffff',
+                    padding: '0.4rem 0.85rem',
+                    borderRadius: '6px',
+                    fontSize: '0.8rem',
+                    fontWeight: 700,
+                    textDecoration: 'none',
+                  }}
+                >
+                  🎥 Ver Mapeamento Completo e Links das Salas Online (Google Meet) →
+                </a>
+              </div>
+            </div>
           ) : activeDay.key === '2026-11-26' ? (
             <>
               <strong>Atenção:</strong> No dia <strong>26/11 (Presencial)</strong> teremos <strong>Apresentações Orais</strong> nas <strong>Salas 1, 2, 3, 5, 6 e 7</strong> e <strong>Painéis Digitais</strong> na <strong>Sala 4 (Totens 1 a 4)</strong>. Compareça com antecedência à sua sala ou totem!
@@ -438,26 +460,64 @@ export function ApresentacaoTrabalhosClient() {
           ) : viewMode === 'grouped' ? (
             /* Visualização Agrupada por Sala / Totem */
             <div className={styles.roomGroupSection}>
-              {groupedRooms.map((group) => (
-                <div key={group.roomKey} className={styles.roomCard}>
-                  {/* Cabeçalho da Sala */}
-                  <div className={styles.roomHeader}>
-                    <div className={styles.roomTitleGroup}>
-                      <span className={styles.roomNumberBadge}>{group.room}</span>
-                      <h3 className={styles.roomTitle}>{group.area}</h3>
+              {groupedRooms.map((group) => {
+                const onlineRoomInfo =
+                  activeDay.format === 'Online'
+                    ? ONLINE_ROOMS.find(
+                        (r) =>
+                          r.shift === group.shift &&
+                          (r.roomName.toLowerCase() === group.room.toLowerCase() ||
+                            r.roomNumber.toString() === group.room.replace(/\D/g, ''))
+                      )
+                    : null;
+
+                return (
+                  <div key={group.roomKey} className={styles.roomCard}>
+                    {/* Cabeçalho da Sala */}
+                    <div className={styles.roomHeader}>
+                      <div className={styles.roomTitleGroup}>
+                        <span className={styles.roomNumberBadge}>{group.room}</span>
+                        <h3 className={styles.roomTitle}>{group.area}</h3>
+                      </div>
+                      <div className={styles.roomMetaBadges}>
+                        <span className={styles.roomShiftBadge}>
+                          {group.shift === 'MANHÃ' ? '☀️ Manhã' : '🌙 Tarde'}
+                        </span>
+                        <span className={styles.roomCategoryBadge}>
+                          {group.category}
+                        </span>
+                        <span className={styles.roomPresentationCount}>
+                          ({group.presentations.length} {group.presentations.length === 1 ? 'trabalho' : 'trabalhos'})
+                        </span>
+                      </div>
+
+                      {onlineRoomInfo && (
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap', marginTop: '0.75rem', width: '100%', paddingTop: '0.5rem', borderTop: '1px dashed #e2e8f0' }}>
+                          <a
+                            href={onlineRoomInfo.meetUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '0.4rem',
+                              background: '#1a73e8',
+                              color: '#ffffff',
+                              padding: '0.35rem 0.75rem',
+                              borderRadius: '6px',
+                              fontSize: '0.8rem',
+                              fontWeight: 700,
+                              textDecoration: 'none',
+                            }}
+                          >
+                            🎥 Entrar no Google Meet ({onlineRoomInfo.roomName})
+                          </a>
+                          <span style={{ fontSize: '0.75rem', color: '#64748b' }}>
+                            <strong>SIP:</strong> {onlineRoomInfo.sip.replace('sip:', '')}
+                          </span>
+                        </div>
+                      )}
                     </div>
-                    <div className={styles.roomMetaBadges}>
-                      <span className={styles.roomShiftBadge}>
-                        {group.shift === 'MANHÃ' ? '☀️ Manhã' : '🌙 Tarde'}
-                      </span>
-                      <span className={styles.roomCategoryBadge}>
-                        {group.category}
-                      </span>
-                      <span className={styles.roomPresentationCount}>
-                        ({group.presentations.length} {group.presentations.length === 1 ? 'trabalho' : 'trabalhos'})
-                      </span>
-                    </div>
-                  </div>
 
                   {/* Lista de Apresentações da Sala */}
                   <div className={styles.roomPresentationsList}>
@@ -518,7 +578,8 @@ export function ApresentacaoTrabalhosClient() {
                     ))}
                   </div>
                 </div>
-              ))}
+              );
+            })}
             </div>
           ) : (
             /* Visualização em Formato Tabela */
