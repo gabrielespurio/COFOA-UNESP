@@ -82,14 +82,6 @@ const SCHEDULE_DATA = [
         description: '• Graduação em MEDICINA pela Universidade de São Paulo (USP)\n• Especialização e Residência médica em Anestesiologia pelo Hospital das Clínicas da Faculdade de Medicina de Ribeirão Preto – USP\n• Título de Especialista em Anestesiologia pela Sociedade Brasileira de Anestesiologia (SBA)\n• Sócio do Serviço de Anestesiologia de Araçatuba (SAA)',
         type: 'ANESTESIOLOGIA / SEDAÇÃO',
         image: '/images/palestras/gustavo-coelho.jpg'
-      },
-      {
-        time: '18:00h-20:00h',
-        title: 'ABERTURA OFICIAL',
-        speaker: '-',
-        description: 'Cerimônia de abertura oficial do evento.',
-        type: 'ABERTURA',
-        image: ''
       }
     ]
   },
