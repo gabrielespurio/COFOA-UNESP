@@ -6,6 +6,7 @@ import { prisma } from '@/lib/prisma';
 import styles from './page.module.css';
 import { ExternalBoardCard } from './ExternalBoardCard';
 import { CompanionDinnerCard } from './CompanionDinnerCard';
+import { OnlineRoomsQuickAccess } from './OnlineRoomsQuickAccess';
 
 export const metadata: Metadata = {
   title: 'Área do Participante',
@@ -46,7 +47,8 @@ export default async function ParticipantDashboardPage() {
       )}
 
       {participant && (
-        <div className={styles.grid}>
+        <>
+          <div className={styles.grid}>
           <div className={styles.card}>
             <div className={styles.cardTitle}>Status da Inscrição</div>
             {!participant.registration ? (
@@ -86,6 +88,15 @@ export default async function ParticipantDashboardPage() {
             <div className={styles.cardDesc}>Grade completa de apresentações orais e painéis nos totens</div>
             <Button href="/area-participante/apresentacao-trabalhos" variant="outline" size="sm" style={{ marginTop: '1rem' }}>
               Ver Apresentações
+            </Button>
+          </div>
+
+          <div className={styles.card}>
+            <div className={styles.cardTitle}>Salas Online (Meet)</div>
+            <div className={styles.cardValue} style={{ color: '#1a73e8' }}>17 Salas</div>
+            <div className={styles.cardDesc}>Links do Google Meet e bancas das apresentações virtuais (25/11)</div>
+            <Button href="/area-participante/salas-online" variant="primary" size="sm" style={{ marginTop: '1rem' }}>
+              Ver Salas Online
             </Button>
           </div>
 
@@ -134,7 +145,11 @@ export default async function ParticipantDashboardPage() {
             </div>
           )}
         </div>
-      )}
+
+        {/* Seção de Acesso Rápido às Salas Online */}
+        <OnlineRoomsQuickAccess />
+      </>
+    )}
     </div>
   );
 }
