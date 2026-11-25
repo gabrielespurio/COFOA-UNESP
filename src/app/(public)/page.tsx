@@ -173,33 +173,6 @@ export default async function HomePage() {
         </Container>
       </section>
 
-      <SectionDivider flip />
-
-      {/* ═══════════════════ INFORMAÇÕES RÁPIDAS ═══════════════════ */}
-      <section className={`${styles.section} ${styles.sectionAlt}`} id="info">
-        <Container>
-          <SectionHeading
-            overline="Informações"
-            title="Nossos Parceiros"
-            alignment="center"
-          />
-          <div className={styles.infoGrid} style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))' }}>
-            {['Organizadores', 'Patrocinadores', 'Convidados'].map((title, index) => (
-              <div key={index} className={styles.placeholderCard}>
-                <div className={styles.placeholderIconWrapper}>
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                  </svg>
-                </div>
-                <h3 className={styles.placeholderTitle}>{title}</h3>
-                <div className={styles.placeholderBadge}>Em Breve</div>
-              </div>
-            ))}
-          </div>
-        </Container>
-      </section>
-
       <SectionDivider />
 
       {/* ═══════════════════ INSCRIÇÕES ═══════════════════ */}
