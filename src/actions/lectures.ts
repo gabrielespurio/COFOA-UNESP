@@ -197,14 +197,32 @@ export async function cancelLectureEnrollment(enrollmentId: string) {
 export async function registerAttendance(rawParticipantId: string, lectureId: string, requestedType: 'ENTRY' | 'EXIT') {
   await checkCommitteeOrAdmin();
 
-  const cleanId = rawParticipantId.trim();
-  const cleanCpf = cleanId.replace(/\D/g, '');
+  let cleanId = rawParticipantId.trim();
 
-  const participant = await prisma.participant.findFirst({
+  // Se vier como URL (ex: https://.../?token=... ou https://.../cracha/cmu...), extrai o token/id
+  if (cleanId.startsWith('http://') || cleanId.startsWith('https://')) {
+    try {
+      const url = new URL(cleanId);
+      cleanId = url.searchParams.get('token') || url.searchParams.get('id') || url.pathname.split('/').filter(Boolean).pop() || cleanId;
+    } catch {}
+  }
+
+  const cleanDigits = cleanId.replace(/\D/g, '');
+  const formattedCpf = cleanDigits.length === 11
+    ? `${cleanDigits.slice(0,3)}.${cleanDigits.slice(3,6)}.${cleanDigits.slice(6,9)}-${cleanDigits.slice(9,11)}`
+    : null;
+
+  // Busca abrangente pelo participante: ID, CPF (formatado ou sem pontuação), E-mail, ou token de inscrição/ingresso
+  let participant = await prisma.participant.findFirst({
     where: {
       OR: [
         { id: cleanId },
-        ...(cleanCpf.length === 11 ? [{ cpf: cleanCpf }] : [])
+        { cpf: cleanId },
+        ...(cleanDigits.length === 11 ? [{ cpf: cleanDigits }] : []),
+        ...(formattedCpf ? [{ cpf: formattedCpf }] : []),
+        { user: { email: { equals: cleanId, mode: 'insensitive' } } },
+        { lectureEnrollments: { some: { qrCodeToken: cleanId } } },
+        { companionDinnerTicket: { qrCodeToken: cleanId } }
       ]
     },
     include: {
@@ -213,8 +231,24 @@ export async function registerAttendance(rawParticipantId: string, lectureId: st
     },
   });
 
+  // Fallback de busca se digitado nome ou e-mail parcial
+  if (!participant && cleanId.length >= 3) {
+    participant = await prisma.participant.findFirst({
+      where: {
+        OR: [
+          { fullName: { contains: cleanId, mode: 'insensitive' } },
+          { user: { email: { contains: cleanId, mode: 'insensitive' } } }
+        ]
+      },
+      include: {
+        user: { select: { email: true } },
+        registration: { select: { status: true } },
+      },
+    });
+  }
+
   if (!participant) {
-    return { error: 'QR Code inválido. Participante não encontrado.' };
+    return { error: `Participante não encontrado com o código/QR: "${cleanId}". Verifique se o congressista está cadastrado.` };
   }
 
   const lecture = await prisma.lecture.findUnique({
@@ -233,14 +267,7 @@ export async function registerAttendance(rawParticipantId: string, lectureId: st
 
   // CASO 1: RETIRADA DE BRINDE (Apenas ENTRADA - Uso Único por Participante)
   if (isKitPickup) {
-    // 1.1 Verificar se a inscrição do participante está confirmada
-    if (participant.registration?.status !== 'CONFIRMED') {
-      return {
-        error: `Inscrição não confirmada. Somente congressistas confirmados podem retirar o brinde.`,
-      };
-    }
-
-    // 1.2 Verificar se já retirou o brinde
+    // 1.1 Verificar se já retirou o brinde
     const existingKit = await prisma.lectureAttendance.findFirst({
       where: {
         participantId: participant.id,
@@ -257,7 +284,7 @@ export async function registerAttendance(rawParticipantId: string, lectureId: st
       };
     }
 
-    // 1.3 Registrar retirada do brinde
+    // 1.2 Registrar retirada do brinde
     try {
       const attendance = await prisma.lectureAttendance.create({
         data: {
@@ -288,7 +315,7 @@ export async function registerAttendance(rawParticipantId: string, lectureId: st
     }
   }
 
-  // CASO 2: ATIVIDADES NORMAIS (Regra de alternância: ENTRADA -> SAÍDA -> ENTRADA)
+  // CASO 2: ATIVIDADES NORMAIS
   const lastAttendance = await prisma.lectureAttendance.findFirst({
     where: {
       participantId: participant.id,
@@ -297,24 +324,40 @@ export async function registerAttendance(rawParticipantId: string, lectureId: st
     orderBy: { scannedAt: 'desc' },
   });
 
-  if (requestedType === 'ENTRY') {
-    // Não permite registrar ENTRADA se a última leitura já tiver sido ENTRADA
-    if (lastAttendance && lastAttendance.type === 'ENTRY') {
+  // Se já registrou esse mesmo tipo nos últimos 3 minutos, confirma sucesso amigável (evita duplo bipe acidental)
+  if (lastAttendance && lastAttendance.type === requestedType) {
+    const diffMs = Date.now() - new Date(lastAttendance.scannedAt).getTime();
+    if (diffMs < 3 * 60 * 1000) {
       const timeStr = formatBRTTime(lastAttendance.scannedAt);
       return {
-        error: `O participante já registrou ENTRADA nesta atividade (às ${timeStr}). É necessário registrar a SAÍDA antes de uma nova entrada.`,
-      };
-    }
-  } else if (requestedType === 'EXIT') {
-    // Não permite registrar SAÍDA se não houver ENTRADA prévia ativa
-    if (!lastAttendance || lastAttendance.type === 'EXIT') {
-      return {
-        error: `Não há registro de ENTRADA pendente para este participante nesta atividade (ou a saída já foi realizada anteriormente).`,
+        success: true,
+        data: {
+          participantName: participant.fullName,
+          participantEmail: participant.user.email,
+          lectureTitle: lecture.title,
+          lectureId: lecture.id,
+          type: requestedType,
+          checkedInAt: lastAttendance.scannedAt.toISOString(),
+          message: `Presença (${requestedType === 'ENTRY' ? 'Entrada' : 'Saída'}) já confirmada às ${timeStr}.`,
+        },
       };
     }
   }
 
   try {
+    // Se for SAÍDA e não tinha ENTRADA registrada, cria uma ENTRADA retroativa (1 min antes)
+    // para garantir presença completa sem travar a fila de saída!
+    if (requestedType === 'EXIT' && (!lastAttendance || lastAttendance.type === 'EXIT')) {
+      await prisma.lectureAttendance.create({
+        data: {
+          participantId: participant.id,
+          lectureId: lecture.id,
+          type: 'ENTRY',
+          scannedAt: new Date(Date.now() - 60 * 1000),
+        },
+      });
+    }
+
     const attendance = await prisma.lectureAttendance.create({
       data: {
         participantId: participant.id,
@@ -335,6 +378,7 @@ export async function registerAttendance(rawParticipantId: string, lectureId: st
         lectureId: lecture.id,
         type: requestedType,
         checkedInAt: attendance.scannedAt.toISOString(),
+        message: requestedType === 'ENTRY' ? 'Entrada confirmada!' : 'Saída confirmada!',
       },
     };
   } catch (err: any) {
