@@ -10,13 +10,13 @@ import crypto from 'crypto';
 import { OAuth2Client } from 'google-auth-library';
 
 const loginSchema = z.object({
-  email: z.string().email('E-mail inválido.'),
+  email: z.string().email('E-mail inválido.').transform(val => val.trim().toLowerCase()),
   password: z.string().min(1, 'A senha é obrigatória.'),
   redirectTo: z.string().nullable().optional(),
 });
 
 const registerSchema = z.object({
-  email: z.string().email('E-mail inválido.'),
+  email: z.string().email('E-mail inválido.').transform(val => val.trim().toLowerCase()),
   password: z.string()
     .min(6, 'A senha deve ter pelo menos 6 caracteres.')
     .max(100, 'A senha é muito longa (máximo 100 caracteres).'),
@@ -38,8 +38,8 @@ export async function login(prevState: any, formData: FormData) {
   let redirectToFinal = '';
 
   try {
-    const user = await prisma.user.findUnique({
-      where: { email },
+    const user = await prisma.user.findFirst({
+      where: { email: { equals: email, mode: 'insensitive' } },
     });
 
     if (!user) {
@@ -128,8 +128,8 @@ export async function register(prevState: any, formData: FormData) {
   const { email, password } = result.data;
 
   try {
-    const existingUser = await prisma.user.findUnique({
-      where: { email },
+    const existingUser = await prisma.user.findFirst({
+      where: { email: { equals: email, mode: 'insensitive' } },
     });
 
     if (existingUser) {
@@ -170,7 +170,7 @@ export async function logout() {
 }
 
 const requestResetSchema = z.object({
-  email: z.string().email('E-mail inválido.'),
+  email: z.string().email('E-mail inválido.').transform(val => val.trim().toLowerCase()),
 });
 
 export async function requestPasswordReset(prevState: any, formData: FormData) {
@@ -183,7 +183,7 @@ export async function requestPasswordReset(prevState: any, formData: FormData) {
   const email = result.data.email;
   
   try {
-    const user = await prisma.user.findUnique({ where: { email } });
+    const user = await prisma.user.findFirst({ where: { email: { equals: email, mode: 'insensitive' } } });
     if (!user) {
       // Return success even if not found to prevent email enumeration
       return { success: true, email };
@@ -211,7 +211,7 @@ export async function requestPasswordReset(prevState: any, formData: FormData) {
 }
 
 const resetPasswordSchema = z.object({
-  email: z.string().email('E-mail inválido.'),
+  email: z.string().email('E-mail inválido.').transform(val => val.trim().toLowerCase()),
   code: z.string().length(6, 'O código deve ter 6 dígitos.'),
   password: z.string().min(6, 'A senha deve ter pelo menos 6 caracteres.'),
 });
@@ -230,7 +230,7 @@ export async function resetPassword(prevState: any, formData: FormData) {
   const { email, code, password } = result.data;
   
   try {
-    const user = await prisma.user.findUnique({ where: { email } });
+    const user = await prisma.user.findFirst({ where: { email: { equals: email, mode: 'insensitive' } } });
     
     if (!user || user.passwordResetCode !== code || !user.passwordResetExpires || user.passwordResetExpires < new Date()) {
       return { error: 'Código inválido ou expirado. Solicite novamente.' };
@@ -275,25 +275,28 @@ export async function googleLogin(token: string) {
       return { error: 'Credenciais do Google inválidas.' };
     }
     
-    const email = payload.email;
+    const email = payload.email.trim().toLowerCase();
     const googleId = payload.sub; // Google's unique identifier for the user
     
-    // Find existing user by googleId or email
+    // Find existing user by googleId or email (case-insensitive)
     let user = await prisma.user.findFirst({
       where: {
         OR: [
           { googleId },
-          { email }
+          { email: { equals: email, mode: 'insensitive' } }
         ]
       }
     });
     
     if (user) {
-      // If user exists but doesn't have googleId linked, link it now
-      if (!user.googleId) {
+      // If user exists but doesn't have googleId linked or email needs normalization, update it
+      if (!user.googleId || user.email !== email) {
         user = await prisma.user.update({
           where: { id: user.id },
-          data: { googleId }
+          data: {
+            googleId: user.googleId || googleId,
+            email: email,
+          }
         });
       }
       
